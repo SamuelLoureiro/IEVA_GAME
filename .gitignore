@@ -65,6 +65,5 @@ ehthumbs.db
 .vscode/
 .idea/
 
-# Documentação / Markdown (ocultar do repositório)
-*.md
+
 
