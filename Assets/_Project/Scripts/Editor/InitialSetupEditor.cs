@@ -197,6 +197,46 @@ namespace VARG.Editor
             Object.DestroyImmediate(systemsGo);
             Debug.Log($"[VARG] [Systems] prefab created at {prefabPath}");
         }
+
+        [MenuItem("VARG/Update [Systems] Prefab References")]
+        public static void UpdateSystemsPrefab()
+        {
+            const string prefabPath = "Assets/Resources/Systems/[Systems].prefab";
+            var root = PrefabUtility.LoadPrefabContents(prefabPath);
+            if (root == null)
+            {
+                Debug.LogWarning($"[VARG] Prefab not found at {prefabPath}");
+                return;
+            }
+
+            var gameManager = root.GetComponent<GameManager>();
+            if (gameManager != null)
+            {
+                var campaignConfig = AssetDatabase.LoadAssetAtPath<CampaignConfig>("Assets/_Project/Data/CampaignConfig.asset");
+                var gameConfig = AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/_Project/Data/GameConfig.asset");
+                var scoringConfig = AssetDatabase.LoadAssetAtPath<ScoringConfig>("Assets/_Project/Data/ScoringConfig.asset");
+                var penaltyConfig = AssetDatabase.LoadAssetAtPath<PenaltyConfig>("Assets/_Project/Data/PenaltyConfig.asset");
+
+                var serializedGm = new SerializedObject(gameManager);
+                var campProp = serializedGm.FindProperty("_campaignConfig");
+                var gameProp = serializedGm.FindProperty("_gameConfig");
+                var scorProp = serializedGm.FindProperty("_scoringConfig");
+                var penProp = serializedGm.FindProperty("_penaltyConfig");
+
+                if (campProp != null) campProp.objectReferenceValue = campaignConfig;
+                if (gameProp != null) gameProp.objectReferenceValue = gameConfig;
+                if (scorProp != null) scorProp.objectReferenceValue = scoringConfig;
+                if (penProp != null) penProp.objectReferenceValue = penaltyConfig;
+
+                serializedGm.ApplyModifiedPropertiesWithoutUndo();
+                Debug.Log("[VARG] GameManager references on [Systems] prefab updated!");
+            }
+
+            PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+            PrefabUtility.UnloadPrefabContents(root);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
     }
 }
 #endif

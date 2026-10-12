@@ -51,6 +51,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a34cfeef057af559c5324fc5a35478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Core.GameManager
+  _campaignConfig: {fileID: 11400000, guid: ae418d412fc7cc8618aef2bebee2b372, type: 2}
+  _gameConfig: {fileID: 11400000, guid: 9b22b933c401cb8a3a8fd4050212e7dd, type: 2}
+  _scoringConfig: {fileID: 11400000, guid: 766ece70e26439578917ee579a2227b2, type: 2}
+  _penaltyConfig: {fileID: 11400000, guid: 95c1ab0cd8c062ed88e97595994296ba, type: 2}
 --- !u!114 &8230158156230685837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,6 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a59540dad3a8852287dc7759cfab714, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Core.SceneLoader
+  _transitionUI: {fileID: 0}
 --- !u!114 &8685155739470529266
 MonoBehaviour:
   m_ObjectHideFlags: 0
