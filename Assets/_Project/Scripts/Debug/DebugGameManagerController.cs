@@ -8,6 +8,15 @@ namespace VARG.DebugTools
     {
         [Header("Debug Controls")]
         [SerializeField] private bool _showGui = true;
+        [SerializeField] private bool _dontDestroyOnLoad = true;
+
+        private void Awake()
+        {
+            if (_dontDestroyOnLoad)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
+        }
 
         private void Update()
         {
