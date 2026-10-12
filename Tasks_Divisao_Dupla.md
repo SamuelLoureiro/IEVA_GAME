@@ -81,9 +81,9 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 ## Pessoa A — Caça + HUD + Resultados
 
 ### Sprint 1 — Jogador e alvos placeholder (Passos 1, 2)
-- [ ] **A01** `InputManager` + `KeyboardMouseInput` (mapa `OnFoot` e `UI`).
+- [x] **A01** `InputManager` + `KeyboardMouseInput` (mapa `OnFoot` e `UI`).
   - Arquivos: `Input/*` · Depende: S0.5 · Pronto quando: valores de `IPlayerInput` aparecem num log de debug.
-- [ ] **A02** Prefab **`ETPlayer`**: `ETPlayerController` + `ETCameraLook` (pitch ±85°, cursor travado). *Entregar cedo — B cria a Variant.*
+- [x] **A02** Prefab **`ETPlayer`**: `ETPlayerController` + `ETCameraLook` (pitch ±85°, cursor travado). *Entregar cedo — B cria a Variant.*
   - Depende: A01 · Pronto quando: anda, olha, não atravessa paredes, consegue olhar para cima.
 - [ ] **A03** `PyramidMeshGenerator` (Editor) + prefabs placeholder `Target_*` (com `NavMeshAgent`, layer `Interactable`) e `Mini_*` (com `Rigidbody`, layer `Grabbable`) das 4 primitivas (§R.1); ligar nos `TargetData`.
   - Depende: S0.7 · Pronto quando: os 8 prefabs existem e cada `TargetData` aponta para seu `prefab` e `miniPrefab`.
