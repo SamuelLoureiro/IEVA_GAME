@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &162638527425919953
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2014100970670028855}
+  - component: {fileID: 7941117461795075941}
+  - component: {fileID: 8230158156230685837}
+  - component: {fileID: 2969405070394421553}
+  - component: {fileID: 454286779028910771}
+  - component: {fileID: 2921158033709295128}
+  - component: {fileID: 6717714060433724774}
+  - component: {fileID: 7669703832512416783}
+  - component: {fileID: 8685155739470529266}
+  m_Layer: 0
+  m_Name: '[Systems]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2014100970670028855
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162638527425919953}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7941117461795075941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162638527425919953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a34cfeef057af559c5324fc5a35478, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Core.GameManager
+--- !u!114 &8230158156230685837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162638527425919953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dbd7539473f7a51591b803752067008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Mission.MissionManager
+--- !u!114 &2969405070394421553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162638527425919953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 284aeda247b83402ea2389a9dd93659d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Inventory.InventoryManager
+--- !u!114 &454286779028910771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162638527425919953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bab3ada620c5b78c9f4501b15718ba0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Mission.TimerManager
+--- !u!114 &2921158033709295128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162638527425919953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1842f74918442541c99658d42b3b16ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Mission.LivesManager
+--- !u!114 &6717714060433724774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162638527425919953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b8814d7d2e26b80ba2f3b5eecda0c7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Humor.BossDialogueManager
+  _lines: {fileID: 0}
+--- !u!114 &7669703832512416783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162638527425919953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a59540dad3a8852287dc7759cfab714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Core.SceneLoader
+--- !u!114 &8685155739470529266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162638527425919953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0499ec02d9530d6097054ee51367f93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Input.InputManager

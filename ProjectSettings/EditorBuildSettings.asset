@@ -4,7 +4,25 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/_Project/Scenes/00_Boot.unity
+    guid: 309d85f7a1e5dc69d9a5d3bb5af93d3f
+  - enabled: 1
+    path: Assets/_Project/Scenes/01_BossBriefing.unity
+    guid: 34dfe241f9a50458aaacaf323e9910ff
+  - enabled: 1
+    path: Assets/_Project/Scenes/02_ShipFlight.unity
+    guid: 9959bcb1d284fd9a39bfa055d38ce994
+  - enabled: 1
+    path: Assets/_Project/Scenes/03_CityHunt.unity
+    guid: 9099107a9f4954e809699fca0b1a9ea4
+  - enabled: 1
+    path: Assets/_Project/Scenes/04_ShipSorting.unity
+    guid: 0d4193d37a2aa0fbcad5279f540581a4
+  - enabled: 1
+    path: Assets/_Project/Scenes/05_Results.unity
+    guid: 07745e7ecfc5565b59fc7d0c1209a9b0
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
   m_UseUCBPForAssetBundles: 0

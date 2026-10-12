@@ -66,13 +66,13 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 ---
 
 ## Sprint 0 — Setup e contratos (JUNTOS)
-- [ ] **S0.1** Criar projeto **Unity 6.3 LTS** (mesma versão exata nos dois PCs), repositório, `.gitignore`, LFS, Smart Merge.
+- [x] **S0.1** Criar projeto **Unity 6.3 LTS** (mesma versão exata nos dois PCs), repositório, `.gitignore`, LFS, Smart Merge.
 - [ ] **S0.2** Medir build vazia (URP mínimo vs Built-in) → escolher pipeline; remover pacotes não usados; instalar Input System e AI Navigation. *Pronto quando:* tamanho anotado aqui: `____ MB`.
 - [ ] **S0.3** Player Settings: Active Input Handling = **Input System Package (New)**; IL2CPP; stripping High.
-- [ ] **S0.4** Estrutura de pastas (GDD §0.4), layers/tags e Collision Matrix (§C.5), as 6 cenas vazias registradas no Build Settings.
-- [ ] **S0.5** Escrever os **contratos** (§C.1–C.4) — só assinaturas, métodos vazios: enums, SOs, `CapturedItem`, `IPlayerInput`, `IShipInput`, `IInteractable`, APIs dos managers, `GameEvents`.
-- [ ] **S0.6** `Singleton<T>`, `PersistentBootstrapper`, prefab `[Systems]` com **todos** os managers (stubs) em `Resources/`.
-- [ ] **S0.7** Criar assets: 4 `TargetData`, `CampaignConfig` com 3 `LevelConfig` (§R.2), `PenaltyConfig`, `ScoringConfig`, `GameConfig`.
+- [x] **S0.4** Estrutura de pastas (GDD §0.4), layers/tags e Collision Matrix (§C.5), as 6 cenas vazias registradas no Build Settings.
+- [x] **S0.5** Escrever os **contratos** (§C.1–C.4) — só assinaturas, métodos vazios: enums, SOs, `CapturedItem`, `IPlayerInput`, `IShipInput`, `IInteractable`, APIs dos managers, `GameEvents`.
+- [x] **S0.6** `Singleton<T>`, `PersistentBootstrapper`, prefab `[Systems]` com **todos** os managers (stubs) em `Resources/`.
+- [x] **S0.7** Criar assets: 4 `TargetData`, `CampaignConfig` com 3 `LevelConfig` (§R.2), `PenaltyConfig`, `ScoringConfig`, `GameConfig`.
 - [ ] **S0.8** Combinar o tema visual de planilha (cores, fonte, tamanho de célula) e a textura-paleta 64×64.
 - *Pronto quando:* projeto compila nos dois PCs, Play em qualquer cena cria `[Systems]` sem erro.
 
