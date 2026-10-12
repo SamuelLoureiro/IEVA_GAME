@@ -85,7 +85,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
   - Arquivos: `Input/*` · Depende: S0.5 · Pronto quando: valores de `IPlayerInput` aparecem num log de debug.
 - [x] **A02** Prefab **`ETPlayer`**: `ETPlayerController` + `ETCameraLook` (pitch ±85°, cursor travado). *Entregar cedo — B cria a Variant.*
   - Depende: A01 · Pronto quando: anda, olha, não atravessa paredes, consegue olhar para cima.
-- [ ] **A03** `PyramidMeshGenerator` (Editor) + prefabs placeholder `Target_*` (com `NavMeshAgent`, layer `Interactable`) e `Mini_*` (com `Rigidbody`, layer `Grabbable`) das 4 primitivas (§R.1); ligar nos `TargetData`.
+- [x] **A03** `PyramidMeshGenerator` (Editor) + prefabs placeholder `Target_*` (com `NavMeshAgent`, layer `Interactable`) e `Mini_*` (com `Rigidbody`, layer `Grabbable`) das 4 primitivas (§R.1); ligar nos `TargetData`.
   - Depende: S0.7 · Pronto quando: os 8 prefabs existem e cada `TargetData` aponta para seu `prefab` e `miniPrefab`.
 - [ ] **A04** Greybox de `03_CityHunt` (chão, casas-cubo, limites fechados, nave visível no céu).
 - [ ] **A05** `IInteractable` + `PlayerInteractor` (raycast central) + `CrosshairUI`.

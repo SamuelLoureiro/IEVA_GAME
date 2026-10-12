@@ -15,8 +15,8 @@ MonoBehaviour:
   _id: Target_Cow
   _type: 1
   _displayName: Vaca
-  _prefab: {fileID: 0}
-  _miniPrefab: {fileID: 0}
+  _prefab: {fileID: 4989811464369175581, guid: 5021b0671e5585b6e8b22c799efda196, type: 3}
+  _miniPrefab: {fileID: 7659040522746109453, guid: 2c8b29c72159fe67d9fc49b967d75d01, type: 3}
   _icon: {fileID: 0}
   _walkSpeed: 2
   _fleeSpeed: 4

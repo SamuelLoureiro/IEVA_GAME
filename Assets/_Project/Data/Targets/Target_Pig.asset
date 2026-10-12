@@ -15,8 +15,8 @@ MonoBehaviour:
   _id: Target_Pig
   _type: 2
   _displayName: Porco
-  _prefab: {fileID: 0}
-  _miniPrefab: {fileID: 0}
+  _prefab: {fileID: 7793214832482616600, guid: 75305b3edc387fc9a994147b1b3d23b4, type: 3}
+  _miniPrefab: {fileID: 6302685719003216089, guid: e0edc02e0f33b51aa976c7af8e733ae4, type: 3}
   _icon: {fileID: 0}
   _walkSpeed: 2.5
   _fleeSpeed: 4.5
