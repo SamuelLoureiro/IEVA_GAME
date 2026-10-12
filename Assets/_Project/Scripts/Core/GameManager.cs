@@ -82,6 +82,7 @@ namespace VARG.Core
 
             if (TimerManager.Instance != null)
             {
+                TimerManager.Instance.StopAllTimers();
                 TimerManager.Instance.ResetDebt();
             }
 
@@ -109,6 +110,11 @@ namespace VARG.Core
 
         public void GoToSorting()
         {
+            if (TimerManager.Instance != null)
+            {
+                TimerManager.Instance.StopTimer(TimerPhase.Capture);
+            }
+
             if (SceneLoader.Instance != null)
             {
                 SceneLoader.Instance.Load(ShipSortingSceneName);
@@ -117,6 +123,11 @@ namespace VARG.Core
 
         public void Victory()
         {
+            if (TimerManager.Instance != null)
+            {
+                TimerManager.Instance.StopAllTimers();
+            }
+
             CalculateAndStoreResult();
             GameEvents.TriggerVictory();
 
@@ -128,6 +139,11 @@ namespace VARG.Core
 
         public void Defeat(DefeatReason reason)
         {
+            if (TimerManager.Instance != null)
+            {
+                TimerManager.Instance.StopAllTimers();
+            }
+
             CalculateAndStoreResult();
             GameEvents.TriggerDefeat(reason);
 

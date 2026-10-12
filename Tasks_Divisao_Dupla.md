@@ -124,7 +124,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 - [x] **B01** `GameManager` (`StartLevel`, `GoToHunt` respeitando `useShipFlight`, `GoToSorting`, `Victory`, `Defeat`, `NextLevel`, `RetryLevel`, `LastResult` com score §R.7) + `SceneLoader` + `SceneTransitionUI`.
   - Pronto quando: dá para percorrer as cenas por botões de debug; reset de nível limpa tudo.
 - [x] **B02** `InventoryManager` completo (`CapturedItem`, eventos).
-- [ ] **B03** `TimerManager` completo: 2 timers, `ApplyPenalty`, **dívida** de Sorting, `Pause`, `OnTimeLow`, `OnTimeUp`. **Sem ganho de tempo.**
+- [x] **B03** `TimerManager` completo: 2 timers, `ApplyPenalty`, **dívida** de Sorting, `Pause`, `OnTimeLow`, `OnTimeUp`. **Sem ganho de tempo.**
   - Pronto quando: penalidade em Sorting durante a Caça vira dívida e é descontada no `StartTimer(Sorting)`.
 - [ ] **B04** `LivesManager` (5 vidas, `OnLifeLost`, derrota em 0).
 - [ ] **B05** `MissionManager` completo: `GenerateMission` (§R.2: 1 tipo proibido, 3 tipos na lista, repetição permitida) + `ValidateCapture` (§R.5: penalidades, vida, inventário, eventos, avanço da ordem).
