@@ -121,15 +121,15 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 ## Pessoa B — Núcleo + Triagem + Briefing + Humor
 
 ### Sprint 1 — Núcleo (Passos 5, 6, 10) — *prioridade máxima, A depende disso*
-- [ ] **B01** `GameManager` (`StartLevel`, `GoToHunt` respeitando `useShipFlight`, `GoToSorting`, `Victory`, `Defeat`, `NextLevel`, `RetryLevel`, `LastResult` com score §R.7) + `SceneLoader` + `SceneTransitionUI`.
+- [x] **B01** `GameManager` (`StartLevel`, `GoToHunt` respeitando `useShipFlight`, `GoToSorting`, `Victory`, `Defeat`, `NextLevel`, `RetryLevel`, `LastResult` com score §R.7) + `SceneLoader` + `SceneTransitionUI`.
   - Pronto quando: dá para percorrer as cenas por botões de debug; reset de nível limpa tudo.
-- [ ] **B02** `InventoryManager` completo (`CapturedItem`, eventos).
-- [ ] **B03** `TimerManager` completo: 2 timers, `ApplyPenalty`, **dívida** de Sorting, `Pause`, `OnTimeLow`, `OnTimeUp`. **Sem ganho de tempo.**
+- [x] **B02** `InventoryManager` completo (`CapturedItem`, eventos).
+- [x] **B03** `TimerManager` completo: 2 timers, `ApplyPenalty`, **dívida** de Sorting, `Pause`, `OnTimeLow`, `OnTimeUp`. **Sem ganho de tempo.**
   - Pronto quando: penalidade em Sorting durante a Caça vira dívida e é descontada no `StartTimer(Sorting)`.
-- [ ] **B04** `LivesManager` (5 vidas, `OnLifeLost`, derrota em 0).
-- [ ] **B05** `MissionManager` completo: `GenerateMission` (§R.2: 1 tipo proibido, 3 tipos na lista, repetição permitida) + `ValidateCapture` (§R.5: penalidades, vida, inventário, eventos, avanço da ordem).
+- [x] **B04** `LivesManager` (5 vidas, `OnLifeLost`, derrota em 0).
+- [x] **B05** `MissionManager` completo: `GenerateMission` (§R.2: 1 tipo proibido, 3 tipos na lista, repetição permitida) + `ValidateCapture` (§R.5: penalidades, vida, inventário, eventos, avanço da ordem).
   - Pronto quando: um teste (EditMode ou botão de debug) cobre os 3 resultados e confirma que a ordem só avança com `Correct`.
-- [ ] **B06** `GameEvents` (§C.4, com limpeza em `SubsystemRegistration`) + `DebugMissionSeeder` + `DebugInventorySeeder` (itens dos 3 resultados).
+- [x] **B06** `GameEvents` (§C.4, com limpeza em `SubsystemRegistration`) + `DebugMissionSeeder` + `DebugInventorySeeder` (itens dos 3 resultados).
 - [ ] **B07** Kit UI planilha: `SpreadsheetPanel`, `SpreadsheetRow`, `SpreadsheetCell`, `FormulaBar`, `SheetTabs`. *A usa no Sprint 3.*
 
 ### Sprint 2 — Triagem (Passos 7, 8, 9)
