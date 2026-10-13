@@ -1,7 +1,10 @@
 #if UNITY_EDITOR
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using VARG.Player;
+using VARG.UI;
 
 namespace VARG.Editor
 {
@@ -50,13 +53,47 @@ namespace VARG.Editor
             lookSerialized.FindProperty("_playerBody").objectReferenceValue = rootGo.transform;
             lookSerialized.ApplyModifiedPropertiesWithoutUndo();
 
+            var interactor = cameraGo.AddComponent<PlayerInteractor>();
+            var interactorSerialized = new SerializedObject(interactor);
+            interactorSerialized.FindProperty("_playerCamera").objectReferenceValue = cam;
+            interactorSerialized.FindProperty("_range").floatValue = 15f;
+            interactorSerialized.ApplyModifiedPropertiesWithoutUndo();
+
+            // HUD Canvas with central crosshair
+            var canvasGo = new GameObject("HUD_Crosshair");
+            canvasGo.transform.SetParent(rootGo.transform, false);
+
+            var canvas = canvasGo.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasGo.AddComponent<CanvasScaler>();
+            canvasGo.AddComponent<GraphicRaycaster>();
+
+            var crosshairGo = new GameObject("Crosshair");
+            crosshairGo.transform.SetParent(canvasGo.transform, false);
+            var crosshairRect = crosshairGo.AddComponent<RectTransform>();
+            crosshairRect.sizeDelta = new Vector2(8f, 8f);
+            crosshairRect.anchorMin = new Vector2(0.5f, 0.5f);
+            crosshairRect.anchorMax = new Vector2(0.5f, 0.5f);
+            crosshairRect.anchoredPosition = Vector2.zero;
+
+            var crosshairImg = crosshairGo.AddComponent<Image>();
+            crosshairImg.color = new Color(0.2f, 1f, 0.4f, 0.75f);
+
+            var crosshairUI = canvasGo.AddComponent<CrosshairUI>();
+            var crosshairUiSerialized = new SerializedObject(crosshairUI);
+            crosshairUiSerialized.FindProperty("_interactor").objectReferenceValue = interactor;
+            crosshairUiSerialized.FindProperty("_crosshairImage").objectReferenceValue = crosshairImg;
+            crosshairUiSerialized.FindProperty("_defaultColor").colorValue = new Color(0.2f, 1f, 0.4f, 0.75f);
+            crosshairUiSerialized.FindProperty("_targetDetectedColor").colorValue = new Color(1f, 0.15f, 0.15f, 0.95f);
+            crosshairUiSerialized.ApplyModifiedPropertiesWithoutUndo();
+
             PrefabUtility.SaveAsPrefabAsset(rootGo, path);
             Object.DestroyImmediate(rootGo);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log($"[VARG] ETPlayer prefab successfully created at: {path}");
+            Debug.Log($"[VARG] ETPlayer prefab updated with PlayerInteractor and CrosshairUI at: {path}");
         }
     }
 }

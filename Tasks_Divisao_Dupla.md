@@ -88,7 +88,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 - [x] **A03** `PyramidMeshGenerator` (Editor) + prefabs placeholder `Target_*` (com `NavMeshAgent`, layer `Interactable`) e `Mini_*` (com `Rigidbody`, layer `Grabbable`) das 4 primitivas (§R.1); ligar nos `TargetData`.
   - Depende: S0.7 · Pronto quando: os 8 prefabs existem e cada `TargetData` aponta para seu `prefab` e `miniPrefab`.
 - [x] **A04** Greybox de `03_CityHunt` (chão, casas-cubo, limites fechados, nave visível no céu).
-- [ ] **A05** `IInteractable` + `PlayerInteractor` (raycast central) + `CrosshairUI`.
+- [x] **A05** `IInteractable` + `PlayerInteractor` (raycast central) + `CrosshairUI`.
   - Depende: A02, A03 · Pronto quando: a mira muda de cor ao apontar para um alvo.
 
 ### Sprint 2 — Captura (Passos 3, 4)
