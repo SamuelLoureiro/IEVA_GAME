@@ -59,6 +59,15 @@ namespace VARG.Editor
             interactorSerialized.FindProperty("_range").floatValue = 15f;
             interactorSerialized.ApplyModifiedPropertiesWithoutUndo();
 
+            var beamFx = cameraGo.AddComponent<ShrinkBeamFX>();
+
+            var shrinkGun = cameraGo.AddComponent<ShrinkGun>();
+            var shrinkGunSerialized = new SerializedObject(shrinkGun);
+            shrinkGunSerialized.FindProperty("_interactor").objectReferenceValue = interactor;
+            shrinkGunSerialized.FindProperty("_beamFX").objectReferenceValue = beamFx;
+            shrinkGunSerialized.FindProperty("_cooldown").floatValue = 0.6f;
+            shrinkGunSerialized.ApplyModifiedPropertiesWithoutUndo();
+
             // HUD Canvas with central crosshair
             var canvasGo = new GameObject("HUD_Crosshair");
             canvasGo.transform.SetParent(rootGo.transform, false);

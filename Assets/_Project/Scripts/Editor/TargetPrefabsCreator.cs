@@ -64,6 +64,8 @@ namespace VARG.Editor
             agent.acceleration = 8f;
             agent.stoppingDistance = 0.5f;
 
+            targetGo.AddComponent<Shrinkable>();
+
             var targetComponent = targetGo.AddComponent<Target>();
             if (targetData != null)
             {

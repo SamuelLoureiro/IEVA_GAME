@@ -6,7 +6,7 @@ namespace VARG.Player
     public class ETCameraLook : MonoBehaviour
     {
         [SerializeField] private Transform _playerBody;
-        [SerializeField] private float _mouseSensitivity = 1.5f;
+        [SerializeField] private float _mouseSensitivity = 1.0f;
         [SerializeField] private float _minPitch = -85f;
         [SerializeField] private float _maxPitch = 85f;
         [SerializeField] private bool _lockCursorOnStart = true;
