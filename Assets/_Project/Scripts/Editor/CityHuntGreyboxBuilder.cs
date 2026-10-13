@@ -1,9 +1,11 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
+using VARG.Targets;
 
 namespace VARG.Editor
 {
@@ -38,6 +40,24 @@ namespace VARG.Editor
             if (existingSampleTargets != null)
             {
                 Object.DestroyImmediate(existingSampleTargets);
+            }
+
+            var existingSpawner = GameObject.Find("TargetSpawner");
+            if (existingSpawner != null)
+            {
+                Object.DestroyImmediate(existingSpawner);
+            }
+
+            var existingSpawnPoints = GameObject.Find("_SpawnPoints");
+            if (existingSpawnPoints != null)
+            {
+                Object.DestroyImmediate(existingSpawnPoints);
+            }
+
+            var existingSpawned = GameObject.Find("_SpawnedTargets");
+            if (existingSpawned != null)
+            {
+                Object.DestroyImmediate(existingSpawned);
             }
 
             var existingDebug = GameObject.Find("_DebugTools");
@@ -137,12 +157,53 @@ namespace VARG.Editor
                 playerInstance.transform.rotation = Quaternion.identity;
             }
 
-            // 7. Instantiate Sample Targets for early visual testing
-            var targetsRoot = new GameObject("_SampleTargets");
-            SpawnSampleTarget(targetsRoot, "Assets/_Project/Prefabs/Targets/Target_Chicken.prefab", new Vector3(-3f, 0.1f, 5f));
-            SpawnSampleTarget(targetsRoot, "Assets/_Project/Prefabs/Targets/Target_Cow.prefab", new Vector3(4f, 0.1f, 6f));
-            SpawnSampleTarget(targetsRoot, "Assets/_Project/Prefabs/Targets/Target_Pig.prefab", new Vector3(-6f, 0.1f, -4f));
-            SpawnSampleTarget(targetsRoot, "Assets/_Project/Prefabs/Targets/Target_Human.prefab", new Vector3(7f, 0.1f, -5f));
+            // 7. Create 16 Spawn Points across city streets and plazas
+            var spawnPointsRoot = new GameObject("_SpawnPoints");
+            var spawnPointList = new List<SpawnPoint>();
+
+            Vector3[] spawnPositions = new Vector3[]
+            {
+                new Vector3(-6f, 0.1f, 8f),
+                new Vector3(6f, 0.1f, 8f),
+                new Vector3(-8f, 0.1f, -8f),
+                new Vector3(8f, 0.1f, -8f),
+
+                new Vector3(-18f, 0.1f, 6f),
+                new Vector3(18f, 0.1f, 6f),
+                new Vector3(-18f, 0.1f, -6f),
+                new Vector3(18f, 0.1f, -6f),
+
+                new Vector3(-6f, 0.1f, 26f),
+                new Vector3(6f, 0.1f, 26f),
+                new Vector3(-28f, 0.1f, 18f),
+                new Vector3(28f, 0.1f, 18f),
+
+                new Vector3(-6f, 0.1f, -26f),
+                new Vector3(6f, 0.1f, -26f),
+                new Vector3(-28f, 0.1f, -18f),
+                new Vector3(28f, 0.1f, -18f)
+            };
+
+            for (var i = 0; i < spawnPositions.Length; i++)
+            {
+                var spGo = new GameObject($"SpawnPoint_{i + 1}");
+                spGo.transform.SetParent(spawnPointsRoot.transform);
+                spGo.transform.position = spawnPositions[i];
+                var sp = spGo.AddComponent<SpawnPoint>();
+                spawnPointList.Add(sp);
+            }
+
+            // Create TargetSpawner
+            var spawnerGo = new GameObject("TargetSpawner");
+            var spawner = spawnerGo.AddComponent<TargetSpawner>();
+            var spawnerSerialized = new SerializedObject(spawner);
+            var spListProp = spawnerSerialized.FindProperty("_spawnPoints");
+            spListProp.arraySize = spawnPointList.Count;
+            for (var i = 0; i < spawnPointList.Count; i++)
+            {
+                spListProp.GetArrayElementAtIndex(i).objectReferenceValue = spawnPointList[i];
+            }
+            spawnerSerialized.ApplyModifiedPropertiesWithoutUndo();
 
             // 8. Ensure Lighting
             EnsureDirectionalLight();

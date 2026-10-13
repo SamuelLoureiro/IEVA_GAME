@@ -96,7 +96,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
   - Depende: A05, B05 · Pronto quando: alvo encolhe com "boing", some, e aparece no inventário com o `CaptureResult` certo (ver no Inspector/log).
 - [x] **A07** `NavMeshSurface` + obstáculos + bake; `TargetAI` (Wander/Idle/Flee/Captured, tick 0.2–0.5 s).
   - Pronto quando: alvos passeiam, fogem do jogador, não saem do mapa.
-- [ ] **A08** `TargetSpawner` + `SpawnPoint` (regra §R.2: `k + extra` por tipo da lista + proibidos).
+- [x] **A08** `TargetSpawner` + `SpawnPoint` (regra §R.2: `k + extra` por tipo da lista + proibidos).
   - Depende: B05, B06 · Pronto quando: com o `DebugMissionSeeder`, a quantidade de cada tipo no mapa bate com a regra.
 - [ ] **A09** `ShipBeamZone`: sobe só com `IsComplete`; senão `OnBeamDenied`.
   - Pronto quando: com ordem incompleta o feixe recusa; completa → para o Timer de Captura e carrega `04_ShipSorting`.
