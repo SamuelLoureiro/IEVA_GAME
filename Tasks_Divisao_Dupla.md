@@ -135,7 +135,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 ### Sprint 2 — Triagem (Passos 7, 8, 9)
 - [x] **B08** Greybox de `04_ShipSorting` (interior da nave, caixa, 4 gaiolas + lixeira) + Prefab Variant `ETPlayer_Sorting`.
   - Depende: A02.
-- [ ] **B09** `CaptureBoxSpawner` + `SortableItem` (instancia `miniPrefab` de cada `CapturedItem`).
+- [x] **B09** `CaptureBoxSpawner` + `SortableItem` (instancia `miniPrefab` de cada `CapturedItem`).
   - Depende: A03 · Pronto quando: com o `DebugInventorySeeder`, os minis certos aparecem na caixa.
 - [ ] **B10** `GrabController` + `Grabbable` (velocidade via `linearVelocity`, arremesso, scroll, `IsHeld`) + `HighlightOnHover`.
 - [ ] **B11** `Cage` + `DiscardBin` + `SortingManager` (§R.6: validar só após soltar; cuspir; descarte errado tira vida).

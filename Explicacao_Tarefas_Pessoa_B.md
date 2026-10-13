@@ -14,8 +14,9 @@
 6. [B05 — MissionManager (Cérebro da Missão e Validação de Captura)](#b05--missionmanager)
 7. [B06 — GameEvents e Seeders de Debug (Desacoplamento e Teste Isolado)](#b06--gameevents-e-seeders-de-debug)
 8. [B08 — Greybox de Triagem e ETPlayer_Sorting (Ambiente da Etapa 4)](#b08--greybox-de-triagem-e-etplayer_sorting)
-9. [Mapa de Integração entre os Sistemas](#mapa-de-integração-entre-os-sistemas)
-10. [Glossário de Defesa Acadêmica](#glossário-de-defesa-acadêmica)
+9. [B09 — CaptureBoxSpawner e SortableItem (Spawning e Itens da Triagem)](#b09--captureboxspawner-e-sortableitem)
+10. [Mapa de Integração entre os Sistemas](#mapa-de-integração-entre-os-sistemas)
+11. [Glossário de Defesa Acadêmica](#glossário-de-defesa-acadêmica)
 
 ---
 
@@ -256,6 +257,31 @@ A Etapa 4 do jogo (Triagem / *Trier*) acontece inteiramente dentro de uma sala f
 ### 4. Pergunta de Banca / Professor
 > **P:** *"Por que modularizar a nave e as estações em prefabs separados e criar um controller dedicado para a triagem?"*  
 > **R:** *"A modularidade em prefabs (`Ship_Interior`, `Cage_*`, `CaptureBox`) garante manutenibilidade e reaproveitamento limpo entre cenas sem acoplamento. O controller dedicado respeita a velocidade reduzida exigida no GDD (3.5 m/s) para o ambiente fechado da nave e desacopla o nosso desenvolvimento da entrega da Caça feito pelo outro desenvolvedor."*
+
+---
+
+## B09 — CaptureBoxSpawner e SortableItem
+
+### 1. O Problema que Resolve
+Conectar a fase de Caça (Etapa 3) à fase de Triagem (Etapa 4). Na Caça, os alvos atingidos pelo raio encolhedor desaparecem do mundo e são salvos como dados no `InventoryManager`. Ao carregar a sala da nave, esses dados precisam se materializar como corpos físicos 3D em miniatura dentro da caixa de captura para que o jogador possa manipulá-los e depositá-los nas gaiolas.
+
+### 2. Scripts Criados / Utilizados
+- [`CaptureBoxSpawner.cs`](./Assets/_Project/Scripts/Sorting/CaptureBoxSpawner.cs)
+- [`SortableItem.cs`](./Assets/_Project/Scripts/Sorting/SortableItem.cs)
+
+### 3. Detalhamento Técnico
+- **Spawning Baseado em Inventário (`CaptureBoxSpawner`):**  
+  Fica localizado na `CaptureBox` apontando para o `SpawnAnchor`. No `Start()`, lê os itens presentes em `InventoryManager.Instance.Items` e instancia o `MiniPrefab` configurado em cada `TargetData`.
+- **Dispersão Física Controlada:**  
+  Aplica uma leve variação aleatória na posição horizontal ($X$ e $Z$) e rotação no plano $Y$ de cada miniatura, evitando que os objetos nasçam sobrepostos no mesmo ponto e sofram explosão de colisão pela física do Unity.
+- **Sincronização Reativa por Eventos:**  
+  Assina os eventos `OnItemAdded` e `OnInventoryCleared` do `InventoryManager`. Se novos itens forem adicionados dinamicamente (como pelo `DebugInventorySeeder`), eles são instanciados na hora sem necessidade de checagem contínua no `Update`.
+- **Rastreabilidade de Dados (`SortableItem`):**  
+  Componente anexado a cada miniatura instanciada. Mantém a referência completa ao `CapturedItem` original (espécie e o resultado da captura: `Correct`, `OutOfOrder` ou `NotInList`), permitindo que as gaiolas e o descarte na próxima etapa identifiquem a validade de cada depósito.
+
+### 4. Pergunta de Banca / Professor
+> **P:** *"Como a cena de Triagem sabe quais itens foram capturados na Caça sem criar dependência direta entre os scripts das duas fases?"*  
+> **R:** *"A comunicação é totalmente desacoplada através do `InventoryManager`, que reside no GameObject `[Systems]` e persiste entre as cenas (Passo 6). Ao carregar a Triagem, o `CaptureBoxSpawner` apenas consulta o inventário e instancia o `MiniPrefab` definido no ScriptableObject `TargetData` de cada item, garantindo que as duas cenas não conheçam uma a outra."*
 
 ---
 

@@ -25,6 +25,11 @@ namespace VARG.DebugTools
             }
         }
 
+        public void Configure(bool seedOnStart)
+        {
+            _seedOnStart = seedOnStart;
+        }
+
         private void Start()
         {
             LoadTargetsIfMissing();
