@@ -367,6 +367,39 @@ Implementar a regra central de negócios da Triagem (Etapa 4 / Passo 9 do GDD):
 
 ---
 
+## B12 — KillZoneRespawn, Timer de Separação e HUD
+
+### 1. O Problema que Resolve
+Conectar o ciclo de tempo e a segurança física da Triagem (Passo 10 do GDD):
+1. Iniciar o cronômetro da Triagem ao entrar na cena `04_ShipSorting` descontando a dívida de tempo acumulada na Caça;
+2. Encerrar o cronômetro imediatamente em caso de vitória ou disparar derrota por estouro de tempo (`SortingTimeUp`) caso chegue a zero;
+3. Exibir o cronômetro e a contagem de alvos restantes em um HUD 2D limpo, centralizado e visível no topo da tela;
+4. Proteger a integridade da partida caso o jogador ou os alvos manipulados caiam para fora da nave no abismo espacial (`KillZoneRespawn`).
+
+### 2. Scripts Criados / Utilizados
+- [`SortingManager.cs`](./Assets/_Project/Scripts/Sorting/SortingManager.cs)
+- [`KillZoneRespawn.cs`](./Assets/_Project/Scripts/Sorting/KillZoneRespawn.cs)
+- [`SortingTimerUI.cs`](./Assets/_Project/Scripts/UI/SortingTimerUI.cs)
+- [`TimerManager.cs`](./Assets/_Project/Scripts/Mission/TimerManager.cs)
+
+### 3. Detalhamento Técnico
+- **Início Automático com Abatimento de Dívida:**  
+  No `Start()` do `SortingManager`, o tempo de triagem configurado no ScriptableObject `LevelConfig` é requisitado e repassado para `TimerManager.Instance.StartTimer(TimerPhase.Sorting, duration)`. O `TimerManager` abate a `SortingDebt` acumulada no primeiro frame e zera a dívida.
+- **HUD Reativo no Topo da Tela (`SortingTimerUI`):**  
+  Implementado como um Canvas `Screen Space - Overlay` escalável. Apresenta o cronômetro formatado (`MM:SS`) e o contador de alvos (`Alvos: X/Y`). Não possui método `Update()`; atualiza exclusivamente através dos eventos `TimerManager.OnTimeChanged` e `SortingManager.OnItemCountsChanged`. Quando o tempo atinge $\le 15$ segundos ou uma penalidade é aplicada (-5s por erro), os dígitos mudam para vermelho.
+- **Segurança Física Completa contra Quedas (`KillZoneRespawn`):**  
+  Um `BoxCollider isTrigger` de $50 \times 2 \times 50$ metros posicionado a 6 metros abaixo da nave captura qualquer entidade que atravesse o parapeito:
+  - **Jogador:** Desativa momentaneamente o `CharacterController`, força o descarte de qualquer bicho seguro (`DropHeld()`), reposiciona no `RespawnPoint` central da nave e reativa o controle;
+  - **Alvos Físicos:** Zera `linearVelocity` e `angularVelocity` e reposiciona o animal sobre o piso da nave, garantindo que a fase nunca se torne invencível por perda acidental de alvos no vazio.
+- **Condições de Término:**  
+  Se o relógio zerar, o `TimerManager` chama `GameManager.Instance.Defeat(DefeatReason.SortingTimeUp)`. Ao completar o depósito de todos os animais, o `SortingManager` para o relógio antes de transicionar para a cena de resultados.
+
+### 4. Pergunta de Banca / Professor
+> **P:** *"O que acontece se o jogador arremessar um bicho para fora da nave no abismo ou cair junto com ele?"*  
+> **R:** *"A `KillZoneRespawn` abaixo da nave intercepta a colisão. Se for o jogador, soltamos o raio trator com `DropHeld()` e reposicionamos o jogador no centro da nave. Se for o bicho, a inércia física é zerada (`linearVelocity = Vector3.zero`) e ele é teleportado de volta para o chão da nave, impedindo que alvos se percam no vácuo e impossibilitem a conclusão da fase."*
+
+---
+
 ## Mapa de Integração entre os Sistemas
 
 Este diagrama resume como os scripts que você construiu trabalham juntos durante um disparo na Caça:

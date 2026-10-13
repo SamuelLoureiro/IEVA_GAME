@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VARG.Core;
+using VARG.Data;
+using VARG.Mission;
 
 namespace VARG.Sorting
 {
     public class SortingManager : Singleton<SortingManager>
     {
+        [SerializeField] private float _fallbackSortingDuration = 45f;
+
         private readonly HashSet<SortableItem> _registeredItems = new();
         private readonly HashSet<SortableItem> _resolvedItems = new();
 
@@ -24,6 +28,16 @@ namespace VARG.Sorting
         private void Start()
         {
             ScanSceneItems();
+            StartSortingTimer();
+        }
+
+        private void StartSortingTimer()
+        {
+            if (TimerManager.Instance == null) return;
+
+            var config = GameManager.Instance != null ? GameManager.Instance.GetCurrentLevelConfig() : null;
+            var duration = config != null ? config.SortingTime : _fallbackSortingDuration;
+            TimerManager.Instance.StartTimer(TimerPhase.Sorting, duration);
         }
 
         public void ScanSceneItems()
@@ -72,10 +86,24 @@ namespace VARG.Sorting
 
             yield return new WaitForSeconds(0.3f);
 
+            if (TimerManager.Instance != null)
+            {
+                TimerManager.Instance.StopTimer(TimerPhase.Sorting);
+            }
+
             GameEvents.TriggerVictory();
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.Victory();
+            }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (TimerManager.Instance != null && TimerManager.Instance.IsRunning(TimerPhase.Sorting))
+            {
+                TimerManager.Instance.StopTimer(TimerPhase.Sorting);
             }
         }
     }

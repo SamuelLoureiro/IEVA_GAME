@@ -140,7 +140,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 - [x] **B10** `GrabController` + `Grabbable` (velocidade via `linearVelocity`, arremesso, scroll, `IsHeld`) + `HighlightOnHover`.
 - [x] **B11** `Cage` + `DiscardBin` + `SortingManager` (§R.6: validar só após soltar; cuspir; descarte errado tira vida).
   - Pronto quando: os 4 casos da tabela §R.6 funcionam e a fase termina com caixa vazia.
-- [ ] **B12** `KillZoneRespawn` + Timer de Separação ligado à cena (start com dívida, stop no fim, derrota no zero).
+- [x] **B12** `KillZoneRespawn` + Timer de Separação ligado à cena (start com dívida, stop no fim, derrota no zero).
 
 ### Sprint 3 — Briefing e Humor (Passos 11, 12)
 - [ ] **B13** Cena `01_BossBriefing`: `BriefingController`, `DialogueBox`, `TypewriterText`, `SpreadsheetTableUI`; lista com tempo limitado; mostra o nível.
