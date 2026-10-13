@@ -81,18 +81,18 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 ## Pessoa A — Caça + HUD + Resultados
 
 ### Sprint 1 — Jogador e alvos placeholder (Passos 1, 2)
-- [ ] **A01** `InputManager` + `KeyboardMouseInput` (mapa `OnFoot` e `UI`).
+- [x] **A01** `InputManager` + `KeyboardMouseInput` (mapa `OnFoot` e `UI`).
   - Arquivos: `Input/*` · Depende: S0.5 · Pronto quando: valores de `IPlayerInput` aparecem num log de debug.
-- [ ] **A02** Prefab **`ETPlayer`**: `ETPlayerController` + `ETCameraLook` (pitch ±85°, cursor travado). *Entregar cedo — B cria a Variant.*
+- [x] **A02** Prefab **`ETPlayer`**: `ETPlayerController` + `ETCameraLook` (pitch ±85°, cursor travado). *Entregar cedo — B cria a Variant.*
   - Depende: A01 · Pronto quando: anda, olha, não atravessa paredes, consegue olhar para cima.
-- [ ] **A03** `PyramidMeshGenerator` (Editor) + prefabs placeholder `Target_*` (com `NavMeshAgent`, layer `Interactable`) e `Mini_*` (com `Rigidbody`, layer `Grabbable`) das 4 primitivas (§R.1); ligar nos `TargetData`.
+- [x] **A03** `PyramidMeshGenerator` (Editor) + prefabs placeholder `Target_*` (com `NavMeshAgent`, layer `Interactable`) e `Mini_*` (com `Rigidbody`, layer `Grabbable`) das 4 primitivas (§R.1); ligar nos `TargetData`.
   - Depende: S0.7 · Pronto quando: os 8 prefabs existem e cada `TargetData` aponta para seu `prefab` e `miniPrefab`.
-- [ ] **A04** Greybox de `03_CityHunt` (chão, casas-cubo, limites fechados, nave visível no céu).
-- [ ] **A05** `IInteractable` + `PlayerInteractor` (raycast central) + `CrosshairUI`.
+- [x] **A04** Greybox de `03_CityHunt` (chão, casas-cubo, limites fechados, nave visível no céu).
+- [x] **A05** `IInteractable` + `PlayerInteractor` (raycast central) + `CrosshairUI`.
   - Depende: A02, A03 · Pronto quando: a mira muda de cor ao apontar para um alvo.
 
 ### Sprint 2 — Captura (Passos 3, 4)
-- [ ] **A06** `Target.cs` + `ShrinkGun` + `Shrinkable` + `ShrinkBeamFX` (cooldown 0.6 s); ao encolher chama `MissionManager.ValidateCapture()`.
+- [x] **A06** `Target.cs` + `ShrinkGun` + `Shrinkable` + `ShrinkBeamFX` (cooldown 0.6 s); ao encolher chama `MissionManager.ValidateCapture()`.
   - Depende: A05, B05 · Pronto quando: alvo encolhe com "boing", some, e aparece no inventário com o `CaptureResult` certo (ver no Inspector/log).
 - [ ] **A07** `NavMeshSurface` + obstáculos + bake; `TargetAI` (Wander/Idle/Flee/Captured, tick 0.2–0.5 s).
   - Pronto quando: alvos passeiam, fogem do jogador, não saem do mapa.
