@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
+using VARG.Ship;
 using VARG.Targets;
 
 namespace VARG.Editor
@@ -129,18 +130,30 @@ namespace VARG.Editor
             beamLight.color = new Color(0.2f, 1f, 0.5f);
             beamLight.intensity = 3f;
 
-            // Abduction Ground Pad (flat disc on the floor, NO solid vertical pillar!)
-            var beamPad = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            beamPad.name = "AbductionBeamZone";
-            beamPad.transform.SetParent(envRoot.transform);
-            beamPad.transform.position = new Vector3(0f, 0.02f, 0f);
-            beamPad.transform.localScale = new Vector3(8f, 0.04f, 8f);
+            // Abduction Beam Zone (flat visual disc on floor + proper vertical trigger collider + ShipBeamZone)
+            var beamZoneGo = new GameObject("AbductionBeamZone");
+            beamZoneGo.transform.SetParent(envRoot.transform);
+            beamZoneGo.transform.position = Vector3.zero;
 
-            var beamCol = beamPad.GetComponent<CapsuleCollider>() ?? (Collider)beamPad.GetComponent<BoxCollider>();
-            if (beamCol != null)
-            {
-                beamCol.isTrigger = true;
-            }
+            var visualDisc = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            visualDisc.name = "BeamVisualDisc";
+            visualDisc.transform.SetParent(beamZoneGo.transform);
+            visualDisc.transform.localPosition = new Vector3(0f, 0.02f, 0f);
+            visualDisc.transform.localScale = new Vector3(8f, 0.04f, 8f);
+            var discCol = visualDisc.GetComponent<Collider>();
+            if (discCol != null) Object.DestroyImmediate(discCol);
+
+            var beamCol = beamZoneGo.AddComponent<CapsuleCollider>();
+            beamCol.isTrigger = true;
+            beamCol.radius = 4f;
+            beamCol.height = 6f;
+            beamCol.center = new Vector3(0f, 3f, 0f);
+
+            var shipBeam = beamZoneGo.AddComponent<ShipBeamZone>();
+            var serializedBeam = new SerializedObject(shipBeam);
+            serializedBeam.FindProperty("_spotlight").objectReferenceValue = beamLight;
+            serializedBeam.FindProperty("_padRenderer").objectReferenceValue = visualDisc.GetComponent<Renderer>();
+            serializedBeam.ApplyModifiedPropertiesWithoutUndo();
 
             // 5. Build NavMeshSurface for environment
             var navSurface = envRoot.AddComponent<NavMeshSurface>();
@@ -270,6 +283,59 @@ namespace VARG.Editor
             l.color = new Color(1f, 0.95f, 0.85f);
             l.intensity = 1.1f;
             lightGo.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
+        }
+
+        [MenuItem("VARG/Setup Ship Beam Zone in City Hunt")]
+        public static void SetupShipBeamZoneOnly()
+        {
+            const string scenePath = "Assets/_Project/Scenes/03_CityHunt.unity";
+            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+
+            var envRoot = GameObject.Find("_Environment");
+            if (envRoot == null)
+            {
+                Debug.LogWarning("[CityHuntGreyboxBuilder] Environment root not found in 03_CityHunt.");
+                return;
+            }
+
+            var beamLight = GameObject.Find("AbductionSpotlight")?.GetComponent<Light>();
+
+            var existingBeam = GameObject.Find("AbductionBeamZone");
+            if (existingBeam != null)
+            {
+                Object.DestroyImmediate(existingBeam);
+            }
+
+            var beamZoneGo = new GameObject("AbductionBeamZone");
+            beamZoneGo.transform.SetParent(envRoot.transform);
+            beamZoneGo.transform.position = Vector3.zero;
+
+            var visualDisc = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            visualDisc.name = "BeamVisualDisc";
+            visualDisc.transform.SetParent(beamZoneGo.transform);
+            visualDisc.transform.localPosition = new Vector3(0f, 0.02f, 0f);
+            visualDisc.transform.localScale = new Vector3(8f, 0.04f, 8f);
+            var discCol = visualDisc.GetComponent<Collider>();
+            if (discCol != null) Object.DestroyImmediate(discCol);
+
+            var beamCol = beamZoneGo.AddComponent<CapsuleCollider>();
+            beamCol.isTrigger = true;
+            beamCol.radius = 4f;
+            beamCol.height = 6f;
+            beamCol.center = new Vector3(0f, 3f, 0f);
+
+            var shipBeam = beamZoneGo.AddComponent<ShipBeamZone>();
+            var serializedBeam = new SerializedObject(shipBeam);
+            if (beamLight != null)
+            {
+                serializedBeam.FindProperty("_spotlight").objectReferenceValue = beamLight;
+            }
+            serializedBeam.FindProperty("_padRenderer").objectReferenceValue = visualDisc.GetComponent<Renderer>();
+            serializedBeam.ApplyModifiedPropertiesWithoutUndo();
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log("[CityHuntGreyboxBuilder] ShipBeamZone configured successfully in 03_CityHunt!");
         }
     }
 }

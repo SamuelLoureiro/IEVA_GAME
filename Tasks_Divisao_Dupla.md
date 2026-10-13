@@ -98,7 +98,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
   - Pronto quando: alvos passeiam, fogem do jogador, não saem do mapa.
 - [x] **A08** `TargetSpawner` + `SpawnPoint` (regra §R.2: `k + extra` por tipo da lista + proibidos).
   - Depende: B05, B06 · Pronto quando: com o `DebugMissionSeeder`, a quantidade de cada tipo no mapa bate com a regra.
-- [ ] **A09** `ShipBeamZone`: sobe só com `IsComplete`; senão `OnBeamDenied`.
+- [x] **A09** `ShipBeamZone`: sobe só com `IsComplete`; senão `OnBeamDenied`.
   - Pronto quando: com ordem incompleta o feixe recusa; completa → para o Timer de Captura e carrega `04_ShipSorting`.
 
 ### Sprint 3 — HUD, Resultados e pause (Passos 5, 10)
