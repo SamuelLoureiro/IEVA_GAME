@@ -329,6 +329,44 @@ Na fase de Triagem (Etapa 4 / *Trier*), o ET precisa manipular fisicamente os al
 
 ---
 
+## B11 — Cage, DiscardBin e SortingManager
+
+### 1. O Problema que Resolve
+Implementar a regra central de negócios da Triagem (Etapa 4 / Passo 9 do GDD):
+1. Processar os depósitos nas 4 gaiolas padronizadas (`Cage_Chicken`, `Cage_Cow`, `Cage_Pig`, `Cage_Human`) e no tubo de descarte (`DiscardBin`);
+2. Assegurar que a validação física ocorra apenas após o jogador **soltar** o item e ele se estabilizar;
+3. Aplicar rigorosamente as regras da Tabela §R.6 (alvo certo trava na gaiola; alvo errado/proibido é cuspido com força e debita 5s; descarte proibido é aceito; descarte de alvo válido retira 1 vida e debita 5s);
+4. Queda com física real e natural nos fundos das estações (sem teletransporte visual e sem deletar alvos descartados do mundo);
+5. Rastrear o término da triagem via `SortingManager` reativo (sem polling) e transicionar para a vitória ao esvaziar a caixa.
+
+### 2. Scripts Criados / Utilizados
+- [`Cage.cs`](./Assets/_Project/Scripts/Sorting/Cage.cs)
+- [`DiscardBin.cs`](./Assets/_Project/Scripts/Sorting/DiscardBin.cs)
+- [`SortingManager.cs`](./Assets/_Project/Scripts/Sorting/SortingManager.cs)
+- [`CageTriggerZone.cs`](./Assets/_Project/Scripts/Sorting/CageTriggerZone.cs)
+- [`DiscardTriggerZone.cs`](./Assets/_Project/Scripts/Sorting/DiscardTriggerZone.cs)
+
+### 3. Detalhamento Técnico
+- **Trigger Zones Desacopladas com Proxies:**  
+  As zonas de gatilho (`TriggerZone`) residem em objetos filhos com `isTrigger = true` na Layer `CageTrigger`. Os componentes `CageTriggerZone` e `DiscardTriggerZone` atuam como proxies leves que delegam os eventos de física para o componente pai sem necessidade de `GetComponentInParent` a cada frame.
+- **Validação Segura Baseada em Repouso:**  
+  Em `ProcessTriggerStay(Collider other)`, o código só avalia o item se:
+  - `item.IsSorted == false` (itens já processados são ignorados instantaneamente com custo zero);
+  - `item.IsHeld == false` (jogador não está segurando o bicho no raio trator);
+  - `item.TimeSinceReleased >= 0.20f` (o bicho já se desprendeu completamente da empunhadura).
+- **Tratamento Físico de Queda e Repouso:**  
+  Ao ser aceito na gaiola ou descartado na lixeira, o item não sofre teletransporte (`transform.position`). A velocidade horizontal é amortecida para concentrar a queda dentro das paredes e a gravidade acelera o corpo até o piso. Uma corrotina `SettleRoutine` monitora o repouso (`sqrMagnitude < 0.04f`) e fixa o Rigidbody (`isKinematic = true`) apenas quando assentado.
+- **Ejeção Física de Erros:**  
+  Alvos errados ou proibidos depositados em gaiolas sofrem `rb.AddForce` direcional para cima e para fora com 8.5 N de impulso, recebem um *cooldown* de 1.2s para evitar re-gatilhos em loop e aplicam penalidade de -5s no `TimerManager`.
+- **SortingManager 100% Orientado a Eventos:**  
+  Não possui método `Update()`. Escaneia os itens no `Start()` e só executa código quando notificado via `NotifyItemResolved(item)`. Quando a contagem restante zera (`RemainingItems <= 0`), aguarda a mão do jogador estar vazia e invoca `GameEvents.TriggerVictory()` e `GameManager.Instance.Victory()`.
+
+### 4. Pergunta de Banca / Professor
+> **P:** *"Por que a validação das gaiolas usa `OnTriggerStay` em vez de `OnTriggerEnter`, e como vocês garantem que isso não pese na física?"*  
+> **R:** *"Se usássemos apenas `OnTriggerEnter`, um jogador que entrasse na área da gaiola ainda segurando o bicho dispararia a validação cedo demais (na mão). Se ele soltasse lá dentro, o `OnTriggerEnter` não dispararia de novo. O `OnTriggerStay` só avalia quando `IsHeld == false` e `TimeSinceReleased >= 0.2s`. Para garantir performance máxima, assim que o item é validado chamamos `item.MarkSorted()`, e a primeira linha do método é um Guard Clause (`if (item.IsSorted) return;`), descartando qualquer processamento adicional em nanossegundos."*
+
+---
+
 ## Mapa de Integração entre os Sistemas
 
 Este diagrama resume como os scripts que você construiu trabalham juntos durante um disparo na Caça:

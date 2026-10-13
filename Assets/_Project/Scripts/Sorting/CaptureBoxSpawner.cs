@@ -115,6 +115,11 @@ namespace VARG.Sorting
                 instance.layer = grabbableLayer;
             }
 
+            if (SortingManager.Instance != null)
+            {
+                SortingManager.Instance.RegisterItem(sortable);
+            }
+
             _spawnedObjects.Add(instance);
             return instance;
         }

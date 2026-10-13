@@ -8,6 +8,8 @@ namespace VARG.Sorting
         [SerializeField] private TargetData _data;
         private CapturedItem _capturedItem;
         private bool _isHeld;
+        private bool _isSorted;
+        private float _lastReleaseTime;
 
         public TargetData Data
         {
@@ -19,10 +21,26 @@ namespace VARG.Sorting
 
         public CapturedItem Item => _capturedItem;
 
+        public bool IsSorted => _isSorted;
+        public float TimeSinceReleased => Time.time - _lastReleaseTime;
+
         public bool IsHeld
         {
             get => _isHeld;
-            set => _isHeld = value;
+            set
+            {
+                if (_isHeld && !value)
+                {
+                    _lastReleaseTime = Time.time;
+                }
+                _isHeld = value;
+            }
+        }
+
+        public void MarkSorted()
+        {
+            _isSorted = true;
+            _isHeld = false;
         }
 
         public void Initialize(CapturedItem capturedItem)

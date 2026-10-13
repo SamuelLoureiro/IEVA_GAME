@@ -22,6 +22,8 @@ namespace VARG.Sorting
 
         public void OnGrabbed()
         {
+            if (_sortableItem != null && _sortableItem.IsSorted) return;
+
             IsHeld = true;
             _rb.useGravity = false;
             _rb.linearVelocity = Vector3.zero;
@@ -65,6 +67,12 @@ namespace VARG.Sorting
 
         public void SetHighlight(bool enable)
         {
+            if (_sortableItem != null && _sortableItem.IsSorted)
+            {
+                if (_highlighter != null) _highlighter.SetHighlight(false);
+                return;
+            }
+
             if (_highlighter != null && !IsHeld)
             {
                 _highlighter.SetHighlight(enable);
