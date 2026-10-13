@@ -1,12 +1,15 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using TMPro;
 using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using VARG.Ship;
 using VARG.Targets;
+using VARG.UI;
 
 namespace VARG.Editor
 {
@@ -65,6 +68,12 @@ namespace VARG.Editor
             if (existingDebug != null)
             {
                 Object.DestroyImmediate(existingDebug);
+            }
+
+            var existingHud = GameObject.Find("HuntHUD");
+            if (existingHud != null)
+            {
+                Object.DestroyImmediate(existingHud);
             }
 
             var envRoot = new GameObject("_Environment");
@@ -221,7 +230,10 @@ namespace VARG.Editor
             // 8. Ensure Lighting
             EnsureDirectionalLight();
 
-            // 9. Debug Tools for standalone testing (DebugMissionSeeder & DebugInventorySeeder)
+            // 9. Hunt HUD Canvas with Targets Progress
+            SetupHuntHUDInternal();
+
+            // 10. Debug Tools for standalone testing (DebugMissionSeeder & DebugInventorySeeder)
             var debugGo = new GameObject("_DebugTools");
             var missionSeeder = debugGo.AddComponent<VARG.DebugTools.DebugMissionSeeder>();
             var missionSeederSerialized = new SerializedObject(missionSeeder);
@@ -336,6 +348,88 @@ namespace VARG.Editor
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             Debug.Log("[CityHuntGreyboxBuilder] ShipBeamZone configured successfully in 03_CityHunt!");
+        }
+
+        [MenuItem("VARG/Setup Hunt HUD in City Hunt")]
+        public static void SetupHuntHUDOnly()
+        {
+            const string scenePath = "Assets/_Project/Scenes/03_CityHunt.unity";
+            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+
+            SetupHuntHUDInternal();
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log("[CityHuntGreyboxBuilder] Hunt HUD configured successfully in 03_CityHunt!");
+        }
+
+        private static void SetupHuntHUDInternal()
+        {
+            var existingHud = GameObject.Find("HuntHUD");
+            if (existingHud != null)
+            {
+                Object.DestroyImmediate(existingHud);
+            }
+
+            var hudGo = new GameObject("HuntHUD");
+            var canvas = hudGo.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 10;
+
+            var scaler = hudGo.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            hudGo.AddComponent<GraphicRaycaster>();
+
+            // Targets Progress Panel (Top-Right)
+            var targetPanelGo = new GameObject("Panel_TargetsProgress");
+            targetPanelGo.transform.SetParent(hudGo.transform, false);
+
+            var panelRect = targetPanelGo.AddComponent<RectTransform>();
+            panelRect.anchorMin = new Vector2(1f, 1f);
+            panelRect.anchorMax = new Vector2(1f, 1f);
+            panelRect.pivot = new Vector2(1f, 1f);
+            panelRect.anchoredPosition = new Vector2(-30f, -30f);
+            panelRect.sizeDelta = new Vector2(360f, 60f);
+
+            var panelImg = targetPanelGo.AddComponent<Image>();
+            panelImg.color = new Color(0.08f, 0.1f, 0.14f, 0.75f);
+
+            // Target Progress Text
+            var textGo = new GameObject("Text_Progress");
+            textGo.transform.SetParent(targetPanelGo.transform, false);
+
+            var textRect = textGo.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.sizeDelta = Vector2.zero;
+            textRect.offsetMin = new Vector2(20f, 0f);
+            textRect.offsetMax = new Vector2(-20f, 0f);
+
+            var tmp = textGo.AddComponent<TextMeshProUGUI>();
+            var fontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset");
+            if (fontAsset != null)
+            {
+                tmp.font = fontAsset;
+            }
+            tmp.text = "Targets: 0/0";
+            tmp.fontSize = 24;
+            tmp.fontStyle = FontStyles.Bold;
+            tmp.alignment = TextAlignmentOptions.Midline;
+            tmp.color = Color.white;
+
+            // Add HuntInventoryUI component
+            var huntUi = targetPanelGo.AddComponent<HuntInventoryUI>();
+            var serializedHuntUi = new SerializedObject(huntUi);
+            serializedHuntUi.FindProperty("_progressText").objectReferenceValue = tmp;
+            serializedHuntUi.FindProperty("_panelBackground").objectReferenceValue = panelImg;
+            serializedHuntUi.FindProperty("_progressFormat").stringValue = "Targets: {0}/{1}";
+            serializedHuntUi.FindProperty("_completedFormat").stringValue = "Targets: {0}/{1} (Return to Ship!)";
+            serializedHuntUi.FindProperty("_normalTextColor").colorValue = Color.white;
+            serializedHuntUi.FindProperty("_completedTextColor").colorValue = new Color(0.2f, 1f, 0.4f);
+            serializedHuntUi.ApplyModifiedPropertiesWithoutUndo();
         }
     }
 }

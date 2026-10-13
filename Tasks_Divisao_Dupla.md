@@ -102,7 +102,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
   - Pronto quando: com ordem incompleta o feixe recusa; completa → para o Timer de Captura e carrega `04_ShipSorting`.
 
 ### Sprint 3 — HUD, Resultados e pause (Passos 5, 10)
-- [ ] **A10** `HuntInventoryUI` (capturados com ✔/⚠/✖, nunca o próximo; `Ordem: 2/4`; barra de fórmulas). Usa kit da B (B07).
+- [x] **A10** `HuntInventoryUI` (progresso de alvos `Targets: X/Y` em inglês, reativo a eventos de captura e conclusão).
 - [ ] **A11** `TimerUI` (Captura + dívida da Triagem, vermelho < 15 s), `TimeDeltaPopup`, `LivesUI`.
   - Pronto quando: cada erro mostra "−10" e uma vida piscando; dívida aparece na Caça.
 - [ ] **A12** Ligar o Timer de Captura à cena (start ao entrar, stop no feixe, derrota no zero).
