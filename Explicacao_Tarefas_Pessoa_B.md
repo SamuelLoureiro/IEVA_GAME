@@ -12,8 +12,10 @@
 4. [B03 — TimerManager (Dois Timers e Sistema de Dívida)](#b03--timermanager)
 5. [B04 — LivesManager (Controle de Vidas e Limite de Erros)](#b04--livesmanager)
 6. [B05 — MissionManager (Cérebro da Missão e Validação de Captura)](#b05--missionmanager)
-7. [Mapa de Integração entre os Sistemas](#mapa-de-integração-entre-os-sistemas)
-8. [Glossário de Defesa Acadêmica](#glossário-de-defesa-acadêmica)
+7. [B06 — GameEvents e Seeders de Debug (Desacoplamento e Teste Isolado)](#b06--gameevents-e-seeders-de-debug)
+8. [B08 — Greybox de Triagem e ETPlayer_Sorting (Ambiente da Etapa 4)](#b08--greybox-de-triagem-e-etplayer_sorting)
+9. [Mapa de Integração entre os Sistemas](#mapa-de-integração-entre-os-sistemas)
+10. [Glossário de Defesa Acadêmica](#glossário-de-defesa-acadêmica)
 
 ---
 
@@ -220,7 +222,40 @@ Quando o último alvo da lista é capturado corretamente (`IsComplete == true`),
 
 ### 4. Pergunta de Banca / Professor
 > **P:** *"Por que usar eventos estáticos e por que limpá-los em SubsystemRegistration?"*  
-> **R:** *"Eventos estáticos desacoplam completamente quem gera o evento de quem o consome. A limpeza em `SubsystemRegistration` é uma boa prática essencial da Unity moderna para suportar o recurso 'Enter Play Mode Options without Domain Reload', impedindo vazamento de listeners e exceções de objetos destruídos."*
+---
+
+## B08 — Greybox de Triagem e ETPlayer_Sorting
+
+### 1. O Problema que Resolve
+A Etapa 4 do jogo (Triagem / *Trier*) acontece inteiramente dentro de uma sala fechada na nave espacial alienígena. Antes de programar as mecânicas de física, arremesso e separação dos bichos, é essencial ter:
+1. O ambiente 3D delimitado (paredes, piso e teto para nada escapar voando pelo espaço);
+2. A caixa de captura onde os alvos encolhidos serão despejados pelo inventário;
+3. As 4 gaiolas identificadas para cada espécie (`Galinha`, `Vaca`, `Porco`, `Humano`) com seus receptáculos e triggers de colisão;
+4. O tubo/lixeira de descarte para os alvos proibidos;
+5. Uma zona de segurança (*KillZone*) para resgatar qualquer objeto que caia fora do cenário por glitch de colisão;
+6. O jogador configurado em 1ª pessoa (`ETPlayer_Sorting`) com velocidade ajustada para ambiente fechado (3.5 m/s) e câmera clamped (-85° a +85°), funcionando de imediato para testes sem depender da entrega da Pessoa A.
+
+### 2. Scripts Criados / Utilizados
+- [`Cage.cs`](./Assets/_Project/Scripts/Sorting/Cage.cs)
+- [`DiscardBin.cs`](./Assets/_Project/Scripts/Sorting/DiscardBin.cs)
+- [`KillZoneRespawn.cs`](./Assets/_Project/Scripts/Sorting/KillZoneRespawn.cs)
+- [`ETPlayerSortingController.cs`](./Assets/_Project/Scripts/Sorting/ETPlayerSortingController.cs)
+
+### 3. Detalhamento Técnico
+- **Arquitetura Modular de Prefabs (`Ship_Interior`, `Cages`, `CaptureBox`):**  
+  Para garantir máxima manutenibilidade e separação de responsabilidades no projeto, a nave e os elementos de triagem foram modularizados em Prefabs:
+  - `Ship_Interior.prefab`: O casco interno da nave espacial, contendo chão, teto, paredes circulares com janela frontal, ponte de comando (`Bridge`) com consoles central e laterais ergonomicamente inclinados para o centro, cadeira do piloto e iluminação ambiente;
+  - `CaptureBox.prefab`: A mesa receptáculo onde os alvos capturados são gerados;
+  - `Cage_*.prefab` e `DiscardBin.prefab`: 4 gaiolas padronizadas por espécie com sinalização colorida em TextMeshPro e tubo de descarte, contendo pontos de snap e ejeção;
+  - `ETPlayer_Sorting.prefab`: Prefab com `CharacterController`, câmera em primeira pessoa na altura dos olhos e física ajustada.
+- **Desacoplamento do Jogador (`ETPlayerSortingController`):**  
+  Lê os comandos de movimentação e rotação via `InputManager.Instance.Player` quando ele existir. Caso a Pessoa A ainda não tenha entregue a classe de input, possui *fallback* transparente para o novo Input System da Unity (`Keyboard.current` e `Mouse.current`), permitindo que a Pessoa B caminhe e teste a sala imediatamente.
+- **Segurança Física com `KillZoneRespawn`:**  
+  Qualquer objeto ou jogador que caia no trigger abaixo do chão tem sua `linearVelocity` zerada e é reposicionado imediatamente no ponto central da nave.
+
+### 4. Pergunta de Banca / Professor
+> **P:** *"Por que modularizar a nave e as estações em prefabs separados e criar um controller dedicado para a triagem?"*  
+> **R:** *"A modularidade em prefabs (`Ship_Interior`, `Cage_*`, `CaptureBox`) garante manutenibilidade e reaproveitamento limpo entre cenas sem acoplamento. O controller dedicado respeita a velocidade reduzida exigida no GDD (3.5 m/s) para o ambiente fechado da nave e desacopla o nosso desenvolvimento da entrega da Caça feito pelo outro desenvolvedor."*
 
 ---
 
