@@ -119,6 +119,57 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &39790918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 39790920}
+  - component: {fileID: 39790919}
+  m_Layer: 0
+  m_Name: '[Debug_InventorySeeder]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &39790919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39790918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed3a4ec7792292cbe9e38891d809f18e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.DebugTools.DebugInventorySeeder
+  _chicken: {fileID: 0}
+  _cow: {fileID: 0}
+  _pig: {fileID: 0}
+  _human: {fileID: 0}
+  _seedOnStart: 1
+  _showGui: 1
+  _dontDestroyOnLoad: 1
+--- !u!4 &39790920
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39790918}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1340362496
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,58 +267,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &2021287530
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2021287532}
-  - component: {fileID: 2021287531}
-  m_Layer: 0
-  m_Name: '[Debug_InventorySeeder]'
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2021287531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2021287530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed3a4ec7792292cbe9e38891d809f18e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VARG.DebugTools.DebugInventorySeeder
-  _chicken: {fileID: 0}
-  _cow: {fileID: 0}
-  _pig: {fileID: 0}
-  _human: {fileID: 0}
-  _seedOnStart: 1
-  _showGui: 1
-  _dontDestroyOnLoad: 1
---- !u!4 &2021287532
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2021287530}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &818837253111024152
+--- !u!1001 &1567435044773848378
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -283,49 +283,9 @@ PrefabInstance:
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
       objectReference: {fileID: 0}
-    - target: {fileID: 2797561812318533330, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4283190527
-      objectReference: {fileID: 0}
-    - target: {fileID: 2797561812318533330, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
     - target: {fileID: 2956841231900923011, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 3166255509907129576, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4290737151
-      objectReference: {fileID: 0}
-    - target: {fileID: 3166255509907129576, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
-    - target: {fileID: 3974323982036750291, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4294950745
-      objectReference: {fileID: 0}
-    - target: {fileID: 3974323982036750291, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
-    - target: {fileID: 5152440631660009947, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4281915903
-      objectReference: {fileID: 0}
-    - target: {fileID: 5152440631660009947, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
-    - target: {fileID: 6289998238251196606, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4290769472
-      objectReference: {fileID: 0}
-    - target: {fileID: 6289998238251196606, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 6335771069260753555, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
@@ -384,7 +344,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 944382e37b8bfb31594a1f7f08c275dc, type: 3}
---- !u!1001 &4071145840953602795
+--- !u!1001 &7899112585463356079
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -446,6 +406,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1340362498}
-  - {fileID: 818837253111024152}
-  - {fileID: 4071145840953602795}
-  - {fileID: 2021287532}
+  - {fileID: 1567435044773848378}
+  - {fileID: 7899112585463356079}
+  - {fileID: 39790920}

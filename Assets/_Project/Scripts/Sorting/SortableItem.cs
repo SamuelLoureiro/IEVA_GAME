@@ -15,6 +15,8 @@ namespace VARG.Sorting
             set => _data = value;
         }
 
+        public TargetType Type => Data != null ? Data.Type : TargetType.Chicken;
+
         public CapturedItem Item => _capturedItem;
 
         public bool IsHeld

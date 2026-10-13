@@ -137,7 +137,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
   - Depende: A02.
 - [x] **B09** `CaptureBoxSpawner` + `SortableItem` (instancia `miniPrefab` de cada `CapturedItem`).
   - Depende: A03 · Pronto quando: com o `DebugInventorySeeder`, os minis certos aparecem na caixa.
-- [ ] **B10** `GrabController` + `Grabbable` (velocidade via `linearVelocity`, arremesso, scroll, `IsHeld`) + `HighlightOnHover`.
+- [x] **B10** `GrabController` + `Grabbable` (velocidade via `linearVelocity`, arremesso, scroll, `IsHeld`) + `HighlightOnHover`.
 - [ ] **B11** `Cage` + `DiscardBin` + `SortingManager` (§R.6: validar só após soltar; cuspir; descarte errado tira vida).
   - Pronto quando: os 4 casos da tabela §R.6 funcionam e a fase termina com caixa vazia.
 - [ ] **B12** `KillZoneRespawn` + Timer de Separação ligado à cena (start com dívida, stop no fim, derrota no zero).

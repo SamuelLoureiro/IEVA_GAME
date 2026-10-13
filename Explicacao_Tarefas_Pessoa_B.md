@@ -285,6 +285,50 @@ Conectar a fase de Caça (Etapa 3) à fase de Triagem (Etapa 4). Na Caça, os al
 
 ---
 
+## B10 — GrabController, Grabbable e HighlightOnHover
+
+### 1. O Problema que Resolve
+Na fase de Triagem (Etapa 4 / *Trier*), o ET precisa manipular fisicamente os alvos capturados em miniatura dentro da nave e organizá-los nas respectivas estações. O sistema exige:
+1. Identificação visual imediata ao mirar num objeto manipulável (*Hover Highlight*);
+2. Atração suave em primeira pessoa que traga o objeto para a frente da câmera sem atravessar paredes ou quebrar colisões;
+3. Ajuste fino de distância de sustentação via rolagem do mouse (1.2m a 3.5m);
+4. Arremesso direcional com impulso físico (14 N) para arremessar alvos nas gaiolas à distância;
+5. Raio trator curvo (*Tractor Beam*) dinâmico, simulando o peso do bicho (parábola $\cap$ / vara de pescar tensionada):
+   - Linha 100% reta ao clicar com o bicho na bancada;
+   - Curvatura suave para cima ao erguer, proporcional à massa (Vaca > Porco/Humano > Galinha);
+   - Retorno à linha reta ao apoiar de volta na bancada.
+6. Ferramenta cômica em primeira pessoa: desentupidor de pia/privada (`Plunger_Viewmodel.prefab`) com o raio saindo diretamente do bocal de sucção de borracha!
+
+### 2. Scripts Criados / Utilizados
+- [`GrabController.cs`](./Assets/_Project/Scripts/Sorting/GrabController.cs)
+- [`Grabbable.cs`](./Assets/_Project/Scripts/Sorting/Grabbable.cs)
+- [`HighlightOnHover.cs`](./Assets/_Project/Scripts/Sorting/HighlightOnHover.cs)
+- [`TractorBeamVisual.cs`](./Assets/_Project/Scripts/Sorting/TractorBeamVisual.cs)
+
+### 3. Detalhamento Técnico
+- **Física por Velocidade Linear (`Rigidbody.linearVelocity`):**  
+  Para cumprir as diretrizes da Unity 6 LTS e evitar que os alvos atravessem grades ou paredes da nave, o `Grabbable` nunca altera `transform.position` diretamente. No `FixedUpdate`, calcula o vetor delta até o ponto focal na frente da câmera e aplica `rb.linearVelocity = delta * followForce`. As grades das gaiolas e paredes continuam bloqueando o objeto através do motor de física PhysX.
+- **Amortecimento Angular e Arremesso Direcional:**  
+  Enquanto sustentado, `angularVelocity` é amortecido suavemente com `Vector3.Lerp` para evitar giros descontrolados se o objeto raspar em obstáculos. Ao clicar com o botão direito para arremessar, qualquer velocidade residual de movimentação do jogador é zerada e um impulso vetorial limpo é aplicado via:
+  ```csharp
+  rb.AddForce(cam.forward * throwForce, ForceMode.Impulse);
+  ```
+- **Raio Trator Dinâmico com Curva de Bézier Quadrática:**  
+  O feixe visual utiliza um `LineRenderer` com 18 segmentos calculados por interpolação de Bézier:
+  $$B(t) = (1-t)^2 P_0 + 2(1-t)t P_1 + t^2 P_2$$
+  - $P_0$: Bocal da ventosa do desentupidor (`MuzzlePoint`);
+  - $P_2$: Posição do alvo sustentado;
+  - $P_1$: Ponto médio acrescido de deslocamento vertical (`Vector3.up * (archHeight * liftFactor)`).
+  Quando o esforço vertical de erguer é nulo (bicho apoiado na mesa), o deslocamento é zero e a curva colapsa numa **linha 100% reta**. Ao erguer no ar, a linha ganha concavidade com abertura para baixo proporcional à espécie (Vaca: 0.65m; Porco/Humano: 0.38m; Galinha: 0.10m).
+- **Viewmodel Modular (`Plunger_Viewmodel`):**  
+  O desentupidor é salvo como um prefab independente na pasta de prefabs do jogador. Possui o nó de referência `MuzzlePoint` desacoplado, permitindo que a arminha ou qualquer outro modelo cômico seja trocado no futuro sem alterar o código de gameplay.
+
+### 4. Pergunta de Banca / Professor
+> **P:** *"Por que a movimentação do objeto segurado é feita via `linearVelocity` no `FixedUpdate` e não movendo o `transform.position` diretamente no `Update`?"*  
+> **R:** *"Alterar `transform.position` diretamente teletransportaria o objeto a cada frame, quebrando a detecção contínua de colisão do motor PhysX e permitindo que o bicho atravessasse paredes e barras de gaiola. Usando `linearVelocity` proporcional ao delta de distância dentro do `FixedUpdate`, o objeto é atraído respeitando integralmente as colisões sólidas da nave."*
+
+---
+
 ## Mapa de Integração entre os Sistemas
 
 Este diagrama resume como os scripts que você construiu trabalham juntos durante um disparo na Caça:

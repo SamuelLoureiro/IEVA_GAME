@@ -85,6 +85,36 @@ namespace VARG.Sorting
             }
             sortable.Initialize(item);
 
+            if (instance.GetComponent<Grabbable>() == null)
+            {
+                instance.AddComponent<Grabbable>();
+            }
+
+            if (instance.GetComponent<HighlightOnHover>() == null)
+            {
+                instance.AddComponent<HighlightOnHover>();
+            }
+
+            var rb = instance.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                var targetType = item.Data != null ? item.Data.Type : TargetType.Chicken;
+                rb.mass = targetType switch
+                {
+                    TargetType.Cow => 2.5f,
+                    TargetType.Pig => 1.4f,
+                    TargetType.Human => 1.4f,
+                    TargetType.Chicken => 0.6f,
+                    _ => 1.0f
+                };
+            }
+
+            var grabbableLayer = LayerMask.NameToLayer("Grabbable");
+            if (grabbableLayer != -1)
+            {
+                instance.layer = grabbableLayer;
+            }
+
             _spawnedObjects.Add(instance);
             return instance;
         }
