@@ -232,6 +232,33 @@ namespace VARG.Editor
                 Debug.Log("[VARG] GameManager references on [Systems] prefab updated!");
             }
 
+            var missionManager = root.GetComponent<MissionManager>();
+            if (missionManager != null)
+            {
+                var chicken = AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Chicken.asset");
+                var cow = AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Cow.asset");
+                var pig = AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Pig.asset");
+                var human = AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Human.asset");
+                var penaltyConfig = AssetDatabase.LoadAssetAtPath<PenaltyConfig>("Assets/_Project/Data/PenaltyConfig.asset");
+
+                var serializedMm = new SerializedObject(missionManager);
+                var penProp = serializedMm.FindProperty("_penaltyConfig");
+                var targetsProp = serializedMm.FindProperty("_availableTargets");
+
+                if (penProp != null) penProp.objectReferenceValue = penaltyConfig;
+                if (targetsProp != null)
+                {
+                    targetsProp.arraySize = 4;
+                    targetsProp.GetArrayElementAtIndex(0).objectReferenceValue = chicken;
+                    targetsProp.GetArrayElementAtIndex(1).objectReferenceValue = cow;
+                    targetsProp.GetArrayElementAtIndex(2).objectReferenceValue = pig;
+                    targetsProp.GetArrayElementAtIndex(3).objectReferenceValue = human;
+                }
+
+                serializedMm.ApplyModifiedPropertiesWithoutUndo();
+                Debug.Log("[VARG] MissionManager references on [Systems] prefab updated!");
+            }
+
             PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
             PrefabUtility.UnloadPrefabContents(root);
             AssetDatabase.SaveAssets();
