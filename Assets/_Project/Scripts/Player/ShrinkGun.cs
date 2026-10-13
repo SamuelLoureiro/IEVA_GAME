@@ -99,11 +99,14 @@ namespace VARG.Player
             var colliders = Physics.OverlapSphere(center, _scareRadius);
             for (var i = 0; i < colliders.Length; i++)
             {
-                // In A07, TargetAI will respond to flee event
                 var target = colliders[i].GetComponentInParent<Target>();
                 if (target != null)
                 {
-                    Debug.Log($"[ShrinkGun] Animal startled nearby: {target.Data?.DisplayName ?? target.name}");
+                    var targetAi = target.GetComponent<TargetAI>();
+                    if (targetAi != null)
+                    {
+                        targetAi.AlertDanger(center);
+                    }
                 }
             }
         }

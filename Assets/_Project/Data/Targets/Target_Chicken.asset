@@ -18,5 +18,5 @@ MonoBehaviour:
   _prefab: {fileID: 432527102681369579, guid: 2d7a527357d0dfa79a359136aececef2, type: 3}
   _miniPrefab: {fileID: 8415223379529903465, guid: 589d7b1d61ff9cd82a0cd3beecee523d, type: 3}
   _icon: {fileID: 0}
-  _walkSpeed: 3
-  _fleeSpeed: 5
+  _walkSpeed: 3.5
+  _fleeSpeed: 8

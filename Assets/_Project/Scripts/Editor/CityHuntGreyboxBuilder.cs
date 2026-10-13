@@ -1,7 +1,9 @@
 #if UNITY_EDITOR
+using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace VARG.Editor
 {
@@ -26,10 +28,22 @@ namespace VARG.Editor
                 Object.DestroyImmediate(existingPlayer);
             }
 
+            var existingCamera = GameObject.Find("Main Camera");
+            if (existingCamera != null)
+            {
+                Object.DestroyImmediate(existingCamera);
+            }
+
             var existingSampleTargets = GameObject.Find("_SampleTargets");
             if (existingSampleTargets != null)
             {
                 Object.DestroyImmediate(existingSampleTargets);
+            }
+
+            var existingDebug = GameObject.Find("_DebugTools");
+            if (existingDebug != null)
+            {
+                Object.DestroyImmediate(existingDebug);
             }
 
             var envRoot = new GameObject("_Environment");
@@ -108,7 +122,13 @@ namespace VARG.Editor
                 beamCol.isTrigger = true;
             }
 
-            // 5. Instantiate ETPlayer
+            // 5. Build NavMeshSurface for environment
+            var navSurface = envRoot.AddComponent<NavMeshSurface>();
+            navSurface.collectObjects = CollectObjects.Children;
+            navSurface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+            navSurface.BuildNavMesh();
+
+            // 6. Instantiate ETPlayer
             var playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/Player/ETPlayer.prefab");
             if (playerPrefab != null)
             {
@@ -117,15 +137,28 @@ namespace VARG.Editor
                 playerInstance.transform.rotation = Quaternion.identity;
             }
 
-            // 6. Instantiate Sample Targets for early visual testing
+            // 7. Instantiate Sample Targets for early visual testing
             var targetsRoot = new GameObject("_SampleTargets");
             SpawnSampleTarget(targetsRoot, "Assets/_Project/Prefabs/Targets/Target_Chicken.prefab", new Vector3(-3f, 0.1f, 5f));
             SpawnSampleTarget(targetsRoot, "Assets/_Project/Prefabs/Targets/Target_Cow.prefab", new Vector3(4f, 0.1f, 6f));
             SpawnSampleTarget(targetsRoot, "Assets/_Project/Prefabs/Targets/Target_Pig.prefab", new Vector3(-6f, 0.1f, -4f));
             SpawnSampleTarget(targetsRoot, "Assets/_Project/Prefabs/Targets/Target_Human.prefab", new Vector3(7f, 0.1f, -5f));
 
-            // 7. Ensure Lighting
+            // 8. Ensure Lighting
             EnsureDirectionalLight();
+
+            // 9. Debug Tools for standalone testing (DebugMissionSeeder & DebugInventorySeeder)
+            var debugGo = new GameObject("_DebugTools");
+            var missionSeeder = debugGo.AddComponent<VARG.DebugTools.DebugMissionSeeder>();
+            var missionSeederSerialized = new SerializedObject(missionSeeder);
+            missionSeederSerialized.FindProperty("_seedOnStart").boolValue = true;
+            missionSeederSerialized.FindProperty("_dontDestroyOnLoad").boolValue = false;
+            missionSeederSerialized.ApplyModifiedPropertiesWithoutUndo();
+
+            var invSeeder = debugGo.AddComponent<VARG.DebugTools.DebugInventorySeeder>();
+            var invSeederSerialized = new SerializedObject(invSeeder);
+            invSeederSerialized.FindProperty("_dontDestroyOnLoad").boolValue = false;
+            invSeederSerialized.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -149,6 +182,10 @@ namespace VARG.Editor
             building.transform.SetParent(parent.transform);
             building.transform.position = pos;
             building.transform.localScale = scale;
+
+            var obstacle = building.AddComponent<NavMeshObstacle>();
+            obstacle.size = Vector3.one;
+            obstacle.carving = true;
         }
 
         private static void SpawnSampleTarget(GameObject parent, string prefabPath, Vector3 pos)

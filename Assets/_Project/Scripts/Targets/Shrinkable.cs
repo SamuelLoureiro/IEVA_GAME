@@ -46,6 +46,9 @@ namespace VARG.Targets
         {
             _isShrinking = true;
 
+            var targetAi = GetComponent<TargetAI>();
+            if (targetAi != null) targetAi.SetCaptured();
+
             var agent = GetComponent<NavMeshAgent>();
             if (agent != null) agent.enabled = false;
 
@@ -79,6 +82,9 @@ namespace VARG.Targets
 
             var agent = GetComponent<NavMeshAgent>();
             if (agent != null) agent.enabled = true;
+
+            var targetAi = GetComponent<TargetAI>();
+            if (targetAi != null) targetAi.ResetState();
 
             var colliders = GetComponentsInChildren<Collider>();
             for (var i = 0; i < colliders.Length; i++)

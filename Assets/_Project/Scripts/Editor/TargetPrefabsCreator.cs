@@ -14,6 +14,7 @@ namespace VARG.Editor
         public static void CreateAllPrefabs()
         {
             EnsureFolder("Assets/_Project/Prefabs/Targets");
+            TuneTargetSpeeds();
 
             var interactableLayer = LayerMask.NameToLayer("Interactable");
             var grabbableLayer = LayerMask.NameToLayer("Grabbable");
@@ -27,7 +28,27 @@ namespace VARG.Editor
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log("[VARG] Created all 8 Target and Mini prefabs and successfully linked to TargetData assets!");
+            Debug.Log("[VARG] Created all 8 Target and Mini prefabs and tuned target speeds!");
+        }
+
+        private static void TuneTargetSpeeds()
+        {
+            SetTargetDataSpeed("Target_Chicken", 3.5f, 8.0f);
+            SetTargetDataSpeed("Target_Cow", 2.5f, 6.2f);
+            SetTargetDataSpeed("Target_Pig", 3.0f, 7.0f);
+            SetTargetDataSpeed("Target_Human", 4.0f, 8.5f);
+        }
+
+        private static void SetTargetDataSpeed(string assetName, float walkSpeed, float fleeSpeed)
+        {
+            var path = $"Assets/_Project/Data/Targets/{assetName}.asset";
+            var data = AssetDatabase.LoadAssetAtPath<TargetData>(path);
+            if (data == null) return;
+
+            var serialized = new SerializedObject(data);
+            serialized.FindProperty("_walkSpeed").floatValue = walkSpeed;
+            serialized.FindProperty("_fleeSpeed").floatValue = fleeSpeed;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void CreateTargetPair(
@@ -60,8 +81,9 @@ namespace VARG.Editor
 
             var agent = targetGo.AddComponent<NavMeshAgent>();
             agent.speed = targetData != null ? targetData.WalkSpeed : 3f;
-            agent.angularSpeed = 180f;
-            agent.acceleration = 8f;
+            agent.angularSpeed = 720f;
+            agent.acceleration = 28f;
+            agent.autoBraking = false;
             agent.stoppingDistance = 0.5f;
 
             targetGo.AddComponent<Shrinkable>();
@@ -71,6 +93,12 @@ namespace VARG.Editor
             {
                 targetComponent.Data = targetData;
             }
+
+            var targetAi = targetGo.AddComponent<TargetAI>();
+            var aiSerialized = new SerializedObject(targetAi);
+            aiSerialized.FindProperty("_agent").objectReferenceValue = agent;
+            aiSerialized.FindProperty("_target").objectReferenceValue = targetComponent;
+            aiSerialized.ApplyModifiedPropertiesWithoutUndo();
 
             var targetPrefabPath = $"Assets/_Project/Prefabs/Targets/Target_{typeName}.prefab";
             var targetPrefab = PrefabUtility.SaveAsPrefabAsset(targetGo, targetPrefabPath);
