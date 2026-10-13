@@ -8,6 +8,7 @@ namespace VARG.DebugTools
     public class DebugMissionSeeder : MonoBehaviour
     {
         [Header("Options")]
+        [SerializeField] private bool _seedOnStart = false;
         [SerializeField] private bool _showGui = true;
         [SerializeField] private bool _dontDestroyOnLoad = true;
 
@@ -22,6 +23,22 @@ namespace VARG.DebugTools
             }
 
             LoadLevelConfig();
+        }
+
+        private void Start()
+        {
+            if (_seedOnStart)
+            {
+                SeedDefaultMission();
+            }
+        }
+
+        public void SeedDefaultMission()
+        {
+            if (MissionManager.Instance == null) return;
+            LoadLevelConfig();
+            MissionManager.Instance.GenerateMission(_levelConfig1);
+            _lastResult = null;
         }
 
         private void LoadLevelConfig()

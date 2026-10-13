@@ -129,7 +129,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 - [x] **B04** `LivesManager` (5 vidas, `OnLifeLost`, derrota em 0).
 - [x] **B05** `MissionManager` completo: `GenerateMission` (§R.2: 1 tipo proibido, 3 tipos na lista, repetição permitida) + `ValidateCapture` (§R.5: penalidades, vida, inventário, eventos, avanço da ordem).
   - Pronto quando: um teste (EditMode ou botão de debug) cobre os 3 resultados e confirma que a ordem só avança com `Correct`.
-- [ ] **B06** `GameEvents` (§C.4, com limpeza em `SubsystemRegistration`) + `DebugMissionSeeder` + `DebugInventorySeeder` (itens dos 3 resultados).
+- [x] **B06** `GameEvents` (§C.4, com limpeza em `SubsystemRegistration`) + `DebugMissionSeeder` + `DebugInventorySeeder` (itens dos 3 resultados).
 - [ ] **B07** Kit UI planilha: `SpreadsheetPanel`, `SpreadsheetRow`, `SpreadsheetCell`, `FormulaBar`, `SheetTabs`. *A usa no Sprint 3.*
 
 ### Sprint 2 — Triagem (Passos 7, 8, 9)

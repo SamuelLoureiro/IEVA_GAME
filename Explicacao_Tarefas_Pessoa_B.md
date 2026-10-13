@@ -194,6 +194,36 @@ Quando o último alvo da lista é capturado corretamente (`IsComplete == true`),
 
 ---
 
+## B06 — GameEvents e Seeders de Teste
+
+### 1. O Problema que Resolve
+- Em projetos Unity com múltiplas cenas e dois desenvolvedores trabalhando em paralelo, testar sistemas sem acoplamento exige:
+  1. Uma camada de eventos global estática que não quebre quando a Unity roda sem recarregar o domínio C# (*Enter Play Mode Options*).
+  2. Ferramentas de injeção de dados falsos (*Seeders*) para que a Pessoa A teste a Caça sem depender da tela de Briefing pronta, e a Pessoa B teste a Triagem sem depender da Caça pronta.
+
+### 2. Scripts Criados / Utilizados
+- [`GameEvents.cs`](./Assets/_Project/Scripts/Core/GameEvents.cs)
+- [`DebugMissionSeeder.cs`](./Assets/_Project/Scripts/Debug/DebugMissionSeeder.cs)
+- [`DebugInventorySeeder.cs`](./Assets/_Project/Scripts/Debug/DebugInventorySeeder.cs)
+
+### 3. Detalhamento Técnico
+- **Limpeza de Eventos Estáticos (`SubsystemRegistration`):**  
+  Em C#, eventos estáticos sobrevivem enquanto a aplicação roda. Se o Unity reiniciar o Play Mode sem recarregar o domínio (opção de otimização comum no Unity 6), inscrições antigas de eventos causariam vazamento de memória e chamadas fantasmas. O método:
+  ```csharp
+  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+  private static void ResetEvents() { ... }
+  ```
+  garante que todas as listas de inscritos sejam limpas a cada novo Play Mode.
+- **Desacoplamento por Seeders:**  
+  - `DebugInventorySeeder`: Enche o inventário com os 3 tipos de resultado (`Correct`, `OutOfOrder`, `NotInList`). Permite que a Pessoa B desenvolva e teste toda a cena de Triagem (`04_ShipSorting`) de forma 100% autônoma.
+  - `DebugMissionSeeder`: Gera uma missão determinística com lista e animal proibido para que a Pessoa A possa testar a cidade (`03_CityHunt`) e o spawn de alvos (`TargetSpawner`) de forma autônoma.
+
+### 4. Pergunta de Banca / Professor
+> **P:** *"Por que usar eventos estáticos e por que limpá-los em SubsystemRegistration?"*  
+> **R:** *"Eventos estáticos desacoplam completamente quem gera o evento de quem o consome. A limpeza em `SubsystemRegistration` é uma boa prática essencial da Unity moderna para suportar o recurso 'Enter Play Mode Options without Domain Reload', impedindo vazamento de listeners e exceções de objetos destruídos."*
+
+---
+
 ## Mapa de Integração entre os Sistemas
 
 Este diagrama resume como os scripts que você construiu trabalham juntos durante um disparo na Caça:
