@@ -130,22 +130,22 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 - [x] **B05** `MissionManager` completo: `GenerateMission` (§R.2: 1 tipo proibido, 3 tipos na lista, repetição permitida) + `ValidateCapture` (§R.5: penalidades, vida, inventário, eventos, avanço da ordem).
   - Pronto quando: um teste (EditMode ou botão de debug) cobre os 3 resultados e confirma que a ordem só avança com `Correct`.
 - [x] **B06** `GameEvents` (§C.4, com limpeza em `SubsystemRegistration`) + `DebugMissionSeeder` + `DebugInventorySeeder` (itens dos 3 resultados).
-- [ ] **B07** Kit UI planilha: `SpreadsheetPanel`, `SpreadsheetRow`, `SpreadsheetCell`, `FormulaBar`, `SheetTabs`. *A usa no Sprint 3.*
+- [ ] **B07** *(Adiado para Sprint 3 junto com as UIs)* Kit UI planilha: `SpreadsheetPanel`, `SpreadsheetRow`, `SpreadsheetCell`, `FormulaBar`, `SheetTabs`. *A e B usam no Sprint 3.*
 
 ### Sprint 2 — Triagem (Passos 7, 8, 9)
-- [ ] **B08** Greybox de `04_ShipSorting` (interior da nave, caixa, 4 gaiolas + lixeira) + Prefab Variant `ETPlayer_Sorting`.
+- [x] **B08** Greybox de `04_ShipSorting` (interior da nave, caixa, 4 gaiolas + lixeira) + Prefab Variant `ETPlayer_Sorting`.
   - Depende: A02.
-- [ ] **B09** `CaptureBoxSpawner` + `SortableItem` (instancia `miniPrefab` de cada `CapturedItem`).
+- [x] **B09** `CaptureBoxSpawner` + `SortableItem` (instancia `miniPrefab` de cada `CapturedItem`).
   - Depende: A03 · Pronto quando: com o `DebugInventorySeeder`, os minis certos aparecem na caixa.
-- [ ] **B10** `GrabController` + `Grabbable` (velocidade via `linearVelocity`, arremesso, scroll, `IsHeld`) + `HighlightOnHover`.
-- [ ] **B11** `Cage` + `DiscardBin` + `SortingManager` (§R.6: validar só após soltar; cuspir; descarte errado tira vida).
+- [x] **B10** `GrabController` + `Grabbable` (velocidade via `linearVelocity`, arremesso, scroll, `IsHeld`) + `HighlightOnHover`.
+- [x] **B11** `Cage` + `DiscardBin` + `SortingManager` (§R.6: validar só após soltar; cuspir; descarte errado tira vida).
   - Pronto quando: os 4 casos da tabela §R.6 funcionam e a fase termina com caixa vazia.
-- [ ] **B12** `KillZoneRespawn` + Timer de Separação ligado à cena (start com dívida, stop no fim, derrota no zero).
+- [x] **B12** `KillZoneRespawn` + Timer de Separação ligado à cena (start com dívida, stop no fim, derrota no zero).
 
 ### Sprint 3 — Briefing e Humor (Passos 11, 12)
-- [ ] **B13** Cena `01_BossBriefing`: `BriefingController`, `DialogueBox`, `TypewriterText`, `SpreadsheetTableUI`; lista com tempo limitado; mostra o nível.
+- [x] **B13** Cena `01_BossBriefing`: `BriefingController`, `DialogueBox`, `TypewriterText`, `TargetShowcaseUI`; lista com tempo limitado; mostra o nível.
   - Pronto quando: a lista some ao continuar e nunca mais aparece no nível.
-- [ ] **B14** `BossLineSet` + `BossDialogueManager` (shuffle bag, tokens, escalonamento por vidas perdidas, cooldown, `OnIdle`).
+- [x] **B14** `BossLineSet` + `BossDialogueManager` (shuffle bag, tokens, escalonamento por vidas perdidas, cooldown, `OnIdle`).
 - [ ] **B15** `BossPopupUI` (comentário de célula) + `AlienVoice` (bipes).
 - [ ] **B16** Progressão de níveis: `NextLevel` usa o próximo `LevelConfig`; após o último, repete com +1 item e +10 s.
 

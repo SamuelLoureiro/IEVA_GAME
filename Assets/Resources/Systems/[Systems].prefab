@@ -121,7 +121,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8814d7d2e26b80ba2f3b5eecda0c7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Humor.BossDialogueManager
-  _lines: {fileID: 0}
+  _lines: {fileID: 11400000, guid: 185fee748459e8e9a8d3315b139fc71c, type: 2}
+  _minCooldown: 3.5
+  _idleThreshold: 20
+  _enableIdleDetection: 1
 --- !u!114 &7669703832512416783
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -31,41 +31,41 @@ namespace VARG.DebugTools
             var isCapRunning = TimerManager.Instance.IsRunning(TimerPhase.Capture);
             var isSortRunning = TimerManager.Instance.IsRunning(TimerPhase.Sorting);
 
-            GUILayout.Label($"Captura: {captureRem:F1}s {(isCapRunning ? "[RODANDO]" : "[PARADO]")}");
-            GUILayout.Label($"Triagem: {sortingRem:F1}s {(isSortRunning ? "[RODANDO]" : "[PARADO]")}");
-            GUILayout.Label($"Dívida Triagem: {debt:F1}s");
+            GUILayout.Label($"Capture: {captureRem:F1}s {(isCapRunning ? "[RUNNING]" : "[STOPPED]")}");
+            GUILayout.Label($"Sorting: {sortingRem:F1}s {(isSortRunning ? "[RUNNING]" : "[STOPPED]")}");
+            GUILayout.Label($"Sorting Debt: {debt:F1}s");
 
-            if (GUILayout.Button("Iniciar Captura (90s)"))
+            if (GUILayout.Button("Start Capture (90s)"))
             {
                 TimerManager.Instance.StartTimer(TimerPhase.Capture, 90f);
             }
 
-            if (GUILayout.Button("Parar Captura (Simula Feixe da Nave)"))
+            if (GUILayout.Button("Stop Capture (Simulate Ship Beam)"))
             {
                 TimerManager.Instance.StopTimer(TimerPhase.Capture);
             }
 
-            if (GUILayout.Button("Penalidade Captura (-10s)"))
+            if (GUILayout.Button("Capture Penalty (-10s)"))
             {
                 TimerManager.Instance.ApplyPenalty(TimerPhase.Capture, 10f);
             }
 
-            if (GUILayout.Button("Penalidade Triagem (-10s / Dívida)"))
+            if (GUILayout.Button("Sorting Penalty (-10s / Debt)"))
             {
                 TimerManager.Instance.ApplyPenalty(TimerPhase.Sorting, 10f);
             }
 
-            if (GUILayout.Button("Iniciar Triagem (45s)"))
+            if (GUILayout.Button("Start Sorting (45s)"))
             {
                 TimerManager.Instance.StartTimer(TimerPhase.Sorting, 45f);
             }
 
-            if (GUILayout.Button("Parar Triagem (Simula Conclusão)"))
+            if (GUILayout.Button("Stop Sorting (Simulate Conclusion)"))
             {
                 TimerManager.Instance.StopTimer(TimerPhase.Sorting);
             }
 
-            if (GUILayout.Button("Simular Tempo Crítico (Pular para 10s)"))
+            if (GUILayout.Button("Simulate Critical Time (Jump to 10s)"))
             {
                 var activePhase = TimerManager.Instance.IsRunning(TimerPhase.Capture) ? TimerPhase.Capture : TimerPhase.Sorting;
                 var current = TimerManager.Instance.GetRemaining(activePhase);
@@ -75,18 +75,18 @@ namespace VARG.DebugTools
                 }
             }
 
-            if (GUILayout.Button("Simular Tempo Esgotado (Zerar)"))
+            if (GUILayout.Button("Simulate Time Out (Zero)"))
             {
                 var activePhase = TimerManager.Instance.IsRunning(TimerPhase.Capture) ? TimerPhase.Capture : TimerPhase.Sorting;
                 TimerManager.Instance.ApplyPenalty(activePhase, 9999f);
             }
 
-            if (GUILayout.Button("Pausar / Despausar"))
+            if (GUILayout.Button("Pause / Resume"))
             {
                 TimerManager.Instance.Pause(!TimerManager.Instance.IsPaused);
             }
 
-            if (GUILayout.Button("Resetar Dívida"))
+            if (GUILayout.Button("Reset Debt"))
             {
                 TimerManager.Instance.ResetDebt();
             }

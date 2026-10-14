@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 783b5b6aa362bcf128fa19563a0dde7b, type: 3}
+  m_Name: BossLineSet
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Humor.BossLineSet
+  _correctCaptureLines:
+  - "Excelente. Mais um item pra cota e menos uma dor de cabe\xE7a pro meu relat\xF3rio."
+  - "Registrado no invent\xE1rio! Quem diria que voc\xEA sabia ler o briefing?!"
+  - "Correto! O setor de pesquisa agradece a coopera\xE7\xE3o dessa criatura."
+  - "Muito bem, estagi\xE1rio. Continue assim e talvez eu assine seu relat\xF3rio
+    de est\xE1gio."
+  _outOfOrderCaptureLines:
+  - "Eu pedi {expected}, e voc\xEA me traz {captured}?! Voc\xEA sequer olhou a ordem?!"
+  - "Incompet\xEAncia c\xF3smica! A ordem exigia {expected}, n\xE3o {captured}!"
+  - "Parab\xE9ns, desorganizou o protocolo inteiro! A prioridade era {expected}!"
+  - "{captured} agora n\xE3o! Era a vez de {expected}! O tempo t\xE1 correndo!"
+  _notInListCaptureLines:
+  - "{captured}?! ISSO N\xC3O ESTAVA NA LISTA! Voc\xEA quer ser demitido?!"
+  - "Por que tem um {captured} a bordo?! Eu proibi expressamente esse tipo de esp\xE9cime!"
+  - "Desastre diplom\xE1tico! Largue esse {captured} antes que a federa\xE7\xE3o
+    descubra!"
+  - "N\xE3o autorizei a abdu\xE7\xE3o de {captured}! Isso \xE9 crime intergal\xE1ctico
+    de classe B!"
+  _beamDeniedLines:
+  - "Acesso negado! O feixe s\xF3 recolhe a nave quando a cota estiver completa!"
+  - "Voltando de m\xE3os vazias?! A miss\xE3o n\xE3o acabou, estagi\xE1rio! V\xE1
+    atr\xE1s dos alvos!"
+  - "N\xE3o tente fugir! Termine a lista antes de pedir resgate!"
+  _correctCageLines:
+  - Gaiola certa. Menos um problema no setor de triagem.
+  - "Esp\xE9cime alocado com sucesso. O cheiro na nave t\xE1 diminuindo."
+  - "Perfeito! Triagem correta sem violar os direitos gal\xE1cticos."
+  _wrongCageLines:
+  - "Voc\xEA colocou {captured} na gaiola errada! A criatura quase foi mastigada!"
+  - Errou a gaiola! Mais uma dessas e o custo do conserto sai do seu contracheque!
+  - "Isso n\xE3o \xE9 um habitat, \xE9 uma salada biol\xF3gica! Gaiola errada!"
+  _correctDiscardLines:
+  - "Descarte correto. Lixo espacial reciclado conforme as normas da ISO c\xF3smica."
+  - Eliminado com sucesso. Menos peso na nave.
+  _wrongDiscardLines:
+  - "Voc\xEA jogou {captured} na lixeira?! ERA UM ALVO DA MISS\xC3O, ANIMAL!"
+  - "Descarte n\xE3o autorizado! Pare de jogar a cota da empresa no triturador!"
+  - "Voc\xEA acabou de desintegrar um item da pesquisa! Minha press\xE3o t\xE1 em
+    300!"
+  _lifeLostTier1Lines:
+  - "Cuidado, estagi\xE1rio! Recursos da nave n\xE3o nascem em \xE1rvore c\xF3smica."
+  - "Menos uma chance. Concentre-se antes que eu rebaixe voc\xEA pra lavador de turbina!"
+  - "Um errinho b\xE1sico... ainda estamos no lucro, mas n\xE3o abuse."
+  _lifeLostTier2Lines:
+  - "Mais um erro e eu te deixo na Terra junto com as vacas! S\xF3 restam {lives}
+    chances!"
+  - "Minha press\xE3o t\xE1 subindo! Se voc\xEA perder mais uma vida, quem vai pro
+    triturador \xE9 voc\xEA!"
+  - "Alerta amarelo! S\xF3 temos {lives} tentativas restantes! Pare de brincar em
+    servi\xE7o!"
+  _lifeLostTier3Lines:
+  - "\xDALTIMA CHANCE! Se voc\xEA errar mais uma vez, eu cancelo sua cidadania alien\xEDgena!"
+  - "UMA VIDA! UMA \xDANICA VIDA! Minha carreira de comandante est\xE1 por um fio!"
+  - "ALERTA VERMELHO! Respire fundo e n\xE3o fa\xE7a nenhuma besteira, estagi\xE1rio!"
+  _timeLowLines:
+  - "O rel\xF3gio t\xE1 correndo na fase de {phase}! Menos enrola\xE7\xE3o e mais
+    trabalho!"
+  - Quinze segundos?! Acelera esse passo antes que o turno termine!
+  - "Hora extra n\xE3o \xE9 remunerada nessa gal\xE1xia! Termine logo esse {phase}!"
+  _victoryLines:
+  - "Miss\xE3o cumprida! Hora de bater o ponto e fingir que trabalhamos duro."
+  - "Cota batida! Voc\xEA escapou de uma advert\xEAncia formal por hoje."
+  - "Excelente trabalho. O relat\xF3rio trimestral vai ficar bonito pro alto conselho."
+  _defeatLines:
+  - "Derrota inaceit\xE1vel ({reason})! Seu relat\xF3rio de desempenho foi direto
+    pro RH!"
+  - "Fim da linha! O estagi\xE1rio conseguiu fracassar a opera\xE7\xE3o mais simples
+    do quadrante!"
+  - "Miss\xE3o falhou: {reason}. Vou fingir que nem te conhe\xE7o no tribunal estelar."
+  _idleLines:
+  - "Voc\xEA ganha por hora agora? Mexa-se!"
+  - "A Terra n\xE3o vai se abduzir sozinha, estagi\xE1rio!"
+  - "Est\xE1 contemplando o cosmos ou travou a\xED embaixo?!"
+  - "Al\xF4? Tem algu\xE9m em casa ou o c\xE9rebro virou gelatina espacial?!"

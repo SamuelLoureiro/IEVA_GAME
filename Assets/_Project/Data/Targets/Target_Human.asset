@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Data.TargetData
   _id: Target_Human
   _type: 3
-  _displayName: Humano
+  _displayName: Human
   _prefab: {fileID: 3150699209010858139, guid: 1b978ffec0c7a0e489cd4bf6e048cf2d, type: 3}
   _miniPrefab: {fileID: 4563897027039132806, guid: 718e59d84021574ecb897dbdfea32f4c, type: 3}
   _icon: {fileID: 0}

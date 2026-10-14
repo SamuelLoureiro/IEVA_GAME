@@ -110,10 +110,10 @@ namespace VARG.Editor
         private static void CreateConfigs()
         {
             // TargetData for the 4 targets
-            CreateTargetData("Target_Chicken", TargetType.Chicken, "Galinha", 3f, 5f);
-            CreateTargetData("Target_Cow", TargetType.Cow, "Vaca", 2f, 4f);
-            CreateTargetData("Target_Pig", TargetType.Pig, "Porco", 2.5f, 4.5f);
-            CreateTargetData("Target_Human", TargetType.Human, "Humano", 4f, 7f);
+            CreateTargetData("Target_Chicken", TargetType.Chicken, "Chicken", 3f, 5f);
+            CreateTargetData("Target_Cow", TargetType.Cow, "Cow", 2f, 4f);
+            CreateTargetData("Target_Pig", TargetType.Pig, "Pig", 2.5f, 4.5f);
+            CreateTargetData("Target_Human", TargetType.Human, "Human", 4f, 7f);
             // PenaltyConfig
             const string penaltyPath = "Assets/_Project/Data/PenaltyConfig.asset";
             if (AssetDatabase.LoadAssetAtPath<PenaltyConfig>(penaltyPath) == null)
@@ -150,6 +150,7 @@ namespace VARG.Editor
             }
 
             CreateCampaignConfig();
+            CreateBossLineSet();
         }
 
         private static void CreateTargetData(string assetName, TargetType type, string displayName, float walkSpeed, float fleeSpeed)
@@ -259,10 +260,170 @@ namespace VARG.Editor
                 Debug.Log("[VARG] MissionManager references on [Systems] prefab updated!");
             }
 
+            var bossDialogueManager = root.GetComponent<BossDialogueManager>();
+            if (bossDialogueManager != null)
+            {
+                var bossLineSet = AssetDatabase.LoadAssetAtPath<BossLineSet>("Assets/_Project/Data/BossLineSet.asset");
+                var serializedBdm = new SerializedObject(bossDialogueManager);
+                var linesProp = serializedBdm.FindProperty("_lines");
+                if (linesProp != null) linesProp.objectReferenceValue = bossLineSet;
+                serializedBdm.ApplyModifiedPropertiesWithoutUndo();
+                Debug.Log("[VARG] BossDialogueManager references on [Systems] prefab updated!");
+            }
+
             PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
             PrefabUtility.UnloadPrefabContents(root);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+        [MenuItem("VARG/Create or Update BossLineSet Asset")]
+        public static void CreateBossLineSet()
+        {
+            const string path = "Assets/_Project/Data/BossLineSet.asset";
+            var asset = AssetDatabase.LoadAssetAtPath<BossLineSet>(path);
+            var isNew = asset == null;
+
+            if (isNew)
+            {
+                asset = ScriptableObject.CreateInstance<BossLineSet>();
+            }
+
+            var ser = new SerializedObject(asset);
+
+            SetArray(ser, "_correctCaptureLines", new[]
+            {
+                "Excelente. Mais um item pra cota e menos uma dor de cabeça pro meu relatório.",
+                "Registrado no inventário! Quem diria que você sabia ler o briefing?!",
+                "Correto! O setor de pesquisa agradece a cooperação dessa criatura.",
+                "Muito bem, estagiário. Continue assim e talvez eu assine seu relatório de estágio."
+            });
+
+            SetArray(ser, "_outOfOrderCaptureLines", new[]
+            {
+                "Eu pedi {expected}, e você me traz {captured}?! Você sequer olhou a ordem?!",
+                "Incompetência cósmica! A ordem exigia {expected}, não {captured}!",
+                "Parabéns, desorganizou o protocolo inteiro! A prioridade era {expected}!",
+                "{captured} agora não! Era a vez de {expected}! O tempo tá correndo!"
+            });
+
+            SetArray(ser, "_notInListCaptureLines", new[]
+            {
+                "{captured}?! ISSO NÃO ESTAVA NA LISTA! Você quer ser demitido?!",
+                "Por que tem um {captured} a bordo?! Eu proibi expressamente esse tipo de espécime!",
+                "Desastre diplomático! Largue esse {captured} antes que a federação descubra!",
+                "Não autorizei a abdução de {captured}! Isso é crime intergaláctico de classe B!"
+            });
+
+            SetArray(ser, "_beamDeniedLines", new[]
+            {
+                "Acesso negado! O feixe só recolhe a nave quando a cota estiver completa!",
+                "Voltando de mãos vazias?! A missão não acabou, estagiário! Vá atrás dos alvos!",
+                "Não tente fugir! Termine a lista antes de pedir resgate!"
+            });
+
+            SetArray(ser, "_correctCageLines", new[]
+            {
+                "Gaiola certa. Menos um problema no setor de triagem.",
+                "Espécime alocado com sucesso. O cheiro na nave tá diminuindo.",
+                "Perfeito! Triagem correta sem violar os direitos galácticos."
+            });
+
+            SetArray(ser, "_wrongCageLines", new[]
+            {
+                "Você colocou {captured} na gaiola errada! A criatura quase foi mastigada!",
+                "Errou a gaiola! Mais uma dessas e o custo do conserto sai do seu contracheque!",
+                "Isso não é um habitat, é uma salada biológica! Gaiola errada!"
+            });
+
+            SetArray(ser, "_correctDiscardLines", new[]
+            {
+                "Descarte correto. Lixo espacial reciclado conforme as normas da ISO cósmica.",
+                "Eliminado com sucesso. Menos peso na nave."
+            });
+
+            SetArray(ser, "_wrongDiscardLines", new[]
+            {
+                "Você jogou {captured} na lixeira?! ERA UM ALVO DA MISSÃO, ANIMAL!",
+                "Descarte não autorizado! Pare de jogar a cota da empresa no triturador!",
+                "Você acabou de desintegrar um item da pesquisa! Minha pressão tá em 300!"
+            });
+
+            SetArray(ser, "_lifeLostTier1Lines", new[]
+            {
+                "Cuidado, estagiário! Recursos da nave não nascem em árvore cósmica.",
+                "Menos uma chance. Concentre-se antes que eu rebaixe você pra lavador de turbina!",
+                "Um errinho básico... ainda estamos no lucro, mas não abuse."
+            });
+
+            SetArray(ser, "_lifeLostTier2Lines", new[]
+            {
+                "Mais um erro e eu te deixo na Terra junto com as vacas! Só restam {lives} chances!",
+                "Minha pressão tá subindo! Se você perder mais uma vida, quem vai pro triturador é você!",
+                "Alerta amarelo! Só temos {lives} tentativas restantes! Pare de brincar em serviço!"
+            });
+
+            SetArray(ser, "_lifeLostTier3Lines", new[]
+            {
+                "ÚLTIMA CHANCE! Se você errar mais uma vez, eu cancelo sua cidadania alienígena!",
+                "UMA VIDA! UMA ÚNICA VIDA! Minha carreira de comandante está por um fio!",
+                "ALERTA VERMELHO! Respire fundo e não faça nenhuma besteira, estagiário!"
+            });
+
+            SetArray(ser, "_timeLowLines", new[]
+            {
+                "O relógio tá correndo na fase de {phase}! Menos enrolação e mais trabalho!",
+                "Quinze segundos?! Acelera esse passo antes que o turno termine!",
+                "Hora extra não é remunerada nessa galáxia! Termine logo esse {phase}!"
+            });
+
+            SetArray(ser, "_victoryLines", new[]
+            {
+                "Missão cumprida! Hora de bater o ponto e fingir que trabalhamos duro.",
+                "Cota batida! Você escapou de uma advertência formal por hoje.",
+                "Excelente trabalho. O relatório trimestral vai ficar bonito pro alto conselho."
+            });
+
+            SetArray(ser, "_defeatLines", new[]
+            {
+                "Derrota inaceitável ({reason})! Seu relatório de desempenho foi direto pro RH!",
+                "Fim da linha! O estagiário conseguiu fracassar a operação mais simples do quadrante!",
+                "Missão falhou: {reason}. Vou fingir que nem te conheço no tribunal estelar."
+            });
+
+            SetArray(ser, "_idleLines", new[]
+            {
+                "Você ganha por hora agora? Mexa-se!",
+                "A Terra não vai se abduzir sozinha, estagiário!",
+                "Está contemplando o cosmos ou travou aí embaixo?!",
+                "Alô? Tem alguém em casa ou o cérebro virou gelatina espacial?!"
+            });
+
+            ser.ApplyModifiedPropertiesWithoutUndo();
+
+            if (isNew)
+            {
+                AssetDatabase.CreateAsset(asset, path);
+            }
+            else
+            {
+                EditorUtility.SetDirty(asset);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[VARG] BossLineSet asset created/updated at {path}");
+        }
+
+        private static void SetArray(SerializedObject so, string propertyName, string[] values)
+        {
+            var prop = so.FindProperty(propertyName);
+            if (prop == null) return;
+            prop.arraySize = values.Length;
+            for (var i = 0; i < values.Length; i++)
+            {
+                prop.GetArrayElementAtIndex(i).stringValue = values[i];
+            }
         }
     }
 }
