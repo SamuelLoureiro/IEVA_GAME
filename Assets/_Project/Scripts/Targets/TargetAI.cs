@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using VARG.Core;
 using VARG.Data;
+using VARG.Player;
 
 namespace VARG.Targets
 {
@@ -33,6 +34,11 @@ namespace VARG.Targets
         [SerializeField] private float _fleeAngularSpeed = 999f;
         [SerializeField] private float _wanderAngularSpeed = 360f;
 
+        [Header("Audio & Panic Feedback")]
+        [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _customFleeClip;
+        [SerializeField] private float _screamCooldown = 2.5f;
+
         private TargetAIState _state = TargetAIState.Idle;
         private Transform _playerTransform;
         private Vector3 _dangerSource;
@@ -43,8 +49,10 @@ namespace VARG.Targets
         private float _currentZigzagAngle = 45f;
         private bool _isInitialized;
         private NavMeshPath _pathBuffer;
+        private float _lastScreamTime = -10f;
 
         public TargetAIState CurrentState => _state;
+        public AudioSource AudioSource => _audioSource;
 
         private void Awake()
         {
@@ -58,7 +66,30 @@ namespace VARG.Targets
                 _target = GetComponent<Target>();
             }
 
+            EnsureAudioSource();
+
             _pathBuffer = new NavMeshPath();
+        }
+
+        public void EnsureAudioSource()
+        {
+            if (_audioSource == null)
+            {
+                _audioSource = GetComponent<AudioSource>();
+                if (_audioSource == null)
+                {
+                    _audioSource = gameObject.AddComponent<AudioSource>();
+                }
+            }
+
+            if (_audioSource != null)
+            {
+                _audioSource.spatialBlend = 1f;
+                _audioSource.playOnAwake = false;
+                _audioSource.minDistance = 2f;
+                _audioSource.maxDistance = 25f;
+                _audioSource.rolloffMode = AudioRolloffMode.Linear;
+            }
         }
 
         private void Start()
@@ -267,6 +298,8 @@ namespace VARG.Targets
             _zigzagSign = Random.value > 0.5f ? 1f : -1f;
             _nextZigzagSwitchTime = Time.time + Random.Range(_zigzagMinDuration, _zigzagMaxDuration);
 
+            PlayFleeScream();
+
             ApplyFleeSpeed();
             UpdateFleeDestination();
         }
@@ -356,10 +389,34 @@ namespace VARG.Targets
                 _stateTimer = _fleeDuration;
                 SwitchZigzagDirection();
                 UpdateFleeDestination();
+                PlayFleeScream();
                 return;
             }
 
             EnterFleeState(dangerSource);
+        }
+
+        private void PlayFleeScream()
+        {
+            if (Time.time - _lastScreamTime < _screamCooldown) return;
+            _lastScreamTime = Time.time;
+
+            var targetType = _target != null && _target.Data != null ? _target.Data.Type : TargetType.Chicken;
+
+            if (_audioSource != null)
+            {
+                var clip = _customFleeClip != null ? _customFleeClip : ProceduralAudioUtility.GetFleeVoiceClip(targetType);
+                if (clip != null)
+                {
+                    _audioSource.pitch = Random.Range(0.95f, 1.05f);
+                    _audioSource.PlayOneShot(clip, 0.85f);
+                }
+            }
+
+            if (CaptureFeedbackFX.Instance != null)
+            {
+                CaptureFeedbackFX.Instance.PlayFleeAlert(transform.position);
+            }
         }
 
         public void SetCaptured()

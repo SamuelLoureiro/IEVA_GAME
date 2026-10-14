@@ -112,7 +112,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 
 ### Sprint 4 — Polimento da Caça
 - [x] **A15** Balanceamento: velocidades de fuga, spawns extras, tempos de captura dos níveis 1–3 (preencher `LevelConfig`).
-- [ ] **A16** Feedback: som/partículas da captura, alvos "gritando" ao fugir.
+- [x] **A16** Feedback: som/partículas da captura, alvos "gritando" ao fugir.
 - [ ] **A17** Arte low-poly (cidade, ET, nave, 4 alvos) substituindo as primitivas, com textura-paleta única.
 - [ ] **A18** Otimização da cidade (polígonos, nº de agentes) — medir build.
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using VARG.Player;
 
 namespace VARG.Targets
 {
@@ -10,10 +11,16 @@ namespace VARG.Targets
         [SerializeField] private float _shrinkDuration = 0.5f;
         [SerializeField] private AnimationCurve _shrinkCurve;
 
+        [Header("Audio Feedback")]
+        [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _boingClip;
+        [SerializeField] private AudioClip _popClip;
+
         private Vector3 _initialScale;
         private bool _isShrinking;
 
         public bool IsShrinking => _isShrinking;
+        public AudioSource AudioSource => _audioSource;
 
         private void Awake()
         {
@@ -22,6 +29,28 @@ namespace VARG.Targets
             if (_shrinkCurve == null || _shrinkCurve.length == 0)
             {
                 _shrinkCurve = CreateDefaultBoingCurve();
+            }
+
+            EnsureAudioSource();
+        }
+
+        public void EnsureAudioSource()
+        {
+            if (_audioSource == null)
+            {
+                _audioSource = GetComponent<AudioSource>();
+                if (_audioSource == null)
+                {
+                    _audioSource = gameObject.AddComponent<AudioSource>();
+                }
+            }
+
+            if (_audioSource != null)
+            {
+                _audioSource.spatialBlend = 1f;
+                _audioSource.playOnAwake = false;
+                _audioSource.minDistance = 2f;
+                _audioSource.maxDistance = 25f;
             }
         }
 
@@ -58,6 +87,13 @@ namespace VARG.Targets
                 colliders[i].enabled = false;
             }
 
+            if (_audioSource != null)
+            {
+                var boing = _boingClip != null ? _boingClip : ProceduralAudioUtility.GetBoingShrinkClip();
+                _audioSource.pitch = UnityEngine.Random.Range(0.95f, 1.05f);
+                _audioSource.PlayOneShot(boing, 0.8f);
+            }
+
             var elapsed = 0f;
             while (elapsed < _shrinkDuration)
             {
@@ -70,6 +106,17 @@ namespace VARG.Targets
 
             transform.localScale = _initialScale * 0.05f;
             _isShrinking = false;
+
+            if (CaptureFeedbackFX.Instance != null)
+            {
+                CaptureFeedbackFX.Instance.PlayCapturePoof(transform.position, Color.white);
+            }
+
+            var pop = _popClip != null ? _popClip : ProceduralAudioUtility.GetCapturePopClip();
+            if (pop != null)
+            {
+                AudioSource.PlayClipAtPoint(pop, transform.position, 0.85f);
+            }
 
             onShrinkComplete?.Invoke();
             gameObject.SetActive(false);

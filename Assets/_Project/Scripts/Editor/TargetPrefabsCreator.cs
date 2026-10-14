@@ -86,7 +86,17 @@ namespace VARG.Editor
             agent.autoBraking = false;
             agent.stoppingDistance = 0.5f;
 
-            targetGo.AddComponent<Shrinkable>();
+            var audioSource = targetGo.AddComponent<AudioSource>();
+            audioSource.spatialBlend = 1f;
+            audioSource.playOnAwake = false;
+            audioSource.minDistance = 2f;
+            audioSource.maxDistance = 25f;
+            audioSource.rolloffMode = AudioRolloffMode.Linear;
+
+            var shrinkable = targetGo.AddComponent<Shrinkable>();
+            var shrinkSerialized = new SerializedObject(shrinkable);
+            shrinkSerialized.FindProperty("_audioSource").objectReferenceValue = audioSource;
+            shrinkSerialized.ApplyModifiedPropertiesWithoutUndo();
 
             var targetComponent = targetGo.AddComponent<Target>();
             if (targetData != null)
@@ -98,6 +108,7 @@ namespace VARG.Editor
             var aiSerialized = new SerializedObject(targetAi);
             aiSerialized.FindProperty("_agent").objectReferenceValue = agent;
             aiSerialized.FindProperty("_target").objectReferenceValue = targetComponent;
+            aiSerialized.FindProperty("_audioSource").objectReferenceValue = audioSource;
             aiSerialized.ApplyModifiedPropertiesWithoutUndo();
 
             var targetPrefabPath = $"Assets/_Project/Prefabs/Targets/Target_{typeName}.prefab";

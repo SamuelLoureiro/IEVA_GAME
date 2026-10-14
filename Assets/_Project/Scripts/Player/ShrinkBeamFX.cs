@@ -47,6 +47,12 @@ namespace VARG.Player
             }
 
             _beamCoroutine = StartCoroutine(BeamRoutine(startPoint, endPoint));
+
+            if (CaptureFeedbackFX.Instance != null)
+            {
+                CaptureFeedbackFX.Instance.PlayImpactSparks(startPoint, _beamColor, 4);
+                CaptureFeedbackFX.Instance.PlayImpactSparks(endPoint, _beamColor, 12);
+            }
         }
 
         private IEnumerator BeamRoutine(Vector3 startPoint, Vector3 endPoint)

@@ -1,4 +1,6 @@
 using UnityEngine;
+using VARG.Core;
+using VARG.Data;
 using VARG.Input;
 using VARG.Targets;
 
@@ -12,10 +14,31 @@ namespace VARG.Player
         [SerializeField] private float _cooldown = 0.6f;
         [SerializeField] private float _maxRange = 25f;
         [SerializeField] private float _scareRadius = 8f;
+        [Header("Audio Feedback")]
         [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _fireClip;
+        [SerializeField] private AudioClip _captureSuccessClip;
+        [SerializeField] private AudioClip _captureErrorClip;
+        [SerializeField] private AudioClip _missionCompleteClip;
 
         private IPlayerInput _playerInput;
         private float _nextFireTime;
+
+        private void OnEnable()
+        {
+            GameEvents.OnCorrectCapture += HandleCorrectCapture;
+            GameEvents.OnOutOfOrderCapture += HandleOutOfOrderCapture;
+            GameEvents.OnNotInListCapture += HandleNotInListCapture;
+            GameEvents.OnMissionComplete += HandleMissionComplete;
+        }
+
+        private void OnDisable()
+        {
+            GameEvents.OnCorrectCapture -= HandleCorrectCapture;
+            GameEvents.OnOutOfOrderCapture -= HandleOutOfOrderCapture;
+            GameEvents.OnNotInListCapture -= HandleNotInListCapture;
+            GameEvents.OnMissionComplete -= HandleMissionComplete;
+        }
 
         private void Start()
         {
@@ -32,6 +55,10 @@ namespace VARG.Player
             if (_audioSource == null)
             {
                 _audioSource = GetComponent<AudioSource>();
+                if (_audioSource == null)
+                {
+                    _audioSource = gameObject.AddComponent<AudioSource>();
+                }
             }
 
             _playerInput = InputManager.HasInstance ? InputManager.Instance.Player : new KeyboardMouseInput();
@@ -115,8 +142,46 @@ namespace VARG.Player
         {
             if (_audioSource == null) return;
 
-            _audioSource.pitch = Random.Range(1.1f, 1.3f);
-            _audioSource.Play();
+            var clip = _fireClip != null ? _fireClip : ProceduralAudioUtility.GetLaserShootClip();
+            _audioSource.pitch = Random.Range(1.05f, 1.25f);
+            _audioSource.PlayOneShot(clip, 0.7f);
+        }
+
+        private void HandleCorrectCapture(TargetData data)
+        {
+            if (_audioSource == null) return;
+
+            var clip = _captureSuccessClip != null ? _captureSuccessClip : ProceduralAudioUtility.GetCaptureSuccessClip();
+            _audioSource.pitch = 1.0f;
+            _audioSource.PlayOneShot(clip, 0.85f);
+        }
+
+        private void HandleOutOfOrderCapture(TargetData captured, TargetData expected)
+        {
+            PlayErrorSound();
+        }
+
+        private void HandleNotInListCapture(TargetData data)
+        {
+            PlayErrorSound();
+        }
+
+        private void PlayErrorSound()
+        {
+            if (_audioSource == null) return;
+
+            var clip = _captureErrorClip != null ? _captureErrorClip : ProceduralAudioUtility.GetCaptureErrorClip();
+            _audioSource.pitch = 1.0f;
+            _audioSource.PlayOneShot(clip, 0.9f);
+        }
+
+        private void HandleMissionComplete()
+        {
+            if (_audioSource == null) return;
+
+            var clip = _missionCompleteClip != null ? _missionCompleteClip : ProceduralAudioUtility.GetMissionCompleteClip();
+            _audioSource.pitch = 1.0f;
+            _audioSource.PlayOneShot(clip, 0.95f);
         }
 
         public void SetInputSource(IPlayerInput inputSource)
