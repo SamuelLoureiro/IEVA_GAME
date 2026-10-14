@@ -108,7 +108,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 - [x] **A12** Ligar o Timer de Captura à cena (start ao entrar, stop no feixe, derrota no zero).
 - [x] **A13** Cena `05_Results` + `ResultsScreen`: tempos restantes, vidas, erros, score (§R.7), gráfico de barras estilo Excel, botões "Próximo nível"/"Tentar de novo".
   - Depende: B01 (`LastResult`).
-- [ ] **A14** `PauseMenu` (Esc): pausa timers, destrava cursor, botões Continuar/Reiniciar nível.
+- [-] **A14** ~~`PauseMenu` (Esc)~~ *(Descartado — não exigido no pipeline do professor)*.
 
 ### Sprint 4 — Polimento da Caça
 - [ ] **A15** Balanceamento: velocidades de fuga, spawns extras, tempos de captura dos níveis 1–3 (preencher `LevelConfig`).
