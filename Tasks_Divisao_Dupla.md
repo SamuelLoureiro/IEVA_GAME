@@ -103,9 +103,9 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 
 ### Sprint 3 — HUD, Resultados e pause (Passos 5, 10)
 - [x] **A10** `HuntInventoryUI` (progresso de alvos `Targets: X/Y` em inglês, reativo a eventos de captura e conclusão).
-- [ ] **A11** `TimerUI` (Captura + dívida da Triagem, vermelho < 15 s), `TimeDeltaPopup`, `LivesUI`.
+- [x] **A11** `TimerUI` (Captura + dívida da Triagem, vermelho < 15 s), `TimeDeltaPopup`, `LivesUI`.
   - Pronto quando: cada erro mostra "−10" e uma vida piscando; dívida aparece na Caça.
-- [ ] **A12** Ligar o Timer de Captura à cena (start ao entrar, stop no feixe, derrota no zero).
+- [x] **A12** Ligar o Timer de Captura à cena (start ao entrar, stop no feixe, derrota no zero).
 - [ ] **A13** Cena `05_Results` + `ResultsScreen`: tempos restantes, vidas, erros, score (§R.7), gráfico de barras estilo Excel, botões "Próximo nível"/"Tentar de novo".
   - Depende: B01 (`LastResult`).
 - [ ] **A14** `PauseMenu` (Esc): pausa timers, destrava cursor, botões Continuar/Reiniciar nível.

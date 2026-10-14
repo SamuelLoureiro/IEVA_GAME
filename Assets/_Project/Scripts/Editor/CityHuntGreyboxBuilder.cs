@@ -383,7 +383,141 @@ namespace VARG.Editor
 
             hudGo.AddComponent<GraphicRaycaster>();
 
-            // Targets Progress Panel (Top-Right)
+            var fontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset");
+            var popupPrefab = EnsureTimeDeltaPopupPrefab(fontAsset);
+
+            // 1. Lives Panel (Top-Left)
+            var livesPanelGo = new GameObject("Panel_Lives");
+            livesPanelGo.transform.SetParent(hudGo.transform, false);
+
+            var livesRect = livesPanelGo.AddComponent<RectTransform>();
+            livesRect.anchorMin = new Vector2(0f, 1f);
+            livesRect.anchorMax = new Vector2(0f, 1f);
+            livesRect.pivot = new Vector2(0f, 1f);
+            livesRect.anchoredPosition = new Vector2(30f, -30f);
+            livesRect.sizeDelta = new Vector2(240f, 60f);
+
+            var livesBg = livesPanelGo.AddComponent<Image>();
+            livesBg.color = new Color(0.08f, 0.1f, 0.14f, 0.75f);
+
+            var livesLabelGo = new GameObject("Text_LivesLabel");
+            livesLabelGo.transform.SetParent(livesPanelGo.transform, false);
+            var livesLabelRect = livesLabelGo.AddComponent<RectTransform>();
+            livesLabelRect.anchorMin = new Vector2(0f, 0f);
+            livesLabelRect.anchorMax = new Vector2(0f, 1f);
+            livesLabelRect.anchoredPosition = new Vector2(50f, 0f);
+            livesLabelRect.sizeDelta = new Vector2(80f, 0f);
+
+            var livesTmp = livesLabelGo.AddComponent<TextMeshProUGUI>();
+            if (fontAsset != null) livesTmp.font = fontAsset;
+            livesTmp.text = "Lives: 5";
+            livesTmp.fontSize = 20;
+            livesTmp.fontStyle = FontStyles.Bold;
+            livesTmp.alignment = TextAlignmentOptions.MidlineLeft;
+            livesTmp.color = Color.white;
+
+            var iconsContainerGo = new GameObject("Icons_Container");
+            iconsContainerGo.transform.SetParent(livesPanelGo.transform, false);
+            var iconsContainerRect = iconsContainerGo.AddComponent<RectTransform>();
+            iconsContainerRect.anchorMin = new Vector2(0f, 0.5f);
+            iconsContainerRect.anchorMax = new Vector2(1f, 0.5f);
+            iconsContainerRect.anchoredPosition = new Vector2(50f, 0f);
+            iconsContainerRect.sizeDelta = new Vector2(-110f, 24f);
+
+            var iconsLayout = iconsContainerGo.AddComponent<HorizontalLayoutGroup>();
+            iconsLayout.spacing = 6f;
+            iconsLayout.childAlignment = TextAnchor.MiddleCenter;
+            iconsLayout.childForceExpandWidth = false;
+            iconsLayout.childForceExpandHeight = false;
+
+            var lifeIcons = new Image[5];
+            for (var i = 0; i < 5; i++)
+            {
+                var iconGo = new GameObject($"LifeIcon_{i + 1}");
+                iconGo.transform.SetParent(iconsContainerGo.transform, false);
+                var iconRect = iconGo.AddComponent<RectTransform>();
+                iconRect.sizeDelta = new Vector2(16f, 16f);
+                var iconImg = iconGo.AddComponent<Image>();
+                iconImg.color = new Color(0.2f, 1f, 0.5f);
+                lifeIcons[i] = iconImg;
+            }
+
+            var livesUi = livesPanelGo.AddComponent<LivesUI>();
+            var serializedLivesUi = new SerializedObject(livesUi);
+            serializedLivesUi.FindProperty("_livesText").objectReferenceValue = livesTmp;
+            var iconsProp = serializedLivesUi.FindProperty("_lifeIcons");
+            iconsProp.arraySize = 5;
+            for (var i = 0; i < 5; i++)
+            {
+                iconsProp.GetArrayElementAtIndex(i).objectReferenceValue = lifeIcons[i];
+            }
+            serializedLivesUi.ApplyModifiedPropertiesWithoutUndo();
+
+            // 2. Timer Panel (Top-Center)
+            var timerPanelGo = new GameObject("Panel_Timer");
+            timerPanelGo.transform.SetParent(hudGo.transform, false);
+
+            var timerRect = timerPanelGo.AddComponent<RectTransform>();
+            timerRect.anchorMin = new Vector2(0.5f, 1f);
+            timerRect.anchorMax = new Vector2(0.5f, 1f);
+            timerRect.pivot = new Vector2(0.5f, 1f);
+            timerRect.anchoredPosition = new Vector2(0f, -30f);
+            timerRect.sizeDelta = new Vector2(220f, 75f);
+
+            var timerBg = timerPanelGo.AddComponent<Image>();
+            timerBg.color = new Color(0.08f, 0.1f, 0.14f, 0.75f);
+
+            var timerTextGo = new GameObject("Text_Timer");
+            timerTextGo.transform.SetParent(timerPanelGo.transform, false);
+            var timerTextRect = timerTextGo.AddComponent<RectTransform>();
+            timerTextRect.anchorMin = new Vector2(0f, 0.35f);
+            timerTextRect.anchorMax = new Vector2(1f, 1f);
+            timerTextRect.sizeDelta = Vector2.zero;
+
+            var timerTmp = timerTextGo.AddComponent<TextMeshProUGUI>();
+            if (fontAsset != null) timerTmp.font = fontAsset;
+            timerTmp.text = "01:30";
+            timerTmp.fontSize = 32;
+            timerTmp.fontStyle = FontStyles.Bold;
+            timerTmp.alignment = TextAlignmentOptions.Center;
+            timerTmp.color = Color.white;
+
+            var debtTextGo = new GameObject("Text_Debt");
+            debtTextGo.transform.SetParent(timerPanelGo.transform, false);
+            var debtTextRect = debtTextGo.AddComponent<RectTransform>();
+            debtTextRect.anchorMin = new Vector2(0f, 0f);
+            debtTextRect.anchorMax = new Vector2(1f, 0.35f);
+            debtTextRect.sizeDelta = Vector2.zero;
+
+            var debtTmp = debtTextGo.AddComponent<TextMeshProUGUI>();
+            if (fontAsset != null) debtTmp.font = fontAsset;
+            debtTmp.text = "Debt: -10s";
+            debtTmp.fontSize = 16;
+            debtTmp.fontStyle = FontStyles.Bold;
+            debtTmp.alignment = TextAlignmentOptions.Center;
+            debtTmp.color = new Color(1f, 0.45f, 0.2f);
+            debtTextGo.SetActive(false);
+
+            var popupContainerGo = new GameObject("Transform_PopupContainer");
+            popupContainerGo.transform.SetParent(timerPanelGo.transform, false);
+            var popupContainerRect = popupContainerGo.AddComponent<RectTransform>();
+            popupContainerRect.anchorMin = new Vector2(0.5f, 0f);
+            popupContainerRect.anchorMax = new Vector2(0.5f, 0f);
+            popupContainerRect.anchoredPosition = new Vector2(0f, -25f);
+            popupContainerRect.sizeDelta = Vector2.zero;
+
+            var timerUi = timerPanelGo.AddComponent<TimerUI>();
+            var serializedTimerUi = new SerializedObject(timerUi);
+            serializedTimerUi.FindProperty("_timerText").objectReferenceValue = timerTmp;
+            serializedTimerUi.FindProperty("_debtText").objectReferenceValue = debtTmp;
+            serializedTimerUi.FindProperty("_timerBackground").objectReferenceValue = timerBg;
+            serializedTimerUi.FindProperty("_popupPrefab").objectReferenceValue = popupPrefab;
+            serializedTimerUi.FindProperty("_popupContainer").objectReferenceValue = popupContainerGo.transform;
+            serializedTimerUi.FindProperty("_autoStartCaptureTimer").boolValue = true;
+            serializedTimerUi.FindProperty("_defaultCaptureDuration").floatValue = 90f;
+            serializedTimerUi.ApplyModifiedPropertiesWithoutUndo();
+
+            // 3. Targets Progress Panel (Top-Right)
             var targetPanelGo = new GameObject("Panel_TargetsProgress");
             targetPanelGo.transform.SetParent(hudGo.transform, false);
 
@@ -397,7 +531,6 @@ namespace VARG.Editor
             var panelImg = targetPanelGo.AddComponent<Image>();
             panelImg.color = new Color(0.08f, 0.1f, 0.14f, 0.75f);
 
-            // Target Progress Text
             var textGo = new GameObject("Text_Progress");
             textGo.transform.SetParent(targetPanelGo.transform, false);
 
@@ -409,18 +542,13 @@ namespace VARG.Editor
             textRect.offsetMax = new Vector2(-20f, 0f);
 
             var tmp = textGo.AddComponent<TextMeshProUGUI>();
-            var fontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset");
-            if (fontAsset != null)
-            {
-                tmp.font = fontAsset;
-            }
+            if (fontAsset != null) tmp.font = fontAsset;
             tmp.text = "Targets: 0/0";
             tmp.fontSize = 24;
             tmp.fontStyle = FontStyles.Bold;
             tmp.alignment = TextAlignmentOptions.Midline;
             tmp.color = Color.white;
 
-            // Add HuntInventoryUI component
             var huntUi = targetPanelGo.AddComponent<HuntInventoryUI>();
             var serializedHuntUi = new SerializedObject(huntUi);
             serializedHuntUi.FindProperty("_progressText").objectReferenceValue = tmp;
@@ -430,6 +558,56 @@ namespace VARG.Editor
             serializedHuntUi.FindProperty("_normalTextColor").colorValue = Color.white;
             serializedHuntUi.FindProperty("_completedTextColor").colorValue = new Color(0.2f, 1f, 0.4f);
             serializedHuntUi.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static GameObject EnsureTimeDeltaPopupPrefab(TMP_FontAsset fontAsset)
+        {
+            const string prefabFolder = "Assets/_Project/Prefabs/UI";
+            const string prefabPath = "Assets/_Project/Prefabs/UI/TimeDeltaPopup.prefab";
+
+            var existingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (existingPrefab != null) return existingPrefab;
+
+            if (!AssetDatabase.IsValidFolder(prefabFolder))
+            {
+                AssetDatabase.CreateFolder("Assets/_Project/Prefabs", "UI");
+            }
+
+            var popupGo = new GameObject("TimeDeltaPopup");
+            var rect = popupGo.AddComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(160f, 40f);
+
+            var canvasGroup = popupGo.AddComponent<CanvasGroup>();
+
+            var textGo = new GameObject("DeltaText");
+            textGo.transform.SetParent(popupGo.transform, false);
+            var textRect = textGo.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.sizeDelta = Vector2.zero;
+
+            var tmp = textGo.AddComponent<TextMeshProUGUI>();
+            if (fontAsset != null) tmp.font = fontAsset;
+            tmp.text = "-10s";
+            tmp.fontSize = 28;
+            tmp.fontStyle = FontStyles.Bold;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = new Color(1f, 0.25f, 0.25f);
+
+            var popupComp = popupGo.AddComponent<TimeDeltaPopup>();
+            var serializedPopup = new SerializedObject(popupComp);
+            serializedPopup.FindProperty("_deltaText").objectReferenceValue = tmp;
+            serializedPopup.FindProperty("_canvasGroup").objectReferenceValue = canvasGroup;
+            serializedPopup.FindProperty("_penaltyColor").colorValue = new Color(1f, 0.25f, 0.25f);
+            serializedPopup.FindProperty("_floatDistance").floatValue = 50f;
+            serializedPopup.FindProperty("_duration").floatValue = 1.2f;
+            serializedPopup.ApplyModifiedPropertiesWithoutUndo();
+
+            var saved = PrefabUtility.SaveAsPrefabAsset(popupGo, prefabPath);
+            Object.DestroyImmediate(popupGo);
+            AssetDatabase.SaveAssets();
+
+            return saved;
         }
     }
 }
