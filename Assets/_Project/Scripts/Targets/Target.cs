@@ -21,7 +21,7 @@ namespace VARG.Targets
 
         public bool CanInteract => _canInteract && (_shrinkable == null || !_shrinkable.IsShrinking);
 
-        public string Prompt => _data != null ? $"Abduzir {_data.DisplayName}" : "Abduzir";
+        public string Prompt => _data != null ? $"Abduct {_data.DisplayName}" : "Abduct";
 
         private void Awake()
         {

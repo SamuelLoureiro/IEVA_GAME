@@ -28,7 +28,7 @@ namespace VARG.UI
         {
             _canvasGroup.blocksRaycasts = true;
             UpdateProgress(0f);
-            SetStatus("Salvando planilha...");
+            SetStatus("Loading...");
 
             var elapsed = 0f;
             while (elapsed < _fadeDuration)

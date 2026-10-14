@@ -110,10 +110,10 @@ namespace VARG.Editor
         private static void CreateConfigs()
         {
             // TargetData for the 4 targets
-            CreateTargetData("Target_Chicken", TargetType.Chicken, "Galinha", 3f, 5f);
-            CreateTargetData("Target_Cow", TargetType.Cow, "Vaca", 2f, 4f);
-            CreateTargetData("Target_Pig", TargetType.Pig, "Porco", 2.5f, 4.5f);
-            CreateTargetData("Target_Human", TargetType.Human, "Humano", 4f, 7f);
+            CreateTargetData("Target_Chicken", TargetType.Chicken, "Chicken", 3f, 5f);
+            CreateTargetData("Target_Cow", TargetType.Cow, "Cow", 2f, 4f);
+            CreateTargetData("Target_Pig", TargetType.Pig, "Pig", 2.5f, 4.5f);
+            CreateTargetData("Target_Human", TargetType.Human, "Human", 4f, 7f);
             // PenaltyConfig
             const string penaltyPath = "Assets/_Project/Data/PenaltyConfig.asset";
             if (AssetDatabase.LoadAssetAtPath<PenaltyConfig>(penaltyPath) == null)

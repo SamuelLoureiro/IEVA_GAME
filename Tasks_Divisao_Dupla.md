@@ -143,7 +143,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 - [x] **B12** `KillZoneRespawn` + Timer de Separação ligado à cena (start com dívida, stop no fim, derrota no zero).
 
 ### Sprint 3 — Briefing e Humor (Passos 11, 12)
-- [ ] **B13** Cena `01_BossBriefing`: `BriefingController`, `DialogueBox`, `TypewriterText`, `SpreadsheetTableUI`; lista com tempo limitado; mostra o nível.
+- [x] **B13** Cena `01_BossBriefing`: `BriefingController`, `DialogueBox`, `TypewriterText`, `TargetShowcaseUI`; lista com tempo limitado; mostra o nível.
   - Pronto quando: a lista some ao continuar e nunca mais aparece no nível.
 - [ ] **B14** `BossLineSet` + `BossDialogueManager` (shuffle bag, tokens, escalonamento por vidas perdidas, cooldown, `OnIdle`).
 - [ ] **B15** `BossPopupUI` (comentário de célula) + `AlienVoice` (bipes).

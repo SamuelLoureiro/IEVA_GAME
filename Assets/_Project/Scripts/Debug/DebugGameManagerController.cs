@@ -40,26 +40,26 @@ namespace VARG.DebugTools
             if (!_showGui) return;
             if (GameManager.Instance == null) return;
 
-            GUILayout.BeginArea(new Rect(10, 10, 220, 280), "GameManager Debug (Clique ou 1-8)", GUI.skin.window);
+            GUILayout.BeginArea(new Rect(10, 10, 220, 280), "GameManager Debug (Click or 1-8)", GUI.skin.window);
 
-            GUILayout.Label($"Nível Atual: {GameManager.Instance.CurrentLevel}");
+            GUILayout.Label($"Current Level: {GameManager.Instance.CurrentLevel}");
 
             if (GUILayout.Button("1. StartLevel (Briefing)"))
             {
                 GameManager.Instance.StartLevel();
             }
 
-            if (GUILayout.Button("2. GoToHunt (Caça / Nave)"))
+            if (GUILayout.Button("2. GoToHunt (City / Ship)"))
             {
                 GameManager.Instance.GoToHunt();
             }
 
-            if (GUILayout.Button("3. GoToSorting (Triagem)"))
+            if (GUILayout.Button("3. GoToSorting (Sorting)"))
             {
                 GameManager.Instance.GoToSorting();
             }
 
-            if (GUILayout.Button("4. Victory (Resultados)"))
+            if (GUILayout.Button("4. Victory (Results)"))
             {
                 GameManager.Instance.Victory();
             }
