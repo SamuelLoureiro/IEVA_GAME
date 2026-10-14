@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Data.TargetData
   _id: Target_Chicken
   _type: 0
-  _displayName: Galinha
+  _displayName: Chicken
   _prefab: {fileID: 432527102681369579, guid: 2d7a527357d0dfa79a359136aececef2, type: 3}
   _miniPrefab: {fileID: 8415223379529903465, guid: 589d7b1d61ff9cd82a0cd3beecee523d, type: 3}
   _icon: {fileID: 0}

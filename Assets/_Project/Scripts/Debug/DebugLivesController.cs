@@ -22,16 +22,16 @@ namespace VARG.DebugTools
             if (!_showGui) return;
             if (LivesManager.Instance == null) return;
 
-            GUILayout.BeginArea(new Rect(540, 10, 220, 180), "Vidas Debug (B04)", GUI.skin.window);
+            GUILayout.BeginArea(new Rect(540, 10, 220, 180), "Debug Lives (B04)", GUI.skin.window);
 
-            GUILayout.Label($"Vidas Restantes: {LivesManager.Instance.Lives}");
+            GUILayout.Label($"Remaining Lives: {LivesManager.Instance.Lives}");
 
-            if (GUILayout.Button("Perder 1 Vida (-1)"))
+            if (GUILayout.Button("Lose 1 Life (-1)"))
             {
                 LivesManager.Instance.LoseLife();
             }
 
-            if (GUILayout.Button("Perder Todas as Vidas (Zerar)"))
+            if (GUILayout.Button("Lose All Lives (Zero)"))
             {
                 while (LivesManager.Instance.Lives > 0)
                 {
@@ -39,7 +39,7 @@ namespace VARG.DebugTools
                 }
             }
 
-            if (GUILayout.Button("Resetar Vidas (5)"))
+            if (GUILayout.Button("Reset Lives (5)"))
             {
                 LivesManager.Instance.ResetLives(5);
             }

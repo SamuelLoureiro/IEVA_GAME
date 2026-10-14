@@ -53,37 +53,37 @@ namespace VARG.DebugTools
             if (!_showGui) return;
             if (MissionManager.Instance == null) return;
 
-            GUILayout.BeginArea(new Rect(540, 200, 280, 420), "Missão Debug (B05)", GUI.skin.window);
+            GUILayout.BeginArea(new Rect(540, 200, 280, 420), "Mission Debug (B05)", GUI.skin.window);
 
-            GUILayout.Label($"Tipo Proibido: {MissionManager.Instance.ForbiddenType}");
-            GUILayout.Label($"Progresso: {MissionManager.Instance.CurrentIndex} / {MissionManager.Instance.RequiredCount}");
-            GUILayout.Label($"Completa: {(MissionManager.Instance.IsComplete ? "[SIM - PRONTA]" : "[NÃO]")}");
+            GUILayout.Label($"Forbidden Type: {MissionManager.Instance.ForbiddenType}");
+            GUILayout.Label($"Progress: {MissionManager.Instance.CurrentIndex} / {MissionManager.Instance.RequiredCount}");
+            GUILayout.Label($"Complete: {(MissionManager.Instance.IsComplete ? "[YES - READY]" : "[NO]")}");
 
             if (_lastResult.HasValue)
             {
-                GUILayout.Label($"Último Resultado: {_lastResult.Value}");
+                GUILayout.Label($"Last Result: {_lastResult.Value}");
             }
 
             GUILayout.Space(5);
-            GUILayout.Label("Ordem Requerida:");
+            GUILayout.Label("Required Order:");
             for (var i = 0; i < MissionManager.Instance.RequiredOrder.Count; i++)
             {
                 var target = MissionManager.Instance.RequiredOrder[i];
                 var prefix = i == MissionManager.Instance.CurrentIndex ? "-> " : "   ";
-                var status = i < MissionManager.Instance.CurrentIndex ? "[OK]" : "[PENDENTE]";
+                var status = i < MissionManager.Instance.CurrentIndex ? "[OK]" : "[PENDING]";
                 GUILayout.Label($"{prefix}[{i + 1}] {target.DisplayName} {status}");
             }
 
             GUILayout.Space(5);
 
-            if (GUILayout.Button("1. Gerar Missão (Nível 1)"))
+            if (GUILayout.Button("1. Generate Mission (Level 1)"))
             {
                 LoadLevelConfig();
                 MissionManager.Instance.GenerateMission(_levelConfig1);
                 _lastResult = null;
             }
 
-            if (GUILayout.Button("2. Capturar Correto (Correct)"))
+            if (GUILayout.Button("2. Capture Expected (Correct)"))
             {
                 if (!MissionManager.Instance.IsComplete && MissionManager.Instance.CurrentIndex < MissionManager.Instance.RequiredOrder.Count)
                 {
@@ -92,7 +92,7 @@ namespace VARG.DebugTools
                 }
             }
 
-            if (GUILayout.Button("3. Capturar Fora de Ordem (OutOfOrder)"))
+            if (GUILayout.Button("3. Capture Wrong Order (OutOfOrder)"))
             {
                 TargetData wrongAllowed = null;
                 var allTypes = (TargetType[])System.Enum.GetValues(typeof(TargetType));
@@ -116,7 +116,7 @@ namespace VARG.DebugTools
                 }
             }
 
-            if (GUILayout.Button("4. Capturar Proibido (NotInList)"))
+            if (GUILayout.Button("4. Capture Forbidden (NotInList)"))
             {
                 var forbiddenData = MissionManager.Instance.GetTargetDataForType(MissionManager.Instance.ForbiddenType);
                 if (forbiddenData != null)

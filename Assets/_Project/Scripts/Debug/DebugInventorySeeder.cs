@@ -25,6 +25,11 @@ namespace VARG.DebugTools
             }
         }
 
+        public void Configure(bool seedOnStart)
+        {
+            _seedOnStart = seedOnStart;
+        }
+
         private void Start()
         {
             LoadTargetsIfMissing();
@@ -84,7 +89,7 @@ namespace VARG.DebugTools
 
             GUILayout.BeginArea(new Rect(10, 300, 240, 220), "Inventory Debug", GUI.skin.window);
 
-            GUILayout.Label($"Total Itens: {InventoryManager.Instance.Count}");
+            GUILayout.Label($"Total Items: {InventoryManager.Instance.Count}");
 
             for (var i = 0; i < InventoryManager.Instance.Items.Count; i++)
             {
@@ -93,12 +98,12 @@ namespace VARG.DebugTools
                 GUILayout.Label($"[{i + 1}] {nameStr} - {item.Result}");
             }
 
-            if (GUILayout.Button("Popular Inventário (Mock)"))
+            if (GUILayout.Button("Seed Inventory (Mock)"))
             {
                 SeedDebugInventory();
             }
 
-            if (GUILayout.Button("Limpar Inventário"))
+            if (GUILayout.Button("Clear Inventory"))
             {
                 InventoryManager.Instance.Clear();
             }
