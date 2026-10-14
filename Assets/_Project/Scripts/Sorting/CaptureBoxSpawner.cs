@@ -126,6 +126,11 @@ namespace VARG.Sorting
 
         public void ClearSpawned()
         {
+            if (SortingManager.Instance != null)
+            {
+                SortingManager.Instance.ClearItems();
+            }
+
             for (var i = _spawnedObjects.Count - 1; i >= 0; i--)
             {
                 if (_spawnedObjects[i] != null)

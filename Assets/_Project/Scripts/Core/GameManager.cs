@@ -20,6 +20,8 @@ namespace VARG.Core
 
         public int CurrentLevel { get; private set; } = 1;
         public LevelResult LastResult { get; private set; }
+        public bool IsVictory { get; private set; }
+        public DefeatReason? LastDefeatReason { get; private set; }
 
         protected override void Awake()
         {
@@ -67,6 +69,8 @@ namespace VARG.Core
 
         public void StartLevel()
         {
+            IsVictory = false;
+            LastDefeatReason = null;
             var levelConfig = GetCurrentLevelConfig();
 
             if (InventoryManager.Instance != null)
@@ -128,6 +132,8 @@ namespace VARG.Core
                 TimerManager.Instance.StopAllTimers();
             }
 
+            IsVictory = true;
+            LastDefeatReason = null;
             CalculateAndStoreResult();
             GameEvents.TriggerVictory();
 
@@ -144,6 +150,8 @@ namespace VARG.Core
                 TimerManager.Instance.StopAllTimers();
             }
 
+            IsVictory = false;
+            LastDefeatReason = reason;
             CalculateAndStoreResult();
             GameEvents.TriggerDefeat(reason);
 

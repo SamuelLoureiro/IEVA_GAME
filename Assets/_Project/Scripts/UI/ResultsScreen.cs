@@ -74,7 +74,9 @@ namespace VARG.UI
             var hasResult = GameManager.HasInstance && GameManager.Instance.LastResult.Score >= 0;
             CurrentResult = hasResult ? GameManager.Instance.LastResult : GetSampleResult();
 
-            var isVictory = CurrentResult.RemainingLives > 0;
+            var isVictory = GameManager.HasInstance
+                ? GameManager.Instance.IsVictory
+                : (CurrentResult.RemainingLives > 0 && CurrentResult.RemainingCaptureTime > 0f && CurrentResult.RemainingSortingTime > 0f);
 
             if (_titleText != null)
             {
@@ -85,7 +87,17 @@ namespace VARG.UI
             if (_subtitleText != null)
             {
                 var levelNumber = GameManager.HasInstance ? GameManager.Instance.CurrentLevel : 1;
-                _subtitleText.text = $"Level {levelNumber} Performance Summary";
+                if (isVictory)
+                {
+                    _subtitleText.text = $"Level {levelNumber} Performance Summary";
+                }
+                else
+                {
+                    var reasonText = (GameManager.HasInstance && GameManager.Instance.LastDefeatReason.HasValue)
+                        ? GetDefeatReasonText(GameManager.Instance.LastDefeatReason.Value)
+                        : "Mission Failed";
+                    _subtitleText.text = $"Level {levelNumber} - {reasonText}";
+                }
             }
 
             if (_captureTimeText != null)
@@ -213,6 +225,21 @@ namespace VARG.UI
         private static LevelResult GetSampleResult()
         {
             return new LevelResult(52f, 28f, 4, 1, 1200);
+        }
+
+        private static string GetDefeatReasonText(DefeatReason reason)
+        {
+            switch (reason)
+            {
+                case DefeatReason.CaptureTimeUp:
+                    return "Capture Time Expired!";
+                case DefeatReason.SortingTimeUp:
+                    return "Sorting Time Expired!";
+                case DefeatReason.NoLives:
+                    return "Out of Lives!";
+                default:
+                    return "Mission Failed";
+            }
         }
     }
 }

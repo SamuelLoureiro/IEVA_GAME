@@ -15,7 +15,7 @@ namespace VARG.Editor
         public static void RunVerification()
         {
             var passedCount = 0;
-            var totalCount = 4;
+            var totalCount = 5;
 
             Debug.Log("[Verification A13] Starting ResultsScreen verification...");
 
@@ -113,6 +113,20 @@ namespace VARG.Editor
                 else
                 {
                     Debug.LogError($"[Verification A13] Test 4 FAILED: fillAmount={fillAmount}");
+                }
+
+                // Test 5: Defeat via CaptureTimeUp (Time runs out in Hunt phase with lives remaining)
+                gm.Defeat(DefeatReason.CaptureTimeUp);
+                testScreen.DisplayResults();
+
+                if (titleTmp.text.Contains("FAILED") && !nextBtnGo.activeSelf && retryBtnGo.activeSelf)
+                {
+                    passedCount++;
+                    Debug.Log($"[Verification A13] Test 5 PASSED: CaptureTimeUp defeat correctly shows '{titleTmp.text}' with Next Level disabled.");
+                }
+                else
+                {
+                    Debug.LogError($"[Verification A13] Test 5 FAILED: CaptureTimeUp defeat showed Title='{titleTmp.text}', NextActive={nextBtnGo.activeSelf}");
                 }
             }
             finally
