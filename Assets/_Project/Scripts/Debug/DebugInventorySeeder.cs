@@ -34,7 +34,7 @@ namespace VARG.DebugTools
         {
             LoadTargetsIfMissing();
 
-            if (_seedOnStart)
+            if (_seedOnStart && (InventoryManager.Instance == null || InventoryManager.Instance.Count == 0))
             {
                 SeedDebugInventory();
             }

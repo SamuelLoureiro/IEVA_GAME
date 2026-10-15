@@ -12,5 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55440ee1e81dd7a39bce3c0100a65bbd, type: 3}
   m_Name: CampaignConfig
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Data.CampaignConfig
-  _targets: []
-  _levels: []
+  _targets:
+  - {fileID: 11400000, guid: 58c288895ecc8b61181ef7d72e54dfde, type: 2}
+  - {fileID: 11400000, guid: f28f0d2b456590d87987fc6edf098cd8, type: 2}
+  - {fileID: 11400000, guid: 95bcb5353f5481559830bc7f16bd1f66, type: 2}
+  - {fileID: 11400000, guid: b697f596817d9ca67b1c959ac62645dd, type: 2}
+  _levels:
+  - {fileID: 11400000, guid: 1e0ab27b170294230b61176f34a4b2b5, type: 2}
+  - {fileID: 11400000, guid: af601bd218105ab21ad14d57cd41081b, type: 2}
+  - {fileID: 11400000, guid: 61d8df16260637aefb6730fd35ac4230, type: 2}

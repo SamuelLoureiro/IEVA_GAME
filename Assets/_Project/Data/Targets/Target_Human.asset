@@ -19,4 +19,4 @@ MonoBehaviour:
   _miniPrefab: {fileID: 4563897027039132806, guid: 718e59d84021574ecb897dbdfea32f4c, type: 3}
   _icon: {fileID: 0}
   _walkSpeed: 4
-  _fleeSpeed: 7
+  _fleeSpeed: 8.5

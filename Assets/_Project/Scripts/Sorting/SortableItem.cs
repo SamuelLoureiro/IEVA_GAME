@@ -51,5 +51,13 @@ namespace VARG.Sorting
                 _data = capturedItem.Data;
             }
         }
+
+        private void OnDestroy()
+        {
+            if (!_isSorted && SortingManager.Instance != null)
+            {
+                SortingManager.Instance.UnregisterItem(this);
+            }
+        }
     }
 }

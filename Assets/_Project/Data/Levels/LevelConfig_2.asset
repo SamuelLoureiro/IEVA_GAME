@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f18635be1b38f20ce806eb309c600718, type: 3}
   m_Name: LevelConfig_2
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Data.LevelConfig
-  _listSize: 3
-  _captureTime: 90
-  _sortingTime: 45
+  _listSize: 4
+  _captureTime: 100
+  _sortingTime: 55
   _extraSpawnsPerRequired: 1
   _forbiddenSpawnCount: 2
-  _fleeSpeedMultiplier: 1
+  _fleeSpeedMultiplier: 1.15

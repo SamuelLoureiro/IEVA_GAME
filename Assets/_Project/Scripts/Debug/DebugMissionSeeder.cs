@@ -27,7 +27,7 @@ namespace VARG.DebugTools
 
         private void Start()
         {
-            if (_seedOnStart)
+            if (_seedOnStart && (MissionManager.Instance == null || MissionManager.Instance.RequiredCount == 0))
             {
                 SeedDefaultMission();
             }

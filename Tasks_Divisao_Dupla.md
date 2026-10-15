@@ -94,25 +94,25 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 ### Sprint 2 — Captura (Passos 3, 4)
 - [x] **A06** `Target.cs` + `ShrinkGun` + `Shrinkable` + `ShrinkBeamFX` (cooldown 0.6 s); ao encolher chama `MissionManager.ValidateCapture()`.
   - Depende: A05, B05 · Pronto quando: alvo encolhe com "boing", some, e aparece no inventário com o `CaptureResult` certo (ver no Inspector/log).
-- [ ] **A07** `NavMeshSurface` + obstáculos + bake; `TargetAI` (Wander/Idle/Flee/Captured, tick 0.2–0.5 s).
+- [x] **A07** `NavMeshSurface` + obstáculos + bake; `TargetAI` (Wander/Idle/Flee/Captured, tick 0.2–0.5 s).
   - Pronto quando: alvos passeiam, fogem do jogador, não saem do mapa.
-- [ ] **A08** `TargetSpawner` + `SpawnPoint` (regra §R.2: `k + extra` por tipo da lista + proibidos).
+- [x] **A08** `TargetSpawner` + `SpawnPoint` (regra §R.2: `k + extra` por tipo da lista + proibidos).
   - Depende: B05, B06 · Pronto quando: com o `DebugMissionSeeder`, a quantidade de cada tipo no mapa bate com a regra.
-- [ ] **A09** `ShipBeamZone`: sobe só com `IsComplete`; senão `OnBeamDenied`.
+- [x] **A09** `ShipBeamZone`: sobe só com `IsComplete`; senão `OnBeamDenied`.
   - Pronto quando: com ordem incompleta o feixe recusa; completa → para o Timer de Captura e carrega `04_ShipSorting`.
 
 ### Sprint 3 — HUD, Resultados e pause (Passos 5, 10)
-- [ ] **A10** `HuntInventoryUI` (capturados com ✔/⚠/✖, nunca o próximo; `Ordem: 2/4`; barra de fórmulas). Usa kit da B (B07).
-- [ ] **A11** `TimerUI` (Captura + dívida da Triagem, vermelho < 15 s), `TimeDeltaPopup`, `LivesUI`.
+- [x] **A10** `HuntInventoryUI` (progresso de alvos `Targets: X/Y` em inglês, reativo a eventos de captura e conclusão).
+- [x] **A11** `TimerUI` (Captura + dívida da Triagem, vermelho < 15 s), `TimeDeltaPopup`, `LivesUI`.
   - Pronto quando: cada erro mostra "−10" e uma vida piscando; dívida aparece na Caça.
-- [ ] **A12** Ligar o Timer de Captura à cena (start ao entrar, stop no feixe, derrota no zero).
-- [ ] **A13** Cena `05_Results` + `ResultsScreen`: tempos restantes, vidas, erros, score (§R.7), gráfico de barras estilo Excel, botões "Próximo nível"/"Tentar de novo".
+- [x] **A12** Ligar o Timer de Captura à cena (start ao entrar, stop no feixe, derrota no zero).
+- [x] **A13** Cena `05_Results` + `ResultsScreen`: tempos restantes, vidas, erros, score (§R.7), gráfico de barras estilo Excel, botões "Próximo nível"/"Tentar de novo".
   - Depende: B01 (`LastResult`).
-- [ ] **A14** `PauseMenu` (Esc): pausa timers, destrava cursor, botões Continuar/Reiniciar nível.
+- [-] **A14** ~~`PauseMenu` (Esc)~~ *(Descartado — não exigido no pipeline do professor)*.
 
 ### Sprint 4 — Polimento da Caça
-- [ ] **A15** Balanceamento: velocidades de fuga, spawns extras, tempos de captura dos níveis 1–3 (preencher `LevelConfig`).
-- [ ] **A16** Feedback: som/partículas da captura, alvos "gritando" ao fugir.
+- [x] **A15** Balanceamento: velocidades de fuga, spawns extras, tempos de captura dos níveis 1–3 (preencher `LevelConfig`).
+- [x] **A16** Feedback: som/partículas da captura, alvos "gritando" ao fugir.
 - [ ] **A17** Arte low-poly (cidade, ET, nave, 4 alvos) substituindo as primitivas, com textura-paleta única.
 - [ ] **A18** Otimização da cidade (polígonos, nº de agentes) — medir build.
 

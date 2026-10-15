@@ -13,7 +13,9 @@ GameObject:
   - component: {fileID: 956668253015692730}
   - component: {fileID: 1597972910228102833}
   - component: {fileID: 76515232070797996}
+  - component: {fileID: 946500933813529769}
   - component: {fileID: 4949917981860157532}
+  - component: {fileID: 6064591976148858435}
   m_Layer: 7
   m_Name: Target_Human
   m_TagString: Untagged
@@ -127,17 +129,36 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5000001
   m_Speed: 4
-  m_Acceleration: 8
+  m_Acceleration: 28
   avoidancePriority: 50
-  m_AngularSpeed: 180
+  m_AngularSpeed: 720
   m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 1.9999999
   m_BaseOffset: 0.99999994
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &946500933813529769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3150699209010858139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb647df792f7680b4a077a101948b493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Targets.Shrinkable
+  _shrinkDuration: 0.5
+  _shrinkCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &4949917981860157532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,3 +173,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Targets.Target
   _data: {fileID: 11400000, guid: 95bcb5353f5481559830bc7f16bd1f66, type: 2}
   _canInteract: 1
+--- !u!114 &6064591976148858435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3150699209010858139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4d8b2d45aa6029e7bb1ede38faaa8d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Targets.TargetAI
+  _agent: {fileID: 76515232070797996}
+  _target: {fileID: 4949917981860157532}
+  _wanderRadius: 12
+  _minIdleDuration: 1
+  _maxIdleDuration: 2.5
+  _playerDetectRadius: 14
+  _fleeDuration: 3.5
+  _tickInterval: 0.15
+  _enableZigzag: 1
+  _baseZigzagAngle: 45
+  _zigzagMinDuration: 0.25
+  _zigzagMaxDuration: 0.5
+  _fleeWaypointDistance: 5.5
+  _wanderAcceleration: 12
+  _fleeAcceleration: 35
+  _fleeAngularSpeed: 999
+  _wanderAngularSpeed: 360

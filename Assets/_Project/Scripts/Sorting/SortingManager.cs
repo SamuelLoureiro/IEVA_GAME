@@ -49,13 +49,37 @@ namespace VARG.Sorting
             }
         }
 
+        public void ClearItems()
+        {
+            _registeredItems.Clear();
+            _resolvedItems.Clear();
+            _totalItems = 0;
+            _remainingItems = 0;
+            _isVictoryTriggered = false;
+            OnItemCountsChanged?.Invoke(0, 0);
+        }
+
+        public void UnregisterItem(SortableItem item)
+        {
+            if (item == null) return;
+            if (_registeredItems.Remove(item))
+            {
+                _resolvedItems.Remove(item);
+                _registeredItems.RemoveWhere(i => i == null);
+                _totalItems = _registeredItems.Count;
+                _remainingItems = Mathf.Max(0, _totalItems - _resolvedItems.Count);
+                OnItemCountsChanged?.Invoke(_remainingItems, _totalItems);
+            }
+        }
+
         public void RegisterItem(SortableItem item)
         {
             if (item == null || _registeredItems.Contains(item)) return;
 
+            _registeredItems.RemoveWhere(i => i == null);
             _registeredItems.Add(item);
             _totalItems = _registeredItems.Count;
-            _remainingItems = _totalItems - _resolvedItems.Count;
+            _remainingItems = Mathf.Max(0, _totalItems - _resolvedItems.Count);
             OnItemCountsChanged?.Invoke(_remainingItems, _totalItems);
         }
 
@@ -64,6 +88,8 @@ namespace VARG.Sorting
             if (item == null || _resolvedItems.Contains(item)) return;
 
             _resolvedItems.Add(item);
+            _registeredItems.RemoveWhere(i => i == null);
+            _totalItems = _registeredItems.Count;
             _remainingItems = Mathf.Max(0, _totalItems - _resolvedItems.Count);
             OnItemCountsChanged?.Invoke(_remainingItems, _totalItems);
 
