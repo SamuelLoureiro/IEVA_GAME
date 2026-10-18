@@ -141,6 +141,19 @@ namespace VARG.Mission
             return targetType == ForbiddenType;
         }
 
+        public int GetRequiredCountForType(TargetType type)
+        {
+            var count = 0;
+            for (var i = 0; i < _requiredOrder.Count; i++)
+            {
+                if (_requiredOrder[i] != null && _requiredOrder[i].Type == type)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
         public CaptureResult ValidateCapture(TargetData captured)
         {
             if (captured == null) return CaptureResult.NotInList;

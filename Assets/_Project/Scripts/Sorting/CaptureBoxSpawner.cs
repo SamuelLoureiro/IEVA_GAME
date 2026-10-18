@@ -95,6 +95,11 @@ namespace VARG.Sorting
                 instance.AddComponent<HighlightOnHover>();
             }
 
+            if (instance.GetComponent<SortingEscapeeAI>() == null)
+            {
+                instance.AddComponent<SortingEscapeeAI>();
+            }
+
             var rb = instance.GetComponent<Rigidbody>();
             if (rb != null)
             {

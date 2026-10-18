@@ -7,7 +7,7 @@ namespace VARG.DebugTools
     public class DebugTimerController : MonoBehaviour
     {
         [Header("Options")]
-        [SerializeField] private bool _showGui = true;
+        [SerializeField] private bool _showGui = false;
         [SerializeField] private bool _dontDestroyOnLoad = true;
 
         private void Awake()

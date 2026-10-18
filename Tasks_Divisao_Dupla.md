@@ -150,7 +150,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 - [x] **B16** Progressão de níveis: `NextLevel` usa o próximo `LevelConfig`; após o último, repete com +1 item e +10 s.
 
 ### Sprint 4 — Polimento da Triagem + Build (#6)
-- [ ] **B17** Feedback das gaiolas (ding, cuspe cômico, partículas), balanceamento do Timer de Separação.
+- [x] **B17** Feedback das gaiolas (ding, cuspe cômico, partículas), balanceamento do Timer de Separação.
 - [ ] **B18** Arte low-poly: interior da nave, gaiolas, lixeira, chefe.
 - [ ] **B19** Otimização de tamanho: atlas TMP reduzido, compressão, stripping, LZ4HC; auditoria com Build Report (compilado final compactado **< 10 MB**).
 

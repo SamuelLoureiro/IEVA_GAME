@@ -24,7 +24,14 @@ namespace VARG.Sorting
         {
             if (_sortableItem != null && _sortableItem.IsSorted) return;
 
+            var escapee = GetComponent<SortingEscapeeAI>();
+            if (escapee != null)
+            {
+                escapee.StopEscape();
+            }
+
             IsHeld = true;
+            _rb.isKinematic = false;
             _rb.useGravity = false;
             _rb.linearVelocity = Vector3.zero;
             _rb.angularVelocity = Vector3.zero;

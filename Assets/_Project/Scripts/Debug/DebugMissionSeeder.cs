@@ -9,7 +9,7 @@ namespace VARG.DebugTools
     {
         [Header("Options")]
         [SerializeField] private bool _seedOnStart = false;
-        [SerializeField] private bool _showGui = true;
+        [SerializeField] private bool _showGui = false;
         [SerializeField] private bool _dontDestroyOnLoad = true;
 
         private LevelConfig _levelConfig1;

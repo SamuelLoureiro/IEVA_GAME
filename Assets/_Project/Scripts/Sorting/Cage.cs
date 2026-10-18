@@ -17,19 +17,32 @@ namespace VARG.Sorting
         [SerializeField] private float _settleDelay = 0.20f;
         [SerializeField] private PenaltyConfig _penaltyConfig;
 
+        [Header("Feedback")]
+        [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _acceptClip;
+        [SerializeField] private AudioClip _ejectClip;
+        [SerializeField] private ParticleSystem _acceptParticles;
+        [SerializeField] private ParticleSystem _ejectParticles;
+
         private readonly List<SortableItem> _lockedItems = new();
-        private readonly Dictionary<SortableItem, float> _ejectedCooldowns = new();
+        private readonly HashSet<SortableItem> _rejectedUntilGrabbed = new();
 
         public TargetType AcceptedType => _acceptedType;
         public Transform SnapPoint => _snapPoint != null ? _snapPoint : transform;
         public Transform EjectPoint => _ejectPoint != null ? _ejectPoint : transform;
         public float EjectForce => _ejectForce;
+        public int LockedCount => _lockedItems.Count;
 
         private void Awake()
         {
             if (_penaltyConfig == null)
             {
                 _penaltyConfig = Resources.Load<PenaltyConfig>("Data/PenaltyConfig");
+            }
+
+            if (_audioSource == null)
+            {
+                _audioSource = GetComponent<AudioSource>();
             }
         }
 
@@ -45,14 +58,18 @@ namespace VARG.Sorting
             var item = other.GetComponentInParent<SortableItem>();
             if (item == null || item.IsSorted) return;
 
-            if (item.IsHeld) return;
+            if (item.IsHeld)
+            {
+                _rejectedUntilGrabbed.Remove(item);
+                return;
+            }
+
+            if (_rejectedUntilGrabbed.Contains(item)) return;
 
             if (item.TimeSinceReleased < _settleDelay) return;
 
-            if (_ejectedCooldowns.TryGetValue(item, out var readyTime) && Time.time < readyTime)
-            {
-                return;
-            }
+            var escapee = item.GetComponent<SortingEscapeeAI>();
+            if (escapee != null && escapee.IsEscaping) return;
 
             ValidateItem(item);
         }
@@ -66,7 +83,8 @@ namespace VARG.Sorting
         {
             var isForbidden = IsItemForbidden(item);
             var isCorrectType = item.Type == _acceptedType;
-            var isValidDeposit = isCorrectType && !isForbidden;
+            var isWithinQuota = _lockedItems.Count < GetRequiredQuota();
+            var isValidDeposit = isCorrectType && !isForbidden && isWithinQuota;
 
             if (isValidDeposit)
             {
@@ -76,6 +94,15 @@ namespace VARG.Sorting
             {
                 EjectItem(item);
             }
+        }
+
+        private int GetRequiredQuota()
+        {
+            if (MissionManager.Instance != null && MissionManager.Instance.RequiredCount > 0)
+            {
+                return MissionManager.Instance.GetRequiredCountForType(_acceptedType);
+            }
+            return int.MaxValue;
         }
 
         private bool IsItemForbidden(SortableItem item)
@@ -89,6 +116,7 @@ namespace VARG.Sorting
 
         private void AcceptItem(SortableItem item)
         {
+            _rejectedUntilGrabbed.Remove(item);
             item.MarkSorted();
             _lockedItems.Add(item);
 
@@ -114,6 +142,16 @@ namespace VARG.Sorting
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x * 0.35f, vy, rb.linearVelocity.z * 0.35f);
                 rb.angularVelocity *= 0.5f;
                 StartCoroutine(SettleRoutine(rb, item.transform));
+            }
+
+            if (_audioSource != null && _acceptClip != null)
+            {
+                _audioSource.PlayOneShot(_acceptClip);
+            }
+
+            if (_acceptParticles != null)
+            {
+                _acceptParticles.Play();
             }
 
             GameEvents.TriggerCorrectCage(item.Data);
@@ -153,16 +191,32 @@ namespace VARG.Sorting
 
         private void EjectItem(SortableItem item)
         {
-            _ejectedCooldowns[item] = Time.time + 1.2f;
+            _rejectedUntilGrabbed.Add(item);
+
+            var safeEjectPos = transform.TransformPoint(new Vector3(0f, 0.7f, -2.0f));
 
             var rb = item.GetComponent<Rigidbody>();
             if (rb != null)
             {
+                rb.isKinematic = false;
                 rb.linearVelocity = Vector3.zero;
-                var targetEject = EjectPoint != null ? EjectPoint.position : (transform.position + Vector3.up * 1.8f - transform.forward * 1.5f);
-                var ejectDir = (targetEject - item.transform.position).normalized + Vector3.up * 0.6f;
-                ejectDir.Normalize();
-                rb.AddForce(ejectDir * _ejectForce, ForceMode.Impulse);
+                rb.angularVelocity = Vector3.zero;
+
+                item.transform.position = safeEjectPos;
+
+                var launchDir = (-transform.forward * 0.82f + Vector3.up * 0.55f).normalized;
+                rb.AddForce(launchDir * _ejectForce, ForceMode.VelocityChange);
+            }
+
+            if (_audioSource != null && _ejectClip != null)
+            {
+                _audioSource.PlayOneShot(_ejectClip);
+            }
+
+            if (_ejectParticles != null)
+            {
+                _ejectParticles.transform.position = safeEjectPos;
+                _ejectParticles.Play();
             }
 
             var penalty = _penaltyConfig != null ? _penaltyConfig.WrongCagePenalty : 5f;
@@ -171,7 +225,21 @@ namespace VARG.Sorting
                 TimerManager.Instance.ApplyPenalty(TimerPhase.Sorting, penalty);
             }
 
+            var escapee = item.GetComponent<SortingEscapeeAI>();
+            if (escapee != null)
+            {
+                escapee.TriggerEscape();
+            }
+
             GameEvents.TriggerWrongCage(item.Data);
+        }
+
+        public void ConfigureFeedback(AudioClip acceptClip, AudioClip ejectClip, ParticleSystem acceptParticles, ParticleSystem ejectParticles)
+        {
+            _acceptClip = acceptClip;
+            _ejectClip = ejectClip;
+            _acceptParticles = acceptParticles;
+            _ejectParticles = ejectParticles;
         }
     }
 }
