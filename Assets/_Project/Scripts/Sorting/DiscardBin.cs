@@ -21,6 +21,7 @@ namespace VARG.Sorting
         [SerializeField] private ParticleSystem _shredParticles;
 
         private readonly HashSet<SortableItem> _rejectedUntilGrabbed = new();
+        private Cage[] _cages;
 
         public Transform DestroyPoint => _destroyPoint != null ? _destroyPoint : transform;
 
@@ -35,6 +36,8 @@ namespace VARG.Sorting
             {
                 _audioSource = GetComponent<AudioSource>();
             }
+
+            _cages = FindObjectsByType<Cage>(FindObjectsSortMode.None);
         }
 
         public void Configure(Transform destroyPoint)
@@ -226,24 +229,25 @@ namespace VARG.Sorting
             }
 
             var cagedCount = 0;
-            var cages = FindObjectsByType<Cage>(FindObjectsSortMode.None);
-            for (var i = 0; i < cages.Length; i++)
+            if (_cages == null || _cages.Length == 0)
             {
-                if (cages[i] != null && cages[i].AcceptedType == item.Type)
+                _cages = FindObjectsByType<Cage>(FindObjectsSortMode.None);
+            }
+
+            if (_cages != null)
+            {
+                for (var i = 0; i < _cages.Length; i++)
                 {
-                    cagedCount += cages[i].LockedCount;
+                    if (_cages[i] != null && _cages[i].AcceptedType == item.Type)
+                    {
+                        cagedCount += _cages[i].LockedCount;
+                    }
                 }
             }
 
-            var availableCount = 0;
-            var allItems = FindObjectsByType<SortableItem>(FindObjectsSortMode.None);
-            for (var i = 0; i < allItems.Length; i++)
-            {
-                if (allItems[i] != null && allItems[i].Type == item.Type && !allItems[i].IsSorted)
-                {
-                    availableCount++;
-                }
-            }
+            var availableCount = SortingManager.Instance != null
+                ? SortingManager.Instance.GetUnsortedCountForType(item.Type)
+                : 0;
 
             return (cagedCount + availableCount) > required;
         }

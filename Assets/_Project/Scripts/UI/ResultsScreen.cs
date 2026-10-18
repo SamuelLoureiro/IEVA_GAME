@@ -132,7 +132,6 @@ namespace VARG.UI
                 _scoreText.text = $"{CurrentResult.Score:N0} PTS";
             }
 
-            // Calculate fill percentages for the chart
             var captureFill = Mathf.Clamp01(CurrentResult.RemainingCaptureTime / 90f);
             var sortingFill = Mathf.Clamp01(CurrentResult.RemainingSortingTime / 45f);
             var livesFill = Mathf.Clamp01(CurrentResult.RemainingLives / 5f);
@@ -148,7 +147,6 @@ namespace VARG.UI
                 SetBarsFillImmediate(captureFill, sortingFill, livesFill, accuracyFill);
             }
 
-            // Buttons visibility
             var isCampaignComplete = isVictory && GameManager.HasInstance && GameManager.Instance.CurrentLevel >= GameManager.MaxLevel;
 
             if (_nextLevelButton != null)

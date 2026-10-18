@@ -6,6 +6,7 @@ using VARG.Targets;
 
 namespace VARG.Player
 {
+    [RequireComponent(typeof(AudioSource))]
     public class ShrinkGun : MonoBehaviour
     {
         [SerializeField] private PlayerInteractor _interactor;
@@ -21,6 +22,7 @@ namespace VARG.Player
         [SerializeField] private AudioClip _captureErrorClip;
         [SerializeField] private AudioClip _missionCompleteClip;
 
+        private readonly Collider[] _scareHitBuffer = new Collider[24];
         private IPlayerInput _playerInput;
         private float _nextFireTime;
 
@@ -55,10 +57,6 @@ namespace VARG.Player
             if (_audioSource == null)
             {
                 _audioSource = GetComponent<AudioSource>();
-                if (_audioSource == null)
-                {
-                    _audioSource = gameObject.AddComponent<AudioSource>();
-                }
             }
 
             _playerInput = InputManager.HasInstance ? InputManager.Instance.Player : new KeyboardMouseInput();
@@ -123,10 +121,10 @@ namespace VARG.Player
 
         private void ScareNearbyTargets(Vector3 center)
         {
-            var colliders = Physics.OverlapSphere(center, _scareRadius);
-            for (var i = 0; i < colliders.Length; i++)
+            var hitCount = Physics.OverlapSphereNonAlloc(center, _scareRadius, _scareHitBuffer);
+            for (var i = 0; i < hitCount; i++)
             {
-                var target = colliders[i].GetComponentInParent<Target>();
+                var target = _scareHitBuffer[i].GetComponentInParent<Target>();
                 if (target != null)
                 {
                     var targetAi = target.GetComponent<TargetAI>();

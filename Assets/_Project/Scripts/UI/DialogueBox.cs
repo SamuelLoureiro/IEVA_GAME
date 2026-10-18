@@ -1,8 +1,8 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using VARG.Input;
 
 namespace VARG.UI
 {
@@ -14,6 +14,7 @@ namespace VARG.UI
         [SerializeField] private GameObject _continueIndicator;
         [SerializeField] private Button _advanceButton;
 
+        private IPlayerInput _playerInput;
         private Action _onDialogueComplete;
         private bool _isLineFinished;
 
@@ -27,14 +28,16 @@ namespace VARG.UI
             }
         }
 
+        private void Start()
+        {
+            _playerInput = InputManager.HasInstance ? InputManager.Instance.Player : new KeyboardMouseInput();
+        }
+
         private void Update()
         {
-            var keyboard = Keyboard.current;
-            var mouse = Mouse.current;
-            var spaceOrEnter = keyboard != null && (keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame);
-            var mouseClick = mouse != null && mouse.leftButton.wasPressedThisFrame;
+            if (_playerInput == null) return;
 
-            if (spaceOrEnter || mouseClick)
+            if (_playerInput.InteractPressed || _playerInput.FirePressed)
             {
                 HandleAdvanceRequested();
             }

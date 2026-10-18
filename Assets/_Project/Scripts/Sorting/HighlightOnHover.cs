@@ -4,42 +4,57 @@ namespace VARG.Sorting
 {
     public class HighlightOnHover : MonoBehaviour
     {
+        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+        private static readonly int ColorId = Shader.PropertyToID("_Color");
+
         [SerializeField] private Color _highlightTint = new Color(0.3f, 0.3f, 0.3f, 0f);
 
         private Renderer _renderer;
-        private Material _material;
-        private Color _originalColor;
+        private MaterialPropertyBlock _propBlock;
+        private Color _originalColor = Color.white;
         private bool _isHighlighted;
 
         private void Awake()
         {
             _renderer = GetComponentInChildren<Renderer>();
-            if (_renderer != null)
+            _propBlock = new MaterialPropertyBlock();
+
+            if (_renderer != null && _renderer.sharedMaterial != null)
             {
-                _material = _renderer.material;
-                _originalColor = _material.color;
+                var sharedMat = _renderer.sharedMaterial;
+                if (sharedMat.HasProperty(BaseColorId))
+                {
+                    _originalColor = sharedMat.GetColor(BaseColorId);
+                }
+                else if (sharedMat.HasProperty(ColorId))
+                {
+                    _originalColor = sharedMat.GetColor(ColorId);
+                }
             }
         }
 
         public void SetHighlight(bool enable)
         {
-            if (_material == null || _isHighlighted == enable) return;
+            if (_renderer == null || _isHighlighted == enable) return;
 
             _isHighlighted = enable;
-            _material.color = enable ? _originalColor + _highlightTint : _originalColor;
+            if (enable)
+            {
+                var targetColor = _originalColor + _highlightTint;
+                _renderer.GetPropertyBlock(_propBlock);
+                _propBlock.SetColor(BaseColorId, targetColor);
+                _propBlock.SetColor(ColorId, targetColor);
+                _renderer.SetPropertyBlock(_propBlock);
+            }
+            else
+            {
+                _renderer.SetPropertyBlock(null);
+            }
         }
 
         private void OnDisable()
         {
             SetHighlight(false);
-        }
-
-        private void OnDestroy()
-        {
-            if (_material != null)
-            {
-                Destroy(_material);
-            }
         }
     }
 }

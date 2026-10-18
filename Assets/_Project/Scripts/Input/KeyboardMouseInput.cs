@@ -72,7 +72,7 @@ namespace VARG.Input
             get
             {
                 var keyboard = Keyboard.current;
-                return keyboard != null && keyboard.eKey.wasPressedThisFrame;
+                return keyboard != null && (keyboard.eKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame);
             }
         }
 

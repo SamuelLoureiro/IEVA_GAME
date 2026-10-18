@@ -2,10 +2,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using VARG.Data;
-using VARG.Player;
+using VARG.Targets;
 
 namespace VARG.Sorting
 {
+    [RequireComponent(typeof(NavMeshAgent), typeof(AudioSource))]
     public class SortingEscapeeAI : MonoBehaviour
     {
         [Header("Components")]
@@ -14,6 +15,7 @@ namespace VARG.Sorting
         [SerializeField] private Grabbable _grabbable;
         [SerializeField] private SortableItem _sortableItem;
         [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _panicClip;
 
         [Header("Flee Settings")]
         [SerializeField] private float _fleeSpeed = 4.5f;
@@ -38,15 +40,12 @@ namespace VARG.Sorting
             if (_grabbable == null) _grabbable = GetComponent<Grabbable>();
             if (_sortableItem == null) _sortableItem = GetComponent<SortableItem>();
             if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
-
-            if (_agent == null)
+            if (_audioSource != null)
             {
-                _agent = GetComponent<NavMeshAgent>();
-                if (_agent == null)
-                {
-                    _agent = gameObject.AddComponent<NavMeshAgent>();
-                }
+                _audioSource.playOnAwake = false;
+                _audioSource.spatialBlend = 1f;
             }
+            if (_agent == null) _agent = GetComponent<NavMeshAgent>();
 
             ConfigureAgent();
         }
@@ -91,13 +90,20 @@ namespace VARG.Sorting
         private void PlayPanicScream()
         {
             if (_audioSource == null) return;
-            var type = _sortableItem != null ? _sortableItem.Type : TargetType.Chicken;
 
-            var clip = ProceduralAudioUtility.GetFleeVoiceClip(type);
-            if (clip != null)
+            if (_panicClip == null && _sortableItem != null && _sortableItem.Data != null && _sortableItem.Data.Prefab != null)
+            {
+                var targetAi = _sortableItem.Data.Prefab.GetComponent<TargetAI>();
+                if (targetAi != null)
+                {
+                    _panicClip = targetAi.CustomFleeClip;
+                }
+            }
+
+            if (_panicClip != null)
             {
                 _audioSource.pitch = Random.Range(0.95f, 1.05f);
-                _audioSource.PlayOneShot(clip, 0.85f);
+                _audioSource.PlayOneShot(_panicClip, 0.85f);
             }
         }
 

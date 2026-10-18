@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace VARG.UI
 {
+    [RequireComponent(typeof(CanvasGroup))]
     public class TimeDeltaPopup : MonoBehaviour
     {
         [Header("Components")]
@@ -22,7 +23,7 @@ namespace VARG.UI
             _rectTransform = GetComponent<RectTransform>();
             if (_canvasGroup == null)
             {
-                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+                _canvasGroup = GetComponent<CanvasGroup>();
             }
         }
 

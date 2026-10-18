@@ -6,6 +6,7 @@ using VARG.Humor;
 
 namespace VARG.UI
 {
+    [RequireComponent(typeof(CanvasGroup))]
     public class BossPopupUI : MonoBehaviour
     {
         [Header("Components")]
@@ -55,12 +56,6 @@ namespace VARG.UI
                 if (_activeInstance == null)
                 {
                     var prefab = Resources.Load<GameObject>("UI/BossPopupUI");
-#if UNITY_EDITOR
-                    if (prefab == null)
-                    {
-                        prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/UI/BossPopupUI.prefab");
-                    }
-#endif
                     if (prefab != null)
                     {
                         var canvas = Object.FindFirstObjectByType<Canvas>();
@@ -82,7 +77,7 @@ namespace VARG.UI
 
             if (_canvasGroup == null)
             {
-                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+                _canvasGroup = GetComponent<CanvasGroup>();
             }
 
             if (_alienVoice == null)
@@ -90,8 +85,11 @@ namespace VARG.UI
                 _alienVoice = GetComponentInChildren<AlienVoice>();
             }
 
-            _canvasGroup.alpha = 0f;
-            _canvasGroup.blocksRaycasts = false;
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.alpha = 0f;
+                _canvasGroup.blocksRaycasts = false;
+            }
         }
 
         private void OnDestroy()
@@ -125,7 +123,8 @@ namespace VARG.UI
 
             if (_dialogueText != null)
             {
-                _dialogueText.text = string.Empty;
+                _dialogueText.text = line;
+                _dialogueText.maxVisibleCharacters = 0;
             }
 
             yield return StartFade(1f);
@@ -138,7 +137,7 @@ namespace VARG.UI
                 charIndex++;
                 if (_dialogueText != null)
                 {
-                    _dialogueText.text = line.Substring(0, charIndex);
+                    _dialogueText.maxVisibleCharacters = charIndex;
                 }
 
                 var currentChar = line[charIndex - 1];
@@ -151,6 +150,11 @@ namespace VARG.UI
                 }
 
                 yield return new WaitForSeconds(charDelay);
+            }
+
+            if (_dialogueText != null)
+            {
+                _dialogueText.maxVisibleCharacters = int.MaxValue;
             }
 
             yield return new WaitForSeconds(_displayDuration);

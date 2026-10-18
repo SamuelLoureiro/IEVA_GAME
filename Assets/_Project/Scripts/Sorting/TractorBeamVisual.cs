@@ -12,8 +12,6 @@ namespace VARG.Sorting
 
         [Header("Beam Parameters")]
         [SerializeField] private int _segments = 18;
-        [SerializeField] private float _baseSag = 0.20f;
-        [SerializeField] private float _maxSag = 0.70f;
         [SerializeField] private float _wobbleSpeed = 14f;
         [SerializeField] private float _wobbleStrength = 0.025f;
 
