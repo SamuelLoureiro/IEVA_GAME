@@ -7,6 +7,7 @@ namespace VARG.Core
 {
     public class GameManager : Singleton<GameManager>
     {
+        private const string BootSceneName = "00_Boot";
         private const string BriefingSceneName = "01_BossBriefing";
         private const string ShipFlightSceneName = "02_ShipFlight";
         private const string CityHuntSceneName = "03_CityHunt";
@@ -257,6 +258,24 @@ namespace VARG.Core
         public void RetryLevel()
         {
             StartLevel();
+        }
+
+        public void GoToMainMenu()
+        {
+            ClearCustomSpreadsheetLevel();
+            if (TimerManager.Instance != null)
+            {
+                TimerManager.Instance.StopAllTimers();
+            }
+
+            if (SceneLoader.Instance != null)
+            {
+                SceneLoader.Instance.Load(BootSceneName);
+            }
+            else
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(BootSceneName);
+            }
         }
 
         private void CalculateAndStoreResult()

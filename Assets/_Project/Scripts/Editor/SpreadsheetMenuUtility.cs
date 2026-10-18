@@ -8,6 +8,18 @@ namespace VARG.Editor
 {
     public static class SpreadsheetMenuUtility
     {
+        [MenuItem("VARG/Scenes/Open 00_Boot (Main Menu)", priority = 0)]
+        public static void OpenBootScene()
+        {
+            UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/_Project/Scenes/00_Boot.unity");
+        }
+
+        [MenuItem("VARG/Scenes/Open 01_BossBriefing", priority = 1)]
+        public static void OpenBriefingScene()
+        {
+            UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/_Project/Scenes/01_BossBriefing.unity");
+        }
+
         [MenuItem("VARG/Spreadsheet/Open CustomLevel.csv", priority = 10)]
         public static void OpenCustomLevelCsv()
         {

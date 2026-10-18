@@ -1,0 +1,351 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using VARG.Core;
+using VARG.Data;
+using VARG.Mission;
+
+namespace VARG.UI
+{
+    public class MainMenuController : MonoBehaviour
+    {
+        [Header("Buttons")]
+        [SerializeField] private Button _playCampaignButton;
+        [SerializeField] private Button _playCustomButton;
+        [SerializeField] private Button _openSpreadsheetButton;
+        [SerializeField] private Button _quitButton;
+
+        [Header("Texts")]
+        [SerializeField] private TextMeshProUGUI _statusText;
+        [SerializeField] private TextMeshProUGUI _titleText;
+        [SerializeField] private TextMeshProUGUI _subtitleText;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void EnsureMainMenuInBootScene()
+        {
+            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if (activeScene.name == "00_Boot")
+            {
+                if (FindFirstObjectByType<MainMenuController>() == null)
+                {
+                    var go = new GameObject("MainMenuController");
+                    go.AddComponent<MainMenuController>();
+                }
+            }
+        }
+
+        private void Start()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            EnsureMenuUI();
+            SetupListeners();
+
+            // Ensure CustomLevel.csv exists in background so players have it ready to edit
+            SpreadsheetLevelLoader.EnsureTemplateExists(out _);
+        }
+
+        private void OnDestroy()
+        {
+            if (_playCampaignButton != null) _playCampaignButton.onClick.RemoveListener(PlayCampaign);
+            if (_playCustomButton != null) _playCustomButton.onClick.RemoveListener(PlayCustomSpreadsheet);
+            if (_openSpreadsheetButton != null) _openSpreadsheetButton.onClick.RemoveListener(OpenSpreadsheetFile);
+            if (_quitButton != null) _quitButton.onClick.RemoveListener(QuitGame);
+        }
+
+        private void Update()
+        {
+            var keyboard = UnityEngine.InputSystem.Keyboard.current;
+            if (keyboard == null) return;
+
+            if (keyboard.enterKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame)
+            {
+                PlayCampaign();
+            }
+            else if (keyboard.cKey.wasPressedThisFrame || keyboard.pKey.wasPressedThisFrame)
+            {
+                PlayCustomSpreadsheet();
+            }
+            else if (keyboard.eKey.wasPressedThisFrame)
+            {
+                OpenSpreadsheetFile();
+            }
+            else if (keyboard.escapeKey.wasPressedThisFrame)
+            {
+                QuitGame();
+            }
+        }
+
+        public void Configure(
+            Button playCampaignButton,
+            Button playCustomButton,
+            Button openSpreadsheetButton,
+            Button quitButton,
+            TextMeshProUGUI statusText,
+            TextMeshProUGUI titleText = null,
+            TextMeshProUGUI subtitleText = null)
+        {
+            _playCampaignButton = playCampaignButton;
+            _playCustomButton = playCustomButton;
+            _openSpreadsheetButton = openSpreadsheetButton;
+            _quitButton = quitButton;
+            _statusText = statusText;
+            _titleText = titleText;
+            _subtitleText = subtitleText;
+        }
+
+        private void SetupListeners()
+        {
+            if (_playCampaignButton != null)
+            {
+                _playCampaignButton.onClick.RemoveListener(PlayCampaign);
+                _playCampaignButton.onClick.AddListener(PlayCampaign);
+            }
+
+            if (_playCustomButton != null)
+            {
+                _playCustomButton.onClick.RemoveListener(PlayCustomSpreadsheet);
+                _playCustomButton.onClick.AddListener(PlayCustomSpreadsheet);
+            }
+
+            if (_openSpreadsheetButton != null)
+            {
+                _openSpreadsheetButton.onClick.RemoveListener(OpenSpreadsheetFile);
+                _openSpreadsheetButton.onClick.AddListener(OpenSpreadsheetFile);
+            }
+
+            if (_quitButton != null)
+            {
+                _quitButton.onClick.RemoveListener(QuitGame);
+                _quitButton.onClick.AddListener(QuitGame);
+            }
+        }
+
+        public void PlayCampaign()
+        {
+            SetStatus("Iniciando Campanha...", new Color(0.35f, 0.90f, 0.55f));
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.ClearCustomSpreadsheetLevel();
+                GameManager.Instance.StartLevel();
+            }
+            else if (SceneLoader.Instance != null)
+            {
+                SceneLoader.Instance.Load("01_BossBriefing");
+            }
+            else
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene("01_BossBriefing");
+            }
+        }
+
+        public void PlayCustomSpreadsheet()
+        {
+            if (SpreadsheetLevelLoader.TryLoadCustomLevel(out var levelData, out var statusMessage))
+            {
+                var customConfig = ScriptableObject.CreateInstance<LevelConfig>();
+                customConfig.Setup(
+                    levelData.TargetSequence.Count,
+                    levelData.CaptureTime,
+                    levelData.SortingTime,
+                    levelData.ExtraSpawns,
+                    levelData.ForbiddenSpawns,
+                    levelData.FleeSpeedMultiplier
+                );
+
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.SetCustomSpreadsheetLevel(customConfig);
+                }
+
+                if (MissionManager.Instance != null)
+                {
+                    MissionManager.Instance.LoadCustomMission(levelData.TargetSequence, levelData.ForbiddenTarget);
+                }
+
+                SetStatus("Planilha carregada! Iniciando missão...", new Color(0.35f, 0.85f, 1f));
+
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.StartLevel();
+                }
+                else if (SceneLoader.Instance != null)
+                {
+                    SceneLoader.Instance.Load("01_BossBriefing");
+                }
+                else
+                {
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("01_BossBriefing");
+                }
+            }
+            else
+            {
+                SetStatus(statusMessage, new Color(1f, 0.45f, 0.45f));
+                Debug.LogWarning($"[MainMenuController] {statusMessage}");
+            }
+        }
+
+        public void OpenSpreadsheetFile()
+        {
+            var path = SpreadsheetLevelLoader.GetDefaultFilePath();
+            SpreadsheetLevelLoader.EnsureTemplateExists(out path);
+
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.OpenWithDefaultApp(path);
+#else
+            Application.OpenURL("file://" + path);
+#endif
+
+            SetStatus("Planilha 'CustomLevel.csv' aberta! Edite e clique em 'JOGAR CUSTOM'.", new Color(0.40f, 0.88f, 0.98f));
+        }
+
+        public void QuitGame()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+
+        private void SetStatus(string message, Color color)
+        {
+            if (_statusText != null)
+            {
+                _statusText.text = message;
+                _statusText.color = color;
+            }
+        }
+
+        private void EnsureMenuUI()
+        {
+            if (_playCampaignButton != null) return;
+
+            var canvas = FindFirstObjectByType<Canvas>();
+            if (canvas == null)
+            {
+                var canvasObj = new GameObject("MainMenuCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+                canvas = canvasObj.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+                var scaler = canvasObj.GetComponent<CanvasScaler>();
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1920, 1080);
+                scaler.matchWidthOrHeight = 0.5f;
+            }
+
+            if (FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
+            {
+                var eventSys = new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.InputSystem.UI.InputSystemUIInputModule));
+            }
+
+            // Background panel
+            var bgObj = CreatePanel("Background", canvas.transform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, new Color(0.04f, 0.06f, 0.09f, 1f));
+
+            // Title
+            _titleText = CreateText("Title", bgObj.transform, "PROJECT V.A.R.G.", 52, TextAlignmentOptions.Center, FontStyles.Bold, new Color(0.92f, 0.96f, 1f));
+            _titleText.rectTransform.anchorMin = new Vector2(0.5f, 0.80f);
+            _titleText.rectTransform.anchorMax = new Vector2(0.5f, 0.80f);
+            _titleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            _titleText.rectTransform.sizeDelta = new Vector2(1000, 70);
+
+            _subtitleText = CreateText("Subtitle", bgObj.transform, "ABDUÇÃO METÓDICA  |  SISTEMA DE MISSÕES E PLANILHAS", 20, TextAlignmentOptions.Center, FontStyles.Normal, new Color(0.40f, 0.75f, 0.90f));
+            _subtitleText.rectTransform.anchorMin = new Vector2(0.5f, 0.73f);
+            _subtitleText.rectTransform.anchorMax = new Vector2(0.5f, 0.73f);
+            _subtitleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            _subtitleText.rectTransform.sizeDelta = new Vector2(1000, 40);
+
+            // Button container
+            var btnContainer = CreatePanel("ButtonContainer", bgObj.transform, new Vector2(0.5f, 0.44f), new Vector2(0.5f, 0.44f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(480, 320), Color.clear);
+            var layout = btnContainer.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 16f;
+            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = false;
+
+            _playCampaignButton = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ JOGAR CAMPANHA</b>  <size=15>[ ENTER ]</size>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
+            _playCustomButton = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 JOGAR CUSTOM (PLANILHA)</b>  <size=15>[ C ]</size>", new Color(0.15f, 0.45f, 0.85f), new Color(0.25f, 0.65f, 1f));
+            _openSpreadsheetButton = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 ABRIR PLANILHA (EXCEL)</b>  <size=15>[ E ]</size>", new Color(0.18f, 0.28f, 0.38f), new Color(0.28f, 0.42f, 0.58f));
+            _quitButton = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>SAIR</b>  <size=15>[ ESC ]</size>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
+
+            // Status text
+            _statusText = CreateText("StatusText", bgObj.transform, "Selecione um modo para iniciar.", 18, TextAlignmentOptions.Center, FontStyles.Italic, new Color(0.70f, 0.80f, 0.90f));
+            _statusText.rectTransform.anchorMin = new Vector2(0.5f, 0.16f);
+            _statusText.rectTransform.anchorMax = new Vector2(0.5f, 0.16f);
+            _statusText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            _statusText.rectTransform.sizeDelta = new Vector2(900, 50);
+        }
+
+        private static Button CreateMenuButton(string name, Transform parent, string label, Color normalColor, Color highlightColor)
+        {
+            var btnObj = CreatePanel(name, parent, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(460, 56), normalColor);
+            var layoutElem = btnObj.AddComponent<LayoutElement>();
+            layoutElem.preferredHeight = 56f;
+            layoutElem.preferredWidth = 460f;
+
+            var btn = btnObj.AddComponent<Button>();
+            var colors = btn.colors;
+            colors.normalColor = normalColor;
+            colors.highlightedColor = highlightColor;
+            colors.pressedColor = normalColor * 0.8f;
+            colors.selectedColor = highlightColor;
+            btn.colors = colors;
+
+            var text = CreateText("BtnText", btnObj.transform, label, 20, TextAlignmentOptions.Center, FontStyles.Bold, Color.white);
+            text.rectTransform.anchorMin = Vector2.zero;
+            text.rectTransform.anchorMax = Vector2.one;
+            text.rectTransform.offsetMin = Vector2.zero;
+            text.rectTransform.offsetMax = Vector2.zero;
+
+            return btn;
+        }
+
+        private static GameObject CreatePanel(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 pos, Vector2 size, Color color)
+        {
+            var panel = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            if (parent != null) panel.transform.SetParent(parent, false);
+
+            var rect = panel.GetComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.pivot = pivot;
+            rect.anchoredPosition = pos;
+
+            if (size != Vector2.zero)
+            {
+                rect.sizeDelta = size;
+            }
+            else
+            {
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+            }
+
+            var img = panel.GetComponent<Image>();
+            img.color = color;
+            return panel;
+        }
+
+        private static TextMeshProUGUI CreateText(string name, Transform parent, string text, float size, TextAlignmentOptions align, FontStyles style, Color color)
+        {
+            var textObj = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+            textObj.transform.SetParent(parent, false);
+
+            var rect = textObj.GetComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            var tmp = textObj.GetComponent<TextMeshProUGUI>();
+            tmp.text = text;
+            tmp.fontSize = size;
+            tmp.alignment = align;
+            tmp.fontStyle = style;
+            tmp.color = color;
+            return tmp;
+        }
+    }
+}

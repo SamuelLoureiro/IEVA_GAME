@@ -69,7 +69,14 @@ namespace VARG.UI
 
             if (_levelTitleText != null)
             {
-                _levelTitleText.text = $"CAPTURE MISSION  |  LEVEL {currentLevel}";
+                _levelTitleText.text = GameManager.Instance != null && GameManager.Instance.IsCustomSpreadsheetLevel
+                    ? "CAPTURE MISSION  |  CUSTOM SPREADSHEET LEVEL"
+                    : $"CAPTURE MISSION  |  LEVEL {currentLevel}";
+            }
+
+            if (_spreadsheetButtonText != null && GameManager.Instance != null && GameManager.Instance.IsCustomSpreadsheetLevel)
+            {
+                _spreadsheetButtonText.text = "<b>✔ PLANILHA ATIVA</b> <size=13>[ P ]</size>";
             }
 
             if (_showcaseUI != null)
@@ -91,6 +98,11 @@ namespace VARG.UI
 
         private string GetBossOpeningLine(int level)
         {
+            if (GameManager.Instance != null && GameManager.Instance.IsCustomSpreadsheetLevel)
+            {
+                return "Atenção recruta! Missão customizada via planilha autorizada pela matriz! Memorize a sequência e não ouse capturar o alvo proibido!";
+            }
+
             if (level == 1)
             {
                 return "Attention, rookie! Here are the targets you must capture on Earth and their exact order. Memorize the sequence before deploying the ship! Do NOT capture the forbidden target under any circumstances!";
