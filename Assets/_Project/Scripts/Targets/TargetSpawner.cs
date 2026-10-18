@@ -28,13 +28,6 @@ namespace VARG.Targets
                 var containerGo = new GameObject("_SpawnedTargets");
                 _spawnContainer = containerGo.transform;
             }
-
-            if (_fallbackLevelConfig == null)
-            {
-#if UNITY_EDITOR
-                _fallbackLevelConfig = UnityEditor.AssetDatabase.LoadAssetAtPath<LevelConfig>("Assets/_Project/Data/Levels/LevelConfig_1.asset");
-#endif
-            }
         }
 
         private void Start()
@@ -52,14 +45,7 @@ namespace VARG.Targets
             {
                 if (_spawnedTargets[i] != null)
                 {
-                    if (Application.isPlaying)
-                    {
-                        Destroy(_spawnedTargets[i]);
-                    }
-                    else
-                    {
-                        DestroyImmediate(_spawnedTargets[i]);
-                    }
+                    Destroy(_spawnedTargets[i]);
                 }
             }
 
@@ -106,7 +92,6 @@ namespace VARG.Targets
             var extraSpawns = levelConfig != null ? levelConfig.ExtraSpawnsPerRequired : 1;
             var forbiddenSpawns = levelConfig != null ? levelConfig.ForbiddenSpawnCount : 2;
 
-            // 1. Calculate counts according to GDD §R.2
             var requiredCounts = new Dictionary<TargetType, int>();
             for (var i = 0; i < mission.RequiredOrder.Count; i++)
             {
@@ -132,12 +117,10 @@ namespace VARG.Targets
                 spawnQueue.Add(forbiddenType);
             }
 
-            // 2. Shuffle queue and available spawn points
             Shuffle(spawnQueue);
             var shuffledPoints = new List<SpawnPoint>(_spawnPoints);
             Shuffle(shuffledPoints);
 
-            // 3. Spawn targets
             for (var i = 0; i < spawnQueue.Count; i++)
             {
                 var type = spawnQueue[i];
@@ -157,18 +140,7 @@ namespace VARG.Targets
                 }
 
                 var randomRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
-#if UNITY_EDITOR
-                var instance = Application.isPlaying
-                    ? Instantiate(targetData.Prefab, spawnPos, randomRotation, _spawnContainer)
-                    : (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(targetData.Prefab, _spawnContainer);
-                if (!Application.isPlaying && instance != null)
-                {
-                    instance.transform.position = spawnPos;
-                    instance.transform.rotation = randomRotation;
-                }
-#else
                 var instance = Instantiate(targetData.Prefab, spawnPos, randomRotation, _spawnContainer);
-#endif
                 if (instance == null) continue;
 
                 var agent = instance.GetComponent<NavMeshAgent>();

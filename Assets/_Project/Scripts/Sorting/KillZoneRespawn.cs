@@ -6,10 +6,17 @@ namespace VARG.Sorting
     {
         [SerializeField] private Transform _respawnPoint;
 
+        private GrabController _grabController;
+
         public Transform RespawnPoint
         {
             get => _respawnPoint;
             set => _respawnPoint = value;
+        }
+
+        private void Awake()
+        {
+            _grabController = FindFirstObjectByType<GrabController>();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -36,10 +43,14 @@ namespace VARG.Sorting
             var sortable = other.GetComponentInParent<SortableItem>();
             if (sortable != null && sortable.IsHeld)
             {
-                var grab = FindFirstObjectByType<GrabController>();
-                if (grab != null)
+                if (_grabController == null)
                 {
-                    grab.DropHeld();
+                    _grabController = FindFirstObjectByType<GrabController>();
+                }
+
+                if (_grabController != null)
+                {
+                    _grabController.DropHeld();
                 }
             }
 

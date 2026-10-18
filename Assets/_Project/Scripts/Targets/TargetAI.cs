@@ -2,11 +2,11 @@ using UnityEngine;
 using UnityEngine.AI;
 using VARG.Core;
 using VARG.Data;
-using VARG.Player;
 
 namespace VARG.Targets
 {
     [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(AudioSource))]
     public class TargetAI : MonoBehaviour
     {
         [Header("Components")]
@@ -39,6 +39,7 @@ namespace VARG.Targets
         [SerializeField] private AudioClip _customFleeClip;
         [SerializeField] private float _screamCooldown = 2.5f;
 
+        private readonly float[] _testAngles = new float[9];
         private TargetAIState _state = TargetAIState.Idle;
         private Transform _playerTransform;
         private Vector3 _dangerSource;
@@ -53,6 +54,7 @@ namespace VARG.Targets
 
         public TargetAIState CurrentState => _state;
         public AudioSource AudioSource => _audioSource;
+        public AudioClip CustomFleeClip => _customFleeClip;
 
         private void Awake()
         {
@@ -76,10 +78,6 @@ namespace VARG.Targets
             if (_audioSource == null)
             {
                 _audioSource = GetComponent<AudioSource>();
-                if (_audioSource == null)
-                {
-                    _audioSource = gameObject.AddComponent<AudioSource>();
-                }
             }
 
             if (_audioSource != null)
@@ -326,26 +324,23 @@ namespace VARG.Targets
             }
 
             var primaryAngle = _enableZigzag ? (_zigzagSign * _currentZigzagAngle) : 0f;
-            var testAngles = new float[]
-            {
-                primaryAngle,
-                primaryAngle + 20f * _zigzagSign,
-                primaryAngle - 20f * _zigzagSign,
-                0f,
-                -primaryAngle,
-                primaryAngle + 45f * _zigzagSign,
-                primaryAngle - 45f * _zigzagSign,
-                90f * _zigzagSign,
-                -90f * _zigzagSign
-            };
+            _testAngles[0] = primaryAngle;
+            _testAngles[1] = primaryAngle + 20f * _zigzagSign;
+            _testAngles[2] = primaryAngle - 20f * _zigzagSign;
+            _testAngles[3] = 0f;
+            _testAngles[4] = -primaryAngle;
+            _testAngles[5] = primaryAngle + 45f * _zigzagSign;
+            _testAngles[6] = primaryAngle - 45f * _zigzagSign;
+            _testAngles[7] = 90f * _zigzagSign;
+            _testAngles[8] = -90f * _zigzagSign;
 
             var bestDistanceToDanger = (transform.position - _dangerSource).sqrMagnitude;
             var bestTarget = Vector3.zero;
             var foundValidEscape = false;
 
-            for (var i = 0; i < testAngles.Length; i++)
+            for (var i = 0; i < _testAngles.Length; i++)
             {
-                var angle = testAngles[i];
+                var angle = _testAngles[i];
                 var rot = Quaternion.Euler(0f, angle, 0f);
                 var testDir = rot * baseAway;
                 var testPos = transform.position + testDir * _fleeWaypointDistance;
@@ -401,16 +396,10 @@ namespace VARG.Targets
             if (Time.time - _lastScreamTime < _screamCooldown) return;
             _lastScreamTime = Time.time;
 
-            var targetType = _target != null && _target.Data != null ? _target.Data.Type : TargetType.Chicken;
-
-            if (_audioSource != null)
+            if (_audioSource != null && _customFleeClip != null)
             {
-                var clip = _customFleeClip != null ? _customFleeClip : ProceduralAudioUtility.GetFleeVoiceClip(targetType);
-                if (clip != null)
-                {
-                    _audioSource.pitch = Random.Range(0.95f, 1.05f);
-                    _audioSource.PlayOneShot(clip, 0.85f);
-                }
+                _audioSource.pitch = Random.Range(0.95f, 1.05f);
+                _audioSource.PlayOneShot(_customFleeClip, 0.85f);
             }
         }
 

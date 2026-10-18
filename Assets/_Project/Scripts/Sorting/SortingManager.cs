@@ -10,11 +10,14 @@ namespace VARG.Sorting
 {
     public class SortingManager : Singleton<SortingManager>
     {
+        private static readonly Predicate<SortableItem> IsNullPredicate = IsItemNull;
+
         [SerializeField] private float _fallbackSortingDuration = 45f;
 
         private readonly HashSet<SortableItem> _registeredItems = new();
         private readonly HashSet<SortableItem> _resolvedItems = new();
 
+        private GrabController _grabController;
         private int _totalItems;
         private int _remainingItems;
         private bool _isVictoryTriggered;
@@ -25,10 +28,22 @@ namespace VARG.Sorting
 
         public event Action<int, int> OnItemCountsChanged;
 
+        protected override bool IsPersistent => false;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            StartSortingTimer();
+        }
+
         private void Start()
         {
+            _grabController = FindFirstObjectByType<GrabController>();
             ScanSceneItems();
-            StartSortingTimer();
+            if (!TimerManager.HasInstance || !TimerManager.Instance.IsRunning(TimerPhase.Sorting))
+            {
+                StartSortingTimer();
+            }
         }
 
         private void StartSortingTimer()
@@ -65,7 +80,7 @@ namespace VARG.Sorting
             if (_registeredItems.Remove(item))
             {
                 _resolvedItems.Remove(item);
-                _registeredItems.RemoveWhere(i => i == null);
+                PruneDestroyedItems();
                 _totalItems = _registeredItems.Count;
                 _remainingItems = Mathf.Max(0, _totalItems - _resolvedItems.Count);
                 OnItemCountsChanged?.Invoke(_remainingItems, _totalItems);
@@ -76,7 +91,7 @@ namespace VARG.Sorting
         {
             if (item == null || _registeredItems.Contains(item)) return;
 
-            _registeredItems.RemoveWhere(i => i == null);
+            PruneDestroyedItems();
             _registeredItems.Add(item);
             _totalItems = _registeredItems.Count;
             _remainingItems = Mathf.Max(0, _totalItems - _resolvedItems.Count);
@@ -88,7 +103,7 @@ namespace VARG.Sorting
             if (item == null || _resolvedItems.Contains(item)) return;
 
             _resolvedItems.Add(item);
-            _registeredItems.RemoveWhere(i => i == null);
+            PruneDestroyedItems();
             _totalItems = _registeredItems.Count;
             _remainingItems = Mathf.Max(0, _totalItems - _resolvedItems.Count);
             OnItemCountsChanged?.Invoke(_remainingItems, _totalItems);
@@ -100,12 +115,34 @@ namespace VARG.Sorting
             }
         }
 
+        public int GetUnsortedCountForType(TargetType type)
+        {
+            var count = 0;
+            foreach (var registered in _registeredItems)
+            {
+                if (registered != null && !registered.IsSorted && registered.Type == type)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        private void PruneDestroyedItems()
+        {
+            _registeredItems.RemoveWhere(IsNullPredicate);
+        }
+
+        private static bool IsItemNull(SortableItem item)
+        {
+            return item == null;
+        }
+
         private IEnumerator VictorySequenceRoutine()
         {
             yield return new WaitForSeconds(0.6f);
 
-            var grab = FindFirstObjectByType<GrabController>();
-            while (grab != null && grab.IsHolding)
+            while (_grabController != null && _grabController.IsHolding)
             {
                 yield return null;
             }

@@ -148,7 +148,7 @@ namespace VARG.Player
             main.startSpeed = new ParticleSystem.MinMaxCurve(1.5f, 4.5f);
             main.startSize = new ParticleSystem.MinMaxCurve(0.15f, 0.35f);
             main.startColor = new Color(0.9f, 0.95f, 1f, 0.85f);
-            main.gravityModifier = -0.2f; // float upward gently
+            main.gravityModifier = -0.2f;
 
             var shape = ps.shape;
             shape.shapeType = ParticleSystemShapeType.Sphere;
@@ -181,11 +181,6 @@ namespace VARG.Player
             };
 
             _capturePoofParticleSystem.Emit(emitParams, count);
-        }
-
-        public void PlayFleeAlert(Vector3 position, int count = 8)
-        {
-            // Disabled: yellow panic particles removed
         }
     }
 }

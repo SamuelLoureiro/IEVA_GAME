@@ -50,6 +50,7 @@ namespace VARG.UI
             if (_textComponent != null)
             {
                 _textComponent.text = _targetText;
+                _textComponent.maxVisibleCharacters = int.MaxValue;
             }
 
             _isTyping = false;
@@ -63,7 +64,8 @@ namespace VARG.UI
             _isTyping = true;
             if (_textComponent != null)
             {
-                _textComponent.text = string.Empty;
+                _textComponent.text = _targetText;
+                _textComponent.maxVisibleCharacters = 0;
             }
 
             var delay = 1f / Mathf.Max(1f, _charactersPerSecond);
@@ -74,10 +76,15 @@ namespace VARG.UI
                 currentLength++;
                 if (_textComponent != null)
                 {
-                    _textComponent.text = _targetText.Substring(0, currentLength);
+                    _textComponent.maxVisibleCharacters = currentLength;
                 }
 
                 yield return new WaitForSeconds(delay);
+            }
+
+            if (_textComponent != null)
+            {
+                _textComponent.maxVisibleCharacters = int.MaxValue;
             }
 
             _isTyping = false;

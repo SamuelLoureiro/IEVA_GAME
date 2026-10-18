@@ -23,6 +23,7 @@ namespace VARG.Humor
         public float LastSpokenTime { get; private set; }
 
         private readonly Dictionary<string, List<int>> _recentHistory = new();
+        private readonly List<int> _candidateIndices = new();
         private float _nextAllowedSpeechTime;
         private float _idleTimer;
 
@@ -121,26 +122,26 @@ namespace VARG.Humor
             }
 
             var maxHistory = Mathf.Min(3, lines.Length - 1);
-            var candidates = new List<int>();
+            _candidateIndices.Clear();
 
             for (var i = 0; i < lines.Length; i++)
             {
                 if (!history.Contains(i))
                 {
-                    candidates.Add(i);
+                    _candidateIndices.Add(i);
                 }
             }
 
-            if (candidates.Count == 0)
+            if (_candidateIndices.Count == 0)
             {
                 history.Clear();
                 for (var i = 0; i < lines.Length; i++)
                 {
-                    candidates.Add(i);
+                    _candidateIndices.Add(i);
                 }
             }
 
-            var selectedIndex = candidates[UnityEngine.Random.Range(0, candidates.Count)];
+            var selectedIndex = _candidateIndices[UnityEngine.Random.Range(0, _candidateIndices.Count)];
             history.Add(selectedIndex);
 
             while (history.Count > maxHistory)
@@ -305,33 +306,18 @@ namespace VARG.Humor
 
         private bool CheckPlayerActivity()
         {
-            if (InputManager.Instance != null && InputManager.Instance.Player != null)
+            if (!InputManager.HasInstance || InputManager.Instance.Player == null)
             {
-                var p = InputManager.Instance.Player;
-                if (p.Move.sqrMagnitude > 0.01f ||
-                    p.Look.sqrMagnitude > 0.01f ||
-                    p.FirePressed ||
-                    p.GrabHeld ||
-                    p.ThrowPressed ||
-                    p.InteractPressed)
-                {
-                    return true;
-                }
+                return false;
             }
 
-            var keyboard = UnityEngine.InputSystem.Keyboard.current;
-            if (keyboard != null && keyboard.anyKey.isPressed)
-            {
-                return true;
-            }
-
-            var mouse = UnityEngine.InputSystem.Mouse.current;
-            if (mouse != null && (mouse.delta.ReadValue().sqrMagnitude > 0.01f || mouse.leftButton.isPressed || mouse.rightButton.isPressed))
-            {
-                return true;
-            }
-
-            return false;
+            var player = InputManager.Instance.Player;
+            return player.Move.sqrMagnitude > 0.01f ||
+                   player.Look.sqrMagnitude > 0.01f ||
+                   player.FirePressed ||
+                   player.InteractPressed ||
+                   player.GrabHeld ||
+                   player.ThrowPressed;
         }
     }
 }

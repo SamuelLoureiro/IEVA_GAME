@@ -33,38 +33,7 @@ namespace VARG.Mission
             if (_penaltyConfig == null)
             {
                 _penaltyConfig = Resources.Load<PenaltyConfig>("Data/PenaltyConfig");
-#if UNITY_EDITOR
-                if (_penaltyConfig == null)
-                {
-                    _penaltyConfig = UnityEditor.AssetDatabase.LoadAssetAtPath<PenaltyConfig>("Assets/_Project/Data/PenaltyConfig.asset");
-                }
-#endif
             }
-
-            if (_availableTargets == null || _availableTargets.Length == 0)
-            {
-                LoadTargetsFromProject();
-            }
-        }
-
-        private void LoadTargetsFromProject()
-        {
-#if UNITY_EDITOR
-            var targets = new List<TargetData>();
-            var chicken = UnityEditor.AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Chicken.asset");
-            var cow = UnityEditor.AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Cow.asset");
-            var pig = UnityEditor.AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Pig.asset");
-            var human = UnityEditor.AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Human.asset");
-
-            if (chicken != null) targets.Add(chicken);
-            if (cow != null) targets.Add(cow);
-            if (pig != null) targets.Add(pig);
-            if (human != null) targets.Add(human);
-
-            _availableTargets = targets.ToArray();
-#else
-            _availableTargets = Resources.FindObjectsOfTypeAll<TargetData>();
-#endif
         }
 
         public void GenerateMission(LevelConfig level)
@@ -101,7 +70,6 @@ namespace VARG.Mission
                 chosenTypes.Add(randomType);
             }
 
-            // Shuffle list for random hunting order
             for (var i = 0; i < chosenTypes.Count; i++)
             {
                 var randomIndex = UnityEngine.Random.Range(i, chosenTypes.Count);
@@ -122,7 +90,7 @@ namespace VARG.Mission
         {
             if (_availableTargets == null || _availableTargets.Length == 0)
             {
-                LoadTargetsFromProject();
+                return null;
             }
 
             for (var i = 0; i < _availableTargets.Length; i++)
@@ -141,6 +109,19 @@ namespace VARG.Mission
             return targetType == ForbiddenType;
         }
 
+        public int GetRequiredCountForType(TargetType type)
+        {
+            var count = 0;
+            for (var i = 0; i < _requiredOrder.Count; i++)
+            {
+                if (_requiredOrder[i] != null && _requiredOrder[i].Type == type)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
         public CaptureResult ValidateCapture(TargetData captured)
         {
             if (captured == null) return CaptureResult.NotInList;
@@ -154,7 +135,6 @@ namespace VARG.Mission
                 expected = _requiredOrder[CurrentIndex];
             }
 
-            // 1. Forbidden target (NotInList)
             if (captured.Type == ForbiddenType)
             {
                 if (InventoryManager.Instance != null)
@@ -176,7 +156,6 @@ namespace VARG.Mission
                 return CaptureResult.NotInList;
             }
 
-            // 2. Correct target in sequence
             if (!IsComplete && expected != null && captured == expected)
             {
                 CurrentIndex++;
@@ -196,7 +175,6 @@ namespace VARG.Mission
                 return CaptureResult.Correct;
             }
 
-            // 3. Target present in allowed list, but out of order
             if (InventoryManager.Instance != null)
             {
                 InventoryManager.Instance.Add(captured, CaptureResult.OutOfOrder);

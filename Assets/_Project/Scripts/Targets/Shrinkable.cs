@@ -6,6 +6,7 @@ using VARG.Player;
 
 namespace VARG.Targets
 {
+    [RequireComponent(typeof(AudioSource))]
     public class Shrinkable : MonoBehaviour
     {
         [SerializeField] private float _shrinkDuration = 0.5f;
@@ -39,10 +40,6 @@ namespace VARG.Targets
             if (_audioSource == null)
             {
                 _audioSource = GetComponent<AudioSource>();
-                if (_audioSource == null)
-                {
-                    _audioSource = gameObject.AddComponent<AudioSource>();
-                }
             }
 
             if (_audioSource != null)

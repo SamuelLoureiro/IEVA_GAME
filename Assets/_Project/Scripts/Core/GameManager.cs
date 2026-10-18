@@ -18,10 +18,15 @@ namespace VARG.Core
         [SerializeField] private ScoringConfig _scoringConfig;
         [SerializeField] private PenaltyConfig _penaltyConfig;
 
+        public const int MaxLevel = 10;
+
         public int CurrentLevel { get; private set; } = 1;
         public LevelResult LastResult { get; private set; }
         public bool IsVictory { get; private set; }
         public DefeatReason? LastDefeatReason { get; private set; }
+
+        private LevelConfig _runtimeLevelConfig;
+        private int _cachedRuntimeLevel = -1;
 
         protected override void Awake()
         {
@@ -29,15 +34,22 @@ namespace VARG.Core
             LoadDefaultConfigsIfMissing();
         }
 
+        protected override void OnDestroy()
+        {
+            if (_runtimeLevelConfig != null)
+            {
+                Destroy(_runtimeLevelConfig);
+                _runtimeLevelConfig = null;
+            }
+
+            base.OnDestroy();
+        }
+
         private void LoadDefaultConfigsIfMissing()
         {
             if (_campaignConfig == null)
             {
                 _campaignConfig = Resources.Load<CampaignConfig>("Data/CampaignConfig");
-                if (_campaignConfig == null)
-                {
-                    _campaignConfig = FindFirstObjectByType<CampaignConfig>();
-                }
             }
 
             if (_gameConfig == null)
@@ -63,8 +75,37 @@ namespace VARG.Core
                 return null;
             }
 
-            var index = Mathf.Clamp(CurrentLevel - 1, 0, _campaignConfig.Levels.Length - 1);
-            return _campaignConfig.Levels[index];
+            if (CurrentLevel <= _campaignConfig.Levels.Length)
+            {
+                return _campaignConfig.Levels[CurrentLevel - 1];
+            }
+
+            if (_runtimeLevelConfig != null && _cachedRuntimeLevel == CurrentLevel)
+            {
+                return _runtimeLevelConfig;
+            }
+
+            var lastConfig = _campaignConfig.Levels[_campaignConfig.Levels.Length - 1];
+            var clampedLevel = Mathf.Min(CurrentLevel, MaxLevel);
+            var extraLevels = clampedLevel - _campaignConfig.Levels.Length;
+            var forbiddenSpawns = Mathf.Min(lastConfig.ForbiddenSpawnCount + (extraLevels / 2), 5);
+
+            if (_runtimeLevelConfig == null)
+            {
+                _runtimeLevelConfig = ScriptableObject.CreateInstance<LevelConfig>();
+            }
+
+            _runtimeLevelConfig.Setup(
+                lastConfig.ListSize + extraLevels,
+                lastConfig.CaptureTime + (extraLevels * 10f),
+                lastConfig.SortingTime + (extraLevels * 10f),
+                lastConfig.ExtraSpawnsPerRequired,
+                forbiddenSpawns,
+                lastConfig.FleeSpeedMultiplier
+            );
+            _cachedRuntimeLevel = CurrentLevel;
+
+            return _runtimeLevelConfig;
         }
 
         public void StartLevel()
@@ -86,8 +127,7 @@ namespace VARG.Core
 
             if (TimerManager.Instance != null)
             {
-                TimerManager.Instance.StopAllTimers();
-                TimerManager.Instance.ResetDebt();
+                TimerManager.Instance.ResetTimers();
             }
 
             if (MissionManager.Instance != null && levelConfig != null)
@@ -163,7 +203,20 @@ namespace VARG.Core
 
         public void NextLevel()
         {
-            CurrentLevel++;
+            if (CurrentLevel >= MaxLevel)
+            {
+                RestartCampaign();
+            }
+            else
+            {
+                CurrentLevel++;
+                StartLevel();
+            }
+        }
+
+        public void RestartCampaign()
+        {
+            CurrentLevel = 1;
             StartLevel();
         }
 

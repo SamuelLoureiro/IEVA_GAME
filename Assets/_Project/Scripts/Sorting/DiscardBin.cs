@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using VARG.Core;
 using VARG.Data;
@@ -13,6 +14,15 @@ namespace VARG.Sorting
         [SerializeField] private float _settleDelay = 0.20f;
         [SerializeField] private PenaltyConfig _penaltyConfig;
 
+        [Header("Feedback")]
+        [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _shredClip;
+        [SerializeField] private AudioClip _wrongDiscardClip;
+        [SerializeField] private ParticleSystem _shredParticles;
+
+        private readonly HashSet<SortableItem> _rejectedUntilGrabbed = new();
+        private Cage[] _cages;
+
         public Transform DestroyPoint => _destroyPoint != null ? _destroyPoint : transform;
 
         private void Awake()
@@ -21,6 +31,13 @@ namespace VARG.Sorting
             {
                 _penaltyConfig = Resources.Load<PenaltyConfig>("Data/PenaltyConfig");
             }
+
+            if (_audioSource == null)
+            {
+                _audioSource = GetComponent<AudioSource>();
+            }
+
+            _cages = FindObjectsByType<Cage>(FindObjectsSortMode.None);
         }
 
         public void Configure(Transform destroyPoint)
@@ -33,9 +50,18 @@ namespace VARG.Sorting
             var item = other.GetComponentInParent<SortableItem>();
             if (item == null || item.IsSorted) return;
 
-            if (item.IsHeld) return;
+            if (item.IsHeld)
+            {
+                _rejectedUntilGrabbed.Remove(item);
+                return;
+            }
+
+            if (_rejectedUntilGrabbed.Contains(item)) return;
 
             if (item.TimeSinceReleased < _settleDelay) return;
+
+            var escapee = item.GetComponent<SortingEscapeeAI>();
+            if (escapee != null && escapee.IsEscaping) return;
 
             ValidateDiscard(item);
         }
@@ -47,6 +73,21 @@ namespace VARG.Sorting
 
         private void ValidateDiscard(SortableItem item)
         {
+            var isValidDiscard = IsValidDiscard(item);
+
+            if (isValidDiscard)
+            {
+                AcceptDiscard(item);
+            }
+            else
+            {
+                EjectDiscard(item);
+            }
+        }
+
+        private void AcceptDiscard(SortableItem item)
+        {
+            _rejectedUntilGrabbed.Remove(item);
             item.MarkSorted();
 
             var grabbable = item.GetComponent<Grabbable>();
@@ -73,32 +114,73 @@ namespace VARG.Sorting
                 StartCoroutine(SettleRoutine(rb, item.transform));
             }
 
-            var isForbidden = IsItemForbidden(item);
-
-            if (isForbidden)
+            if (_audioSource != null && _shredClip != null)
             {
-                GameEvents.TriggerCorrectDiscard(item.Data);
+                _audioSource.PlayOneShot(_shredClip);
             }
-            else
+
+            if (_shredParticles != null)
             {
-                var penalty = _penaltyConfig != null ? _penaltyConfig.WrongDiscardPenalty : 5f;
-                if (TimerManager.Instance != null)
-                {
-                    TimerManager.Instance.ApplyPenalty(TimerPhase.Sorting, penalty);
-                }
-
-                if (LivesManager.Instance != null)
-                {
-                    LivesManager.Instance.LoseLife();
-                }
-
-                GameEvents.TriggerWrongDiscard(item.Data);
+                _shredParticles.Play();
             }
+
+            GameEvents.TriggerCorrectDiscard(item.Data);
 
             if (SortingManager.Instance != null)
             {
                 SortingManager.Instance.NotifyItemResolved(item);
             }
+        }
+
+        private void EjectDiscard(SortableItem item)
+        {
+            _rejectedUntilGrabbed.Add(item);
+
+            var safeEjectPos = transform.TransformPoint(new Vector3(0f, 0.7f, -2.0f));
+
+            var rb = item.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = false;
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+
+                item.transform.position = safeEjectPos;
+
+                var launchDir = (-transform.forward * 0.82f + Vector3.up * 0.55f).normalized;
+                rb.AddForce(launchDir * 8.5f, ForceMode.VelocityChange);
+            }
+
+            if (_audioSource != null && _wrongDiscardClip != null)
+            {
+                _audioSource.PlayOneShot(_wrongDiscardClip);
+            }
+
+            var penalty = _penaltyConfig != null ? _penaltyConfig.WrongDiscardPenalty : 5f;
+            if (TimerManager.Instance != null)
+            {
+                TimerManager.Instance.ApplyPenalty(TimerPhase.Sorting, penalty);
+            }
+
+            if (LivesManager.Instance != null)
+            {
+                LivesManager.Instance.LoseLife();
+            }
+
+            var escapee = item.GetComponent<SortingEscapeeAI>();
+            if (escapee != null)
+            {
+                escapee.TriggerEscape();
+            }
+
+            GameEvents.TriggerWrongDiscard(item.Data);
+        }
+
+        public void ConfigureFeedback(AudioClip shredClip, AudioClip wrongDiscardClip, ParticleSystem shredParticles)
+        {
+            _shredClip = shredClip;
+            _wrongDiscardClip = wrongDiscardClip;
+            _shredParticles = shredParticles;
         }
 
         private IEnumerator SettleRoutine(Rigidbody rb, Transform itemTransform)
@@ -126,6 +208,48 @@ namespace VARG.Sorting
                     itemTransform.SetParent(transform, true);
                 }
             }
+        }
+
+        private bool IsValidDiscard(SortableItem item)
+        {
+            if (IsItemForbidden(item))
+            {
+                return true;
+            }
+
+            if (MissionManager.Instance == null || MissionManager.Instance.RequiredCount == 0)
+            {
+                return false;
+            }
+
+            var required = MissionManager.Instance.GetRequiredCountForType(item.Type);
+            if (required == 0)
+            {
+                return true;
+            }
+
+            var cagedCount = 0;
+            if (_cages == null || _cages.Length == 0)
+            {
+                _cages = FindObjectsByType<Cage>(FindObjectsSortMode.None);
+            }
+
+            if (_cages != null)
+            {
+                for (var i = 0; i < _cages.Length; i++)
+                {
+                    if (_cages[i] != null && _cages[i].AcceptedType == item.Type)
+                    {
+                        cagedCount += _cages[i].LockedCount;
+                    }
+                }
+            }
+
+            var availableCount = SortingManager.Instance != null
+                ? SortingManager.Instance.GetUnsortedCountForType(item.Type)
+                : 0;
+
+            return (cagedCount + availableCount) > required;
         }
 
         private bool IsItemForbidden(SortableItem item)

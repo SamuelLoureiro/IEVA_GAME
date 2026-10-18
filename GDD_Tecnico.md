@@ -67,17 +67,18 @@
 ### R.6 Triagem (Etapa 4)
 - Todos os itens do inventário (certos + erros) aparecem numa caixa.
 - **Gaiolas:** uma por tipo — `Galinha`, `Vaca`, `Porco`, `Humano` — **sempre as 4 presentes** + uma **lixeira de Descarte**.
-- Itens `OutOfOrder` são alvos válidos → vão para a gaiola do seu tipo. Itens do tipo proibido → Descarte.
+- **Cota por tipo:** cada gaiola só aceita até a quantidade exigida daquele tipo na lista da missão (`MissionManager.RequiredOrder`). Miniaturas adicionais do mesmo tipo capturadas por engano (`OutOfOrder`) são consideradas **excedentes** e devem ser descartadas.
+- Itens do tipo proibido (`NotInList`) e itens excedentes além da cota da gaiola → Descarte.
 
 | Ação | Resultado |
 |---|---|
-| Item válido na gaiola do seu tipo | trava o item na gaiola (sem ganho de tempo) |
-| Item na gaiola errada (inclui tipo proibido em qualquer gaiola) | item é "cuspido" de volta, −5 s no Timer de Separação |
-| Item válido jogado no Descarte | item é destruído, −5 s no Timer de Separação e **−1 vida** |
-| Item do tipo proibido no Descarte | correto (sem ganho de tempo) |
+| Item dentro da cota na gaiola do seu tipo | trava o item na gaiola (sem ganho de tempo) |
+| Item na gaiola errada, tipo proibido ou excedente além da cota | item é "cuspido" de volta, −5 s no Timer de Separação |
+| Item necessário (dentro da cota) jogado no Descarte | item é "cuspido" de volta, foge pelo chão, −5 s no Timer de Separação e **−1 vida** |
+| Item do tipo proibido ou excedente no Descarte | correto (triturado, sem ganho de tempo) |
 
 - A validação só acontece depois que o item é **solto** (nunca enquanto está na mão).
-- Item destruído no Descarte por engano **não precisa ser reposto** — a fase termina quando a caixa e a mão estão vazias.
+- Item necessário jogado no Descarte por engano pula de volta para fora da lixeira, assustado, e deve ser recapturado para a sua gaiola.
 
 ### R.7 Fim do nível e pontuação
 - **Vitória do nível:** todos os itens processados na Triagem → `05_Results` → botão **"Próximo nível"**.
@@ -453,7 +454,7 @@ Há **dois controladores** (o ETzinho e a nave), cada um lendo sua interface de 
 - **`DiscardBin`**: lixeira com trigger; destrói o que entra.
 - Validação em `OnTriggerStay` quando `IsHeld == false` (e item quase parado ou 0.3 s após soltar), uma única vez por item:
   - **Cage:** tipo certo **e** não proibido → trava (`isKinematic = true`, parent à gaiola), `OnCorrectCage`. Caso contrário → "cospe" (`AddForce` para cima/fora), `ApplyPenalty(Sorting, wrongCagePenalty)`, `OnWrongCage`.
-  - **DiscardBin:** tipo proibido → `OnCorrectDiscard`. Item válido → `ApplyPenalty(Sorting, wrongDiscardPenalty)` + `LoseLife()` + `OnWrongDiscard`. Nos dois casos o item é destruído.
+  - **DiscardBin:** tipo proibido ou excedente → tritura o item (`isKinematic = true`), `OnCorrectDiscard`. Item válido da missão → "cospe" o item de volta em fuga (`SortingEscapeeAI`), `ApplyPenalty(Sorting, wrongDiscardPenalty)` + `LoseLife()` + `OnWrongDiscard` (o item não é destruído e deve ser colocado na sua gaiola).
 - **`SortingManager`**: conta itens restantes e chama `GameManager.Victory()`.
 
 ### Scripts

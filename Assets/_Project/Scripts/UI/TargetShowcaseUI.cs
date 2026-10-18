@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VARG.Data;
+using VARG.Input;
 
 namespace VARG.UI
 {
@@ -78,8 +79,9 @@ namespace VARG.UI
         {
             if (!gameObject.activeInHierarchy || _isCompleted || _countdownCoroutine == null) return;
 
-            var keyboard = UnityEngine.InputSystem.Keyboard.current;
-            if (keyboard != null && (keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame))
+            if (InputManager.HasInstance &&
+                InputManager.Instance.Player != null &&
+                (InputManager.Instance.Player.InteractPressed || InputManager.Instance.Player.FirePressed))
             {
                 ConfirmAndProceed();
             }
@@ -109,24 +111,9 @@ namespace VARG.UI
             gameObject.SetActive(true);
             ClearShowcase();
 
-            var list = order;
-            if (list == null || list.Count == 0)
+            if (order != null && order.Count > 0)
             {
-#if UNITY_EDITOR
-                var fallback = new List<TargetData>();
-                var cow = UnityEditor.AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Cow.asset");
-                var pig = UnityEditor.AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Pig.asset");
-                var chicken = UnityEditor.AssetDatabase.LoadAssetAtPath<TargetData>("Assets/_Project/Data/Targets/Target_Chicken.asset");
-                if (cow != null) fallback.Add(cow);
-                if (pig != null) fallback.Add(pig);
-                if (chicken != null) fallback.Add(chicken);
-                list = fallback;
-#endif
-            }
-
-            if (list != null && list.Count > 0)
-            {
-                SpawnShowcaseTargets(list);
+                SpawnShowcaseTargets(order);
             }
         }
 
@@ -197,14 +184,7 @@ namespace VARG.UI
             {
                 if (_spawnedShowcaseObjects[i] != null)
                 {
-                    if (Application.isPlaying)
-                    {
-                        Destroy(_spawnedShowcaseObjects[i]);
-                    }
-                    else
-                    {
-                        DestroyImmediate(_spawnedShowcaseObjects[i]);
-                    }
+                    Destroy(_spawnedShowcaseObjects[i]);
                 }
             }
             _spawnedShowcaseObjects.Clear();
@@ -220,14 +200,7 @@ namespace VARG.UI
 
             foreach (var child in children)
             {
-                if (Application.isPlaying)
-                {
-                    Destroy(child);
-                }
-                else
-                {
-                    DestroyImmediate(child);
-                }
+                Destroy(child);
             }
         }
 
@@ -255,7 +228,6 @@ namespace VARG.UI
                     instance.transform.SetParent(transform, true);
                     instance.transform.localScale = Vector3.one * scale;
 
-                    // Remove/disable physics and sorting logic so it's a pure visual prop
                     var rb = instance.GetComponent<Rigidbody>();
                     if (rb != null)
                     {

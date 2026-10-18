@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using VARG.Input;
 
 namespace VARG.Sorting
@@ -18,6 +17,7 @@ namespace VARG.Sorting
         [SerializeField] private float _maxPitch = 85f;
 
         private CharacterController _characterController;
+        private IPlayerInput _fallbackInput;
         private float _verticalVelocity;
         private float _currentPitch;
 
@@ -26,6 +26,7 @@ namespace VARG.Sorting
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
+            _fallbackInput = new KeyboardMouseInput();
         }
 
         private void OnEnable()
@@ -91,8 +92,7 @@ namespace VARG.Sorting
 
         private void HandleCursorToggle()
         {
-            var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+            if (GetInput().PausePressed)
             {
                 var isLocked = Cursor.lockState == CursorLockMode.Locked;
                 LockCursor(!isLocked);
@@ -101,33 +101,21 @@ namespace VARG.Sorting
 
         private Vector2 ReadMoveInput()
         {
-            if (InputManager.Instance != null && InputManager.Instance.Player != null)
-            {
-                return InputManager.Instance.Player.Move;
-            }
-
-            var input = Vector2.zero;
-            var keyboard = Keyboard.current;
-            if (keyboard != null)
-            {
-                if (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed) input.y += 1f;
-                if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed) input.y -= 1f;
-                if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed) input.x -= 1f;
-                if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed) input.x += 1f;
-            }
-
-            return input;
+            return GetInput().Move;
         }
 
         private Vector2 ReadLookInput()
         {
+            return GetInput().Look;
+        }
+
+        private IPlayerInput GetInput()
+        {
             if (InputManager.Instance != null && InputManager.Instance.Player != null)
             {
-                return InputManager.Instance.Player.Look;
+                return InputManager.Instance.Player;
             }
-
-            var mouse = Mouse.current;
-            return mouse != null ? mouse.delta.ReadValue() : Vector2.zero;
+            return _fallbackInput;
         }
 
         private static void LockCursor(bool locked)
