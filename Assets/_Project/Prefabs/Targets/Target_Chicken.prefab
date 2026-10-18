@@ -157,6 +157,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _audioSource: {fileID: 0}
+  _boingClip: {fileID: 0}
+  _popClip: {fileID: 0}
 --- !u!114 &2505876153500900377
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,3 +203,6 @@ MonoBehaviour:
   _fleeAcceleration: 35
   _fleeAngularSpeed: 999
   _wanderAngularSpeed: 360
+  _audioSource: {fileID: 0}
+  _customFleeClip: {fileID: 8300000, guid: 2a84e590a76e2f949bf784c4ced19580, type: 3}
+  _screamCooldown: 2.5
