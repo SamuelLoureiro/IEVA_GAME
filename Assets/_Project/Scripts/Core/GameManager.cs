@@ -63,8 +63,26 @@ namespace VARG.Core
                 return null;
             }
 
-            var index = Mathf.Clamp(CurrentLevel - 1, 0, _campaignConfig.Levels.Length - 1);
-            return _campaignConfig.Levels[index];
+            if (CurrentLevel <= _campaignConfig.Levels.Length)
+            {
+                return _campaignConfig.Levels[CurrentLevel - 1];
+            }
+
+            var lastConfig = _campaignConfig.Levels[_campaignConfig.Levels.Length - 1];
+            var extraLevels = CurrentLevel - _campaignConfig.Levels.Length;
+            var forbiddenSpawns = Mathf.Min(lastConfig.ForbiddenSpawnCount + (extraLevels / 2), 5);
+
+            var endlessConfig = ScriptableObject.CreateInstance<LevelConfig>();
+            endlessConfig.Setup(
+                lastConfig.ListSize + extraLevels,
+                lastConfig.CaptureTime + (extraLevels * 10f),
+                lastConfig.SortingTime + (extraLevels * 10f),
+                lastConfig.ExtraSpawnsPerRequired,
+                forbiddenSpawns,
+                lastConfig.FleeSpeedMultiplier
+            );
+
+            return endlessConfig;
         }
 
         public void StartLevel()

@@ -43,6 +43,12 @@ namespace VARG.DebugTools
             GUILayout.BeginArea(new Rect(10, 10, 220, 280), "GameManager Debug (Click or 1-8)", GUI.skin.window);
 
             GUILayout.Label($"Current Level: {GameManager.Instance.CurrentLevel}");
+            var currentCfg = GameManager.Instance.GetCurrentLevelConfig();
+            if (currentCfg != null)
+            {
+                GUILayout.Label($"Items: {currentCfg.ListSize} | Forb: {currentCfg.ForbiddenSpawnCount}");
+                GUILayout.Label($"Hunt: {currentCfg.CaptureTime}s | Sort: {currentCfg.SortingTime}s");
+            }
 
             if (GUILayout.Button("1. StartLevel (Briefing)"))
             {

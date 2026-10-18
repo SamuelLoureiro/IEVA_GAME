@@ -18,5 +18,15 @@ namespace VARG.Data
         public int ExtraSpawnsPerRequired => _extraSpawnsPerRequired;
         public int ForbiddenSpawnCount => _forbiddenSpawnCount;
         public float FleeSpeedMultiplier => _fleeSpeedMultiplier;
+
+        public void Setup(int listSize, float captureTime, float sortingTime, int extraSpawns = 1, int forbiddenSpawns = 2, float fleeMultiplier = 1f)
+        {
+            _listSize = listSize;
+            _captureTime = captureTime;
+            _sortingTime = sortingTime;
+            _extraSpawnsPerRequired = extraSpawns;
+            _forbiddenSpawnCount = forbiddenSpawns;
+            _fleeSpeedMultiplier = fleeMultiplier;
+        }
     }
 }

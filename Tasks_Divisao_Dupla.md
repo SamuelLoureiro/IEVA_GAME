@@ -147,7 +147,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
   - Pronto quando: a lista some ao continuar e nunca mais aparece no nível.
 - [x] **B14** `BossLineSet` + `BossDialogueManager` (shuffle bag, tokens, escalonamento por vidas perdidas, cooldown, `OnIdle`).
 - [x] **B15** `BossPopupUI` (balão de fala do chefe) + `AlienVoice` (áudio do chefe com suporte a gravação própria).
-- [ ] **B16** Progressão de níveis: `NextLevel` usa o próximo `LevelConfig`; após o último, repete com +1 item e +10 s.
+- [x] **B16** Progressão de níveis: `NextLevel` usa o próximo `LevelConfig`; após o último, repete com +1 item e +10 s.
 
 ### Sprint 4 — Polimento da Triagem + Build (#6)
 - [ ] **B17** Feedback das gaiolas (ding, cuspe cômico, partículas), balanceamento do Timer de Separação.
