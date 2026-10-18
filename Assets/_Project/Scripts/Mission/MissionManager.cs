@@ -86,6 +86,24 @@ namespace VARG.Mission
             }
         }
 
+        public void LoadCustomMission(IReadOnlyList<TargetType> targetSequence, TargetType forbiddenType)
+        {
+            LoadDependenciesIfMissing();
+
+            _requiredOrder.Clear();
+            CurrentIndex = 0;
+            ForbiddenType = forbiddenType;
+
+            for (var i = 0; i < targetSequence.Count; i++)
+            {
+                var targetData = GetTargetDataForType(targetSequence[i]);
+                if (targetData != null)
+                {
+                    _requiredOrder.Add(targetData);
+                }
+            }
+        }
+
         public TargetData GetTargetDataForType(TargetType type)
         {
             if (_availableTargets == null || _availableTargets.Length == 0)
