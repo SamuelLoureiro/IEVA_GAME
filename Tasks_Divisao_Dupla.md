@@ -146,7 +146,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 - [x] **B13** Cena `01_BossBriefing`: `BriefingController`, `DialogueBox`, `TypewriterText`, `TargetShowcaseUI`; lista com tempo limitado; mostra o nível.
   - Pronto quando: a lista some ao continuar e nunca mais aparece no nível.
 - [x] **B14** `BossLineSet` + `BossDialogueManager` (shuffle bag, tokens, escalonamento por vidas perdidas, cooldown, `OnIdle`).
-- [ ] **B15** `BossPopupUI` (comentário de célula) + `AlienVoice` (bipes).
+- [x] **B15** `BossPopupUI` (balão de fala do chefe) + `AlienVoice` (áudio do chefe com suporte a gravação própria).
 - [ ] **B16** Progressão de níveis: `NextLevel` usa o próximo `LevelConfig`; após o último, repete com +1 item e +10 s.
 
 ### Sprint 4 — Polimento da Triagem + Build (#6)
