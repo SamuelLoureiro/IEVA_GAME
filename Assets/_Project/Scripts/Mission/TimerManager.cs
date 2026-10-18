@@ -81,7 +81,6 @@ namespace VARG.Mission
             }
             else
             {
-                // Transitioning to Sorting automatically pauses/stops the Capture timer
                 _isCaptureRunning = false;
                 var finalDuration = Mathf.Max(0f, duration - SortingDebt);
                 _sortingRemaining = finalDuration;
@@ -108,6 +107,16 @@ namespace VARG.Mission
         {
             _isCaptureRunning = false;
             _isSortingRunning = false;
+        }
+
+        public void ResetTimers()
+        {
+            StopAllTimers();
+            ResetDebt();
+            _captureRemaining = 0f;
+            _sortingRemaining = 0f;
+            _captureTimeLowTriggered = false;
+            _sortingTimeLowTriggered = false;
         }
 
         public void Pause(bool paused)
@@ -158,7 +167,6 @@ namespace VARG.Mission
                 }
                 else
                 {
-                    // Sorting phase is not running yet (e.g. during Capture phase), accumulates as debt
                     SortingDebt += seconds;
                     OnPenaltyApplied?.Invoke(TimerPhase.Sorting, seconds);
                 }

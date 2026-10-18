@@ -25,10 +25,24 @@ namespace VARG.Core
         public bool IsVictory { get; private set; }
         public DefeatReason? LastDefeatReason { get; private set; }
 
+        private LevelConfig _runtimeLevelConfig;
+        private int _cachedRuntimeLevel = -1;
+
         protected override void Awake()
         {
             base.Awake();
             LoadDefaultConfigsIfMissing();
+        }
+
+        protected override void OnDestroy()
+        {
+            if (_runtimeLevelConfig != null)
+            {
+                Destroy(_runtimeLevelConfig);
+                _runtimeLevelConfig = null;
+            }
+
+            base.OnDestroy();
         }
 
         private void LoadDefaultConfigsIfMissing()
@@ -36,10 +50,6 @@ namespace VARG.Core
             if (_campaignConfig == null)
             {
                 _campaignConfig = Resources.Load<CampaignConfig>("Data/CampaignConfig");
-                if (_campaignConfig == null)
-                {
-                    _campaignConfig = FindFirstObjectByType<CampaignConfig>();
-                }
             }
 
             if (_gameConfig == null)
@@ -70,13 +80,22 @@ namespace VARG.Core
                 return _campaignConfig.Levels[CurrentLevel - 1];
             }
 
+            if (_runtimeLevelConfig != null && _cachedRuntimeLevel == CurrentLevel)
+            {
+                return _runtimeLevelConfig;
+            }
+
             var lastConfig = _campaignConfig.Levels[_campaignConfig.Levels.Length - 1];
             var clampedLevel = Mathf.Min(CurrentLevel, MaxLevel);
             var extraLevels = clampedLevel - _campaignConfig.Levels.Length;
             var forbiddenSpawns = Mathf.Min(lastConfig.ForbiddenSpawnCount + (extraLevels / 2), 5);
 
-            var endlessConfig = ScriptableObject.CreateInstance<LevelConfig>();
-            endlessConfig.Setup(
+            if (_runtimeLevelConfig == null)
+            {
+                _runtimeLevelConfig = ScriptableObject.CreateInstance<LevelConfig>();
+            }
+
+            _runtimeLevelConfig.Setup(
                 lastConfig.ListSize + extraLevels,
                 lastConfig.CaptureTime + (extraLevels * 10f),
                 lastConfig.SortingTime + (extraLevels * 10f),
@@ -84,8 +103,9 @@ namespace VARG.Core
                 forbiddenSpawns,
                 lastConfig.FleeSpeedMultiplier
             );
+            _cachedRuntimeLevel = CurrentLevel;
 
-            return endlessConfig;
+            return _runtimeLevelConfig;
         }
 
         public void StartLevel()
@@ -107,8 +127,7 @@ namespace VARG.Core
 
             if (TimerManager.Instance != null)
             {
-                TimerManager.Instance.StopAllTimers();
-                TimerManager.Instance.ResetDebt();
+                TimerManager.Instance.ResetTimers();
             }
 
             if (MissionManager.Instance != null && levelConfig != null)

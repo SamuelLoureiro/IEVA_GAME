@@ -47,7 +47,25 @@ namespace VARG.UI
 
         private void Start()
         {
+            InitializeTimerIfNeeded();
             RefreshInitialState();
+        }
+
+        private void InitializeTimerIfNeeded()
+        {
+            if (!TimerManager.HasInstance || TimerManager.Instance.IsRunning(TimerPhase.Sorting)) return;
+
+            var duration = 45f;
+            if (GameManager.HasInstance)
+            {
+                var levelConfig = GameManager.Instance.GetCurrentLevelConfig();
+                if (levelConfig != null && levelConfig.SortingTime > 0f)
+                {
+                    duration = levelConfig.SortingTime;
+                }
+            }
+
+            TimerManager.Instance.StartTimer(TimerPhase.Sorting, duration);
         }
 
         public void Configure(TextMeshProUGUI timeText, TextMeshProUGUI itemsCountText)
@@ -79,7 +97,6 @@ namespace VARG.UI
         private void HandlePenaltyApplied(TimerPhase phase, float penalty)
         {
             if (phase != TimerPhase.Sorting) return;
-            // Visual feedback on penalty
             if (_timeText != null)
             {
                 _timeText.color = _warningColor;
