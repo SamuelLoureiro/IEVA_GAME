@@ -8,7 +8,6 @@ namespace VARG.Player
 
         private ParticleSystem _impactParticleSystem;
         private ParticleSystem _capturePoofParticleSystem;
-        private ParticleSystem _fleeAlertParticleSystem;
 
         private static Material _particleMaterial;
         private static Texture2D _softParticleTexture;
@@ -55,9 +54,6 @@ namespace VARG.Player
 
             _capturePoofParticleSystem = CreateParticleSystem("CapturePoof", 120);
             ConfigureCapturePoof(_capturePoofParticleSystem);
-
-            _fleeAlertParticleSystem = CreateParticleSystem("FleeAlert", 40);
-            ConfigureFleeAlert(_fleeAlertParticleSystem);
         }
 
         private static void EnsureMaterial()
@@ -159,21 +155,6 @@ namespace VARG.Player
             shape.radius = 0.2f;
         }
 
-        private static void ConfigureFleeAlert(ParticleSystem ps)
-        {
-            var main = ps.main;
-            main.startLifetime = 0.45f;
-            main.startSpeed = new ParticleSystem.MinMaxCurve(1f, 2.5f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.1f, 0.22f);
-            main.startColor = new Color(1f, 0.85f, 0.2f, 0.9f); // warning yellow
-            main.gravityModifier = -0.5f;
-
-            var shape = ps.shape;
-            shape.shapeType = ParticleSystemShapeType.Cone;
-            shape.angle = 25f;
-            shape.radius = 0.15f;
-        }
-
         public void PlayImpactSparks(Vector3 position, Color color, int count = 12)
         {
             if (_impactParticleSystem == null) return;
@@ -204,16 +185,7 @@ namespace VARG.Player
 
         public void PlayFleeAlert(Vector3 position, int count = 8)
         {
-            if (_fleeAlertParticleSystem == null) return;
-
-            var emitParams = new ParticleSystem.EmitParams
-            {
-                position = position + Vector3.up * 0.8f,
-                startColor = new Color(1f, 0.85f, 0.2f, 0.9f),
-                applyShapeToPosition = true
-            };
-
-            _fleeAlertParticleSystem.Emit(emitParams, count);
+            // Disabled: yellow panic particles removed
         }
     }
 }

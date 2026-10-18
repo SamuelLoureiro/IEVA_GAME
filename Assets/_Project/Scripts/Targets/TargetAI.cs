@@ -412,11 +412,6 @@ namespace VARG.Targets
                     _audioSource.PlayOneShot(clip, 0.85f);
                 }
             }
-
-            if (CaptureFeedbackFX.Instance != null)
-            {
-                CaptureFeedbackFX.Instance.PlayFleeAlert(transform.position);
-            }
         }
 
         public void SetCaptured()
