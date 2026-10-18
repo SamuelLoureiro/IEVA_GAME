@@ -1,0 +1,15 @@
+# ==============================================================================
+# VARG - PLANILHA DE NÍVEL CUSTOMIZADO (CUSTOM SPREADSHEET LEVEL)
+# ==============================================================================
+# Abra e edite este arquivo no Excel, LibreOffice, Google Sheets ou Bloco de Notas.
+# Alvos disponíveis: Cow, Pig, Chicken, Human (ou Vaca, Porco, Galinha, Humano)
+# Separadores aceitos: vírgula (,), ponto e vírgula (;) ou tabulação
+# ==============================================================================
+Parametro,Valor
+SequenciaAlvos,Cow;Pig;Chicken;Cow
+AlvoProibido,Human
+TempoCaca,90
+TempoTriagem,45
+AlvosExtras,2
+AlvosProibidos,2
+VelocidadeFuga,1.0
