@@ -89,7 +89,14 @@ namespace VARG.UI
                 var levelNumber = GameManager.HasInstance ? GameManager.Instance.CurrentLevel : 1;
                 if (isVictory)
                 {
-                    _subtitleText.text = $"Level {levelNumber} Performance Summary";
+                    if (GameManager.HasInstance && GameManager.Instance.CurrentLevel >= GameManager.MaxLevel)
+                    {
+                        _subtitleText.text = "Campanha Concluída! Você é o Mestre da Abdução!";
+                    }
+                    else
+                    {
+                        _subtitleText.text = $"Level {levelNumber} Performance Summary";
+                    }
                 }
                 else
                 {
@@ -142,14 +149,26 @@ namespace VARG.UI
             }
 
             // Buttons visibility
+            var isCampaignComplete = isVictory && GameManager.HasInstance && GameManager.Instance.CurrentLevel >= GameManager.MaxLevel;
+
             if (_nextLevelButton != null)
             {
                 _nextLevelButton.gameObject.SetActive(isVictory);
+                var nextText = _nextLevelButton.GetComponentInChildren<TextMeshProUGUI>();
+                if (nextText != null)
+                {
+                    nextText.text = isCampaignComplete ? "Jogar Novamente" : "Próximo Nível";
+                }
             }
 
             if (_retryButton != null)
             {
                 _retryButton.gameObject.SetActive(true);
+                var retryText = _retryButton.GetComponentInChildren<TextMeshProUGUI>();
+                if (retryText != null)
+                {
+                    retryText.text = isCampaignComplete ? "Repetir Nível 10" : (isVictory ? "Repetir Nível" : "Tentar de Novo");
+                }
             }
         }
 

@@ -18,6 +18,8 @@ namespace VARG.Core
         [SerializeField] private ScoringConfig _scoringConfig;
         [SerializeField] private PenaltyConfig _penaltyConfig;
 
+        public const int MaxLevel = 10;
+
         public int CurrentLevel { get; private set; } = 1;
         public LevelResult LastResult { get; private set; }
         public bool IsVictory { get; private set; }
@@ -69,7 +71,8 @@ namespace VARG.Core
             }
 
             var lastConfig = _campaignConfig.Levels[_campaignConfig.Levels.Length - 1];
-            var extraLevels = CurrentLevel - _campaignConfig.Levels.Length;
+            var clampedLevel = Mathf.Min(CurrentLevel, MaxLevel);
+            var extraLevels = clampedLevel - _campaignConfig.Levels.Length;
             var forbiddenSpawns = Mathf.Min(lastConfig.ForbiddenSpawnCount + (extraLevels / 2), 5);
 
             var endlessConfig = ScriptableObject.CreateInstance<LevelConfig>();
@@ -181,7 +184,20 @@ namespace VARG.Core
 
         public void NextLevel()
         {
-            CurrentLevel++;
+            if (CurrentLevel >= MaxLevel)
+            {
+                RestartCampaign();
+            }
+            else
+            {
+                CurrentLevel++;
+                StartLevel();
+            }
+        }
+
+        public void RestartCampaign()
+        {
+            CurrentLevel = 1;
             StartLevel();
         }
 
