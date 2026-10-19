@@ -1,8 +1,8 @@
-Parameter,Value,Description
-TargetSequence,"Cow, Pig, Chicken, Cow","Targets to capture in exact order. Any combination of: Cow, Pig, Chicken, Human"
-ForbiddenTarget,Human,"Forbidden species (penalizes if captured). Can be Cow, Pig, Chicken, or Human (must not be in TargetSequence)"
-CaptureTime,90,"Time limit for the city hunt phase in seconds"
-SortingTime,45,"Time limit for the ship sorting phase in seconds"
-ExtraSpawns,2,"Additional distractor targets roaming the city"
-ForbiddenSpawns,2,"Number of forbidden targets spawned in the city"
-FleeSpeedMultiplier,1.0,"Speed multiplier for escaping targets (e.g. 1.0)"
+Parameter,Value,DefaultValue,Description
+TargetSequence,"Cow, Pig, Chicken, Cow","Cow, Pig, Chicken, Cow","Targets to capture in exact order. Any combination of: Cow, Pig, Chicken, Human"
+ForbiddenTarget,Human,Human,"Forbidden species (penalizes if captured). Can be Cow, Pig, Chicken, or Human (must not be in TargetSequence)"
+CaptureTime,90,90,"Time limit for the city hunt phase in seconds"
+SortingTime,45,45,"Time limit for the ship sorting phase in seconds"
+ExtraSpawns,2,2,"Additional distractor targets roaming the city"
+ForbiddenSpawns,2,2,"Number of forbidden targets spawned in the city"
+FleeSpeedMultiplier,1.0,1.0,"Speed multiplier for escaping targets (e.g. 1.0)"

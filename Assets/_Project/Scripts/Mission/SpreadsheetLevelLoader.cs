@@ -31,14 +31,14 @@ namespace VARG.Mission
             if (File.Exists(filePath)) return false;
 
             var content =
-                "Parameter,Value,Description\n" +
-                "TargetSequence,\"Cow, Pig, Chicken, Cow\",\"Targets to capture in exact order. Any combination of: Cow, Pig, Chicken, Human\"\n" +
-                "ForbiddenTarget,Human,\"Forbidden species (penalizes if captured). Can be Cow, Pig, Chicken, or Human (must not be in TargetSequence)\"\n" +
-                "CaptureTime,90,\"Time limit for the city hunt phase in seconds\"\n" +
-                "SortingTime,45,\"Time limit for the ship sorting phase in seconds\"\n" +
-                "ExtraSpawns,2,\"Additional distractor targets roaming the city\"\n" +
-                "ForbiddenSpawns,2,\"Number of forbidden targets spawned in the city\"\n" +
-                "FleeSpeedMultiplier,1.0,\"Speed multiplier for escaping targets (e.g. 1.0)\"\n";
+                "Parameter,Value,DefaultValue,Description\n" +
+                "TargetSequence,\"Cow, Pig, Chicken, Cow\",\"Cow, Pig, Chicken, Cow\",\"Targets to capture in exact order. Any combination of: Cow, Pig, Chicken, Human\"\n" +
+                "ForbiddenTarget,Human,Human,\"Forbidden species (penalizes if captured). Can be Cow, Pig, Chicken, or Human (must not be in TargetSequence)\"\n" +
+                "CaptureTime,90,90,\"Time limit for the city hunt phase in seconds\"\n" +
+                "SortingTime,45,45,\"Time limit for the ship sorting phase in seconds\"\n" +
+                "ExtraSpawns,2,2,\"Additional distractor targets roaming the city\"\n" +
+                "ForbiddenSpawns,2,2,\"Number of forbidden targets spawned in the city\"\n" +
+                "FleeSpeedMultiplier,1.0,1.0,\"Speed multiplier for escaping targets (e.g. 1.0)\"\n";
 
             try
             {
@@ -75,6 +75,9 @@ namespace VARG.Mission
                 var data = new SpreadsheetLevelData();
                 var foundSequence = false;
                 var delimiter = DetectDelimiter(lines);
+                var keyColIndex = 0;
+                var valueColIndex = 1;
+                var headerProcessed = false;
 
                 foreach (var rawLine in lines)
                 {
@@ -87,10 +90,30 @@ namespace VARG.Mission
                     var parts = SplitCsvLine(line, delimiter);
                     if (parts.Count < 2) continue;
 
-                    var key = NormalizeKey(parts[0]);
-                    if (key == "parameter") continue;
+                    var firstNorm = NormalizeKey(parts[0]);
+                    if (!headerProcessed && (firstNorm == "parameter" || firstNorm == "parametro" || firstNorm == "key"))
+                    {
+                        headerProcessed = true;
+                        for (var c = 0; c < parts.Count; c++)
+                        {
+                            var colNorm = NormalizeKey(parts[c]);
+                            if (colNorm == "parameter" || colNorm == "parametro" || colNorm == "key")
+                            {
+                                keyColIndex = c;
+                            }
+                            else if (colNorm == "value" || colNorm == "valor")
+                            {
+                                valueColIndex = c;
+                            }
+                        }
+                        continue;
+                    }
 
-                    var value = parts[1].Trim().Trim('"');
+                    if (firstNorm == "parameter" || firstNorm == "parametro") continue;
+                    if (keyColIndex >= parts.Count || valueColIndex >= parts.Count) continue;
+
+                    var key = NormalizeKey(parts[keyColIndex]);
+                    var value = parts[valueColIndex].Trim().Trim('"');
 
                     switch (key)
                     {
@@ -99,7 +122,7 @@ namespace VARG.Mission
                         case "targets":
                         case "alvos":
                         case "sequence":
-                            ParseTargetSequence(parts, data.TargetSequence);
+                            ParseTargetSequence(value, data.TargetSequence);
                             foundSequence = data.TargetSequence.Count > 0;
                             break;
 
@@ -243,36 +266,17 @@ namespace VARG.Mission
             return result;
         }
 
-        private static void ParseTargetSequence(IList<string> parts, List<TargetType> list)
+        private static void ParseTargetSequence(string valueString, List<TargetType> list)
         {
             list.Clear();
-            if (parts.Count < 2) return;
+            if (string.IsNullOrWhiteSpace(valueString)) return;
 
-            var val = parts[1].Trim().Trim('"');
-            var subDelimiters = new[] { ',', ';', '|' };
-            if (val.IndexOfAny(subDelimiters) >= 0)
+            var tokens = valueString.Split(new[] { ',', ';', '|', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var token in tokens)
             {
-                var subParts = val.Split(subDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var token in subParts)
-                {
-                    if (TryParseTargetType(token.Trim(), out var target))
-                    {
-                        list.Add(target);
-                    }
-                }
-                return;
-            }
-
-            for (var i = 1; i < parts.Count; i++)
-            {
-                var part = parts[i].Trim().Trim('"');
-                if (TryParseTargetType(part, out var target))
+                if (TryParseTargetType(token.Trim(), out var target))
                 {
                     list.Add(target);
-                }
-                else
-                {
-                    break;
                 }
             }
         }
