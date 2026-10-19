@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VARG.Humor;
 using VARG.Input;
 
 namespace VARG.UI
@@ -13,6 +14,10 @@ namespace VARG.UI
         [SerializeField] private TextMeshProUGUI _dialogueText;
         [SerializeField] private GameObject _continueIndicator;
         [SerializeField] private Button _advanceButton;
+
+        [Header("Boss Audio")]
+        [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _voiceClip;
 
         private IPlayerInput _playerInput;
         private Action _onDialogueComplete;
@@ -26,6 +31,8 @@ namespace VARG.UI
             {
                 _advanceButton.onClick.AddListener(HandleAdvanceRequested);
             }
+
+            if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
 
             if (_dialogueText == null)
             {
@@ -69,6 +76,16 @@ namespace VARG.UI
             if (_dialogueText != null)
             {
                 _dialogueText.text = text ?? string.Empty;
+            }
+
+            if (_voiceClip != null)
+            {
+                if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
+                _audioSource.PlayOneShot(_voiceClip, 0.85f);
+            }
+            else if (BossDialogueManager.HasInstance)
+            {
+                BossDialogueManager.Instance.PlayVoice();
             }
 
             _isLineFinished = true;

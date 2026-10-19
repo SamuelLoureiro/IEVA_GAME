@@ -37,7 +37,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8007584580148538814}
+  - {fileID: 6607385846321720145}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3826474504616172471
@@ -160,8 +160,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _audioSource: {fileID: 0}
-  _boingClip: {fileID: 0}
-  _popClip: {fileID: 0}
+  _boingClip: {fileID: 8300000, guid: 4d866abd71de08ad68568c55ed84b10e, type: 3}
+  _popClip: {fileID: 8300000, guid: 2681e101ec400df2fa22560cfe4d2420, type: 3}
 --- !u!114 &9062309129329893463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,16 +195,8 @@ MonoBehaviour:
   _maxIdleDuration: 2.5
   _playerDetectRadius: 14
   _fleeDuration: 3.5
-  _tickInterval: 0.15
-  _enableZigzag: 1
-  _baseZigzagAngle: 45
-  _zigzagMinDuration: 0.25
-  _zigzagMaxDuration: 0.5
   _fleeWaypointDistance: 5.5
-  _wanderAcceleration: 12
-  _fleeAcceleration: 35
-  _fleeAngularSpeed: 999
-  _wanderAngularSpeed: 360
+  _tickInterval: 0.15
   _audioSource: {fileID: 0}
   _customFleeClip: {fileID: 8300000, guid: 920961bdbea1913c187ee442c815765b, type: 3}
   _screamCooldown: 2.5
@@ -305,7 +297,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1001 &3462225108635378001
+--- !u!1001 &332926280203986878
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -375,20 +367,20 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6081896307724654165, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3596279038469795281}
+      addedObject: {fileID: 9103215303571860357}
   m_SourcePrefab: {fileID: 100100000, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
---- !u!1 &7236008151702992644 stripped
+--- !u!1 &5834966130774733291 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6081896307724654165, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
-  m_PrefabInstance: {fileID: 3462225108635378001}
+  m_PrefabInstance: {fileID: 332926280203986878}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3596279038469795281
+--- !u!114 &9103215303571860357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7236008151702992644}
+  m_GameObject: {fileID: 5834966130774733291}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8119795a0bfc57b6ba9f35564fe0ccc9, type: 3}
@@ -396,8 +388,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Targets.PigAnimationController
   _moveThreshold: 0.1
   _transitionDuration: 0.15
---- !u!4 &8007584580148538814 stripped
+--- !u!4 &6607385846321720145 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6858116759732374767, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
-  m_PrefabInstance: {fileID: 3462225108635378001}
+  m_PrefabInstance: {fileID: 332926280203986878}
   m_PrefabAsset: {fileID: 0}
