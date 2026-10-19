@@ -31,19 +31,14 @@ namespace VARG.Mission
             if (File.Exists(filePath)) return false;
 
             var content =
-                "# ==============================================================================\n" +
-                "# VARG - CUSTOM SPREADSHEET LEVEL CONFIGURATION\n" +
-                "# Edit this file in Excel, LibreOffice, Google Sheets, or Notepad.\n" +
-                "# Available Targets: Cow, Pig, Chicken, Human (or Vaca, Porco, Galinha, Humano)\n" +
-                "# ==============================================================================\n" +
-                "Parametro,Valor\n" +
-                "SequenciaAlvos,Cow;Pig;Chicken;Cow\n" +
-                "AlvoProibido,Human\n" +
-                "TempoCaca,90\n" +
-                "TempoTriagem,45\n" +
-                "AlvosExtras,2\n" +
-                "AlvosProibidos,2\n" +
-                "VelocidadeFuga,1.0\n";
+                "Parameter,Value,Description\n" +
+                "TargetSequence,\"Cow, Pig, Chicken, Cow\",\"Targets to capture in exact order (options: Cow, Pig, Chicken)\"\n" +
+                "ForbiddenTarget,Human,\"Target species that is strictly forbidden\"\n" +
+                "CaptureTime,90,\"Time limit for the city hunt phase in seconds\"\n" +
+                "SortingTime,45,\"Time limit for the ship sorting phase in seconds\"\n" +
+                "ExtraSpawns,2,\"Additional distractor targets in the city\"\n" +
+                "ForbiddenSpawns,2,\"Number of forbidden targets spawned in the city\"\n" +
+                "FleeSpeedMultiplier,1.0,\"Speed multiplier for escaping targets (e.g. 1.0)\"\n";
 
             try
             {
@@ -89,10 +84,12 @@ namespace VARG.Mission
                         continue;
                     }
 
-                    var parts = line.Split(delimiter);
-                    if (parts.Length < 2) continue;
+                    var parts = SplitCsvLine(line, delimiter);
+                    if (parts.Count < 2) continue;
 
                     var key = NormalizeKey(parts[0]);
+                    if (key == "parameter") continue;
+
                     var value = parts[1].Trim().Trim('"');
 
                     switch (key)
@@ -164,14 +161,14 @@ namespace VARG.Mission
 
                 if (!foundSequence || data.TargetSequence.Count == 0)
                 {
-                    statusMessage = "Spreadsheet has no valid targets in 'SequenciaAlvos'. Expected format: Cow;Pig;Chicken";
+                    statusMessage = "Spreadsheet has no valid targets in 'TargetSequence'. Expected format: Cow, Pig, Chicken";
                     return false;
                 }
 
                 levelData = data;
                 statusMessage = wasNewlyCreated
-                    ? $"CustomLevel.csv criado e carregado! ({data.TargetSequence.Count} alvos). Edite-o no Excel a qualquer momento."
-                    : $"Planilha carregada com sucesso! ({data.TargetSequence.Count} alvos, Proibido: {data.ForbiddenTarget}, Caça: {data.CaptureTime:F0}s, Triagem: {data.SortingTime:F0}s)";
+                    ? $"CustomLevel.csv created and loaded! ({data.TargetSequence.Count} targets)."
+                    : $"Spreadsheet loaded successfully! ({data.TargetSequence.Count} targets, Forbidden: {data.ForbiddenTarget}, Hunt: {data.CaptureTime:F0}s, Sort: {data.SortingTime:F0}s)";
                 return true;
             }
             catch (Exception ex)
@@ -198,7 +195,8 @@ namespace VARG.Mission
                 if (string.IsNullOrEmpty(line) || line.StartsWith("#") || line.StartsWith("//")) continue;
 
                 var norm = NormalizeKey(line);
-                if (norm.Contains("tempocaca") || norm.Contains("alvoproibido") || norm.Contains("parametro") || norm.Contains("tempotriagem"))
+                if (norm.Contains("parameter") || norm.Contains("targetsequence") || norm.Contains("capturetime") || norm.Contains("forbiddentarget") ||
+                    norm.Contains("sortingtime") || norm.Contains("parametro") || norm.Contains("tempocaca") || norm.Contains("alvoproibido"))
                 {
                     if (line.Contains(';')) semiCount++;
                     else if (line.Contains(',')) commaCount++;
@@ -211,29 +209,64 @@ namespace VARG.Mission
             return ',';
         }
 
-        private static void ParseTargetSequence(string[] parts, List<TargetType> list)
+        private static List<string> SplitCsvLine(string line, char delimiter)
         {
-            list.Clear();
-            var tokens = new List<string>();
-            var subDelimiters = new[] { ';', ',', '|', '\t', ' ' };
+            var result = new List<string>();
+            var sb = new System.Text.StringBuilder();
+            var inQuotes = false;
 
-            for (var i = 1; i < parts.Length; i++)
+            for (var i = 0; i < line.Length; i++)
             {
-                var part = parts[i].Trim().Trim('"');
-                if (string.IsNullOrEmpty(part)) continue;
-
-                var subParts = part.Split(subDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                for (var j = 0; j < subParts.Length; j++)
+                var c = line[i];
+                if (c == '"')
                 {
-                    tokens.Add(subParts[j].Trim());
+                    inQuotes = !inQuotes;
+                }
+                else if (c == delimiter && !inQuotes)
+                {
+                    result.Add(sb.ToString().Trim().Trim('"'));
+                    sb.Clear();
+                }
+                else
+                {
+                    sb.Append(c);
                 }
             }
 
-            foreach (var token in tokens)
+            result.Add(sb.ToString().Trim().Trim('"'));
+            return result;
+        }
+
+        private static void ParseTargetSequence(IList<string> parts, List<TargetType> list)
+        {
+            list.Clear();
+            if (parts.Count < 2) return;
+
+            var val = parts[1].Trim().Trim('"');
+            var subDelimiters = new[] { ',', ';', '|' };
+            if (val.IndexOfAny(subDelimiters) >= 0)
             {
-                if (TryParseTargetType(token, out var target))
+                var subParts = val.Split(subDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var token in subParts)
+                {
+                    if (TryParseTargetType(token.Trim(), out var target))
+                    {
+                        list.Add(target);
+                    }
+                }
+                return;
+            }
+
+            for (var i = 1; i < parts.Count; i++)
+            {
+                var part = parts[i].Trim().Trim('"');
+                if (TryParseTargetType(part, out var target))
                 {
                     list.Add(target);
+                }
+                else
+                {
+                    break;
                 }
             }
         }

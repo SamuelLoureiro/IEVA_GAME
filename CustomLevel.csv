@@ -1,15 +1,8 @@
-# ==============================================================================
-# VARG - PLANILHA DE NÍVEL CUSTOMIZADO (CUSTOM SPREADSHEET LEVEL)
-# ==============================================================================
-# Abra e edite este arquivo no Excel, LibreOffice, Google Sheets ou Bloco de Notas.
-# Alvos disponíveis: Cow, Pig, Chicken, Human (ou Vaca, Porco, Galinha, Humano)
-# Separadores aceitos: vírgula (,), ponto e vírgula (;) ou tabulação
-# ==============================================================================
-Parametro,Valor
-SequenciaAlvos,Cow;Pig;Chicken;Cow
-AlvoProibido,Human
-TempoCaca,90
-TempoTriagem,45
-AlvosExtras,2
-AlvosProibidos,2
-VelocidadeFuga,1.0
+Parameter,Value,Description
+TargetSequence,"Cow, Pig, Chicken, Cow","Targets to capture in exact order (options: Cow, Pig, Chicken)"
+ForbiddenTarget,Human,"Target species that is strictly forbidden"
+CaptureTime,90,"Time limit for the city hunt phase in seconds"
+SortingTime,45,"Time limit for the ship sorting phase in seconds"
+ExtraSpawns,2,"Additional distractor targets in the city"
+ForbiddenSpawns,2,"Number of forbidden targets spawned in the city"
+FleeSpeedMultiplier,1.0,"Speed multiplier for escaping targets (e.g. 1.0)"
