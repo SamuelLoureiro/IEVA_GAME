@@ -107,7 +107,7 @@ namespace VARG.Editor
             title.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             title.rectTransform.sizeDelta = new Vector2(600, 60);
 
-            var subtitle = CreateText("Subtitle", frameObj.transform, "ABDUÇÃO METÓDICA  |  NÍVEIS E PLANILHAS", 16, TextAlignmentOptions.Center, FontStyles.Normal, new Color(0.40f, 0.75f, 0.90f));
+            var subtitle = CreateText("Subtitle", frameObj.transform, "METHODICAL ABDUCTION  |  MISSIONS & SPREADSHEETS", 16, TextAlignmentOptions.Center, FontStyles.Normal, new Color(0.40f, 0.75f, 0.90f));
             subtitle.rectTransform.anchorMin = new Vector2(0.5f, 0.80f);
             subtitle.rectTransform.anchorMax = new Vector2(0.5f, 0.80f);
             subtitle.rectTransform.pivot = new Vector2(0.5f, 0.5f);
@@ -121,13 +121,13 @@ namespace VARG.Editor
             layout.childControlWidth = true;
             layout.childControlHeight = false;
 
-            var playCampaignBtn = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ JOGAR CAMPANHA</b>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
-            var playCustomBtn = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 JOGAR CUSTOM (PLANILHA)</b>", new Color(0.15f, 0.48f, 0.85f), new Color(0.25f, 0.68f, 1f));
-            var openCsvBtn = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 ABRIR PLANILHA (EXCEL)</b>", new Color(0.16f, 0.24f, 0.34f), new Color(0.24f, 0.38f, 0.52f));
-            var quitBtn = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>SAIR</b>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
+            var playCampaignBtn = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ PLAY CAMPAIGN</b>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
+            var playCustomBtn = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 PLAY CUSTOM (SPREADSHEET)</b>", new Color(0.15f, 0.48f, 0.85f), new Color(0.25f, 0.68f, 1f));
+            var openCsvBtn = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 OPEN SPREADSHEET (EXCEL)</b>", new Color(0.16f, 0.24f, 0.34f), new Color(0.24f, 0.38f, 0.52f));
+            var quitBtn = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>QUIT</b>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
 
             // Status message
-            var status = CreateText("StatusText", frameObj.transform, "Selecione um modo para iniciar.", 16, TextAlignmentOptions.Center, FontStyles.Italic, new Color(0.70f, 0.80f, 0.90f));
+            var status = CreateText("StatusText", frameObj.transform, "Select a game mode to begin.", 16, TextAlignmentOptions.Center, FontStyles.Italic, new Color(0.70f, 0.80f, 0.90f));
             status.rectTransform.anchorMin = new Vector2(0.5f, 0.12f);
             status.rectTransform.anchorMax = new Vector2(0.5f, 0.12f);
             status.rectTransform.pivot = new Vector2(0.5f, 0.5f);

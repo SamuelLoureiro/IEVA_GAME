@@ -67,7 +67,7 @@ namespace VARG.UI
 
             if (_spreadsheetButtonText != null && GameManager.Instance != null && GameManager.Instance.IsCustomSpreadsheetLevel)
             {
-                _spreadsheetButtonText.text = "<b>✔ PLANILHA ATIVA</b>";
+                _spreadsheetButtonText.text = "<b>✔ SPREADSHEET ACTIVE</b>";
             }
 
             if (_showcaseUI != null)
@@ -200,7 +200,7 @@ namespace VARG.UI
                 tmp.font = _levelTitleText.font;
                 tmp.fontSharedMaterial = _levelTitleText.fontSharedMaterial;
             }
-            tmp.text = "<b>📄 NÍVEL DA PLANILHA</b>";
+            tmp.text = "<b>📄 SPREADSHEET LEVEL</b>";
             tmp.fontSize = 15;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = new Color(0.40f, 0.88f, 0.95f, 1f);
@@ -241,7 +241,7 @@ namespace VARG.UI
 
                 if (_spreadsheetButtonText != null)
                 {
-                    _spreadsheetButtonText.text = "<b>✔ PLANILHA CARREGADA</b>";
+                    _spreadsheetButtonText.text = "<b>✔ SPREADSHEET LOADED</b>";
                 }
 
                 if (!_isBossInCorner)

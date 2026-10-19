@@ -101,7 +101,7 @@ namespace VARG.UI
 
         public void PlayCampaign()
         {
-            SetStatus("Iniciando Campanha...", new Color(0.35f, 0.90f, 0.55f));
+            SetStatus("Starting Campaign...", new Color(0.35f, 0.90f, 0.55f));
 
             if (GameManager.Instance != null)
             {
@@ -142,7 +142,7 @@ namespace VARG.UI
                     MissionManager.Instance.LoadCustomMission(levelData.TargetSequence, levelData.ForbiddenTarget);
                 }
 
-                SetStatus("Planilha carregada! Iniciando missão...", new Color(0.35f, 0.85f, 1f));
+                SetStatus("Spreadsheet loaded! Starting mission...", new Color(0.35f, 0.85f, 1f));
 
                 if (GameManager.Instance != null)
                 {
@@ -175,7 +175,7 @@ namespace VARG.UI
             Application.OpenURL("file://" + path);
 #endif
 
-            SetStatus("Planilha 'CustomLevel.csv' aberta! Edite e clique em 'JOGAR CUSTOM'.", new Color(0.40f, 0.88f, 0.98f));
+            SetStatus("'CustomLevel.csv' opened in external editor! Edit, save, and click 'PLAY CUSTOM'.", new Color(0.40f, 0.88f, 0.98f));
         }
 
         public void QuitGame()
@@ -228,7 +228,7 @@ namespace VARG.UI
             _titleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             _titleText.rectTransform.sizeDelta = new Vector2(1000, 70);
 
-            _subtitleText = CreateText("Subtitle", bgObj.transform, "ABDUÇÃO METÓDICA  |  SISTEMA DE MISSÕES E PLANILHAS", 20, TextAlignmentOptions.Center, FontStyles.Normal, new Color(0.40f, 0.75f, 0.90f));
+            _subtitleText = CreateText("Subtitle", bgObj.transform, "METHODICAL ABDUCTION  |  MISSIONS & SPREADSHEETS", 20, TextAlignmentOptions.Center, FontStyles.Normal, new Color(0.40f, 0.75f, 0.90f));
             _subtitleText.rectTransform.anchorMin = new Vector2(0.5f, 0.73f);
             _subtitleText.rectTransform.anchorMax = new Vector2(0.5f, 0.73f);
             _subtitleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
@@ -242,13 +242,13 @@ namespace VARG.UI
             layout.childControlWidth = true;
             layout.childControlHeight = false;
 
-            _playCampaignButton = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ JOGAR CAMPANHA</b>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
-            _playCustomButton = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 JOGAR CUSTOM (PLANILHA)</b>", new Color(0.15f, 0.45f, 0.85f), new Color(0.25f, 0.65f, 1f));
-            _openSpreadsheetButton = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 ABRIR PLANILHA (EXCEL)</b>", new Color(0.18f, 0.28f, 0.38f), new Color(0.28f, 0.42f, 0.58f));
-            _quitButton = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>SAIR</b>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
+            _playCampaignButton = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ PLAY CAMPAIGN</b>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
+            _playCustomButton = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 PLAY CUSTOM (SPREADSHEET)</b>", new Color(0.15f, 0.45f, 0.85f), new Color(0.25f, 0.65f, 1f));
+            _openSpreadsheetButton = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 OPEN SPREADSHEET (EXCEL)</b>", new Color(0.18f, 0.28f, 0.38f), new Color(0.28f, 0.42f, 0.58f));
+            _quitButton = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>QUIT</b>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
 
             // Status text
-            _statusText = CreateText("StatusText", bgObj.transform, "Selecione um modo para iniciar.", 18, TextAlignmentOptions.Center, FontStyles.Italic, new Color(0.70f, 0.80f, 0.90f));
+            _statusText = CreateText("StatusText", bgObj.transform, "Select a game mode to begin.", 18, TextAlignmentOptions.Center, FontStyles.Italic, new Color(0.70f, 0.80f, 0.90f));
             _statusText.rectTransform.anchorMin = new Vector2(0.5f, 0.16f);
             _statusText.rectTransform.anchorMax = new Vector2(0.5f, 0.16f);
             _statusText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
