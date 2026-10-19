@@ -152,7 +152,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 
 ### Sprint 4 — Polimento da Triagem + Build (#6)
 - [x] **B17** Feedback das gaiolas (ding, cuspe cômico, partículas), balanceamento do Timer de Separação.
-- [ ] **B18** Arte low-poly: interior da nave, gaiolas, lixeira, chefe.
+- [x] **B18** Arte low-poly: interior da nave, gaiolas, lixeira, chefe.
 - [ ] **B19** Otimização de tamanho: atlas TMP reduzido, compressão, stripping, LZ4HC; auditoria com Build Report (compilado final compactado **< 10 MB**).
 
 ---
