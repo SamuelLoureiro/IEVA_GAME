@@ -14,7 +14,7 @@ namespace VARG.Player
         [SerializeField] private Transform _muzzlePoint;
         [SerializeField] private float _cooldown = 0.6f;
         [SerializeField] private float _maxRange = 25f;
-        [SerializeField] private float _scareRadius = 8f;
+
         [Header("Audio Feedback")]
         [SerializeField] private AudioSource _audioSource;
         [SerializeField] private AudioClip _fireClip;
@@ -22,7 +22,6 @@ namespace VARG.Player
         [SerializeField] private AudioClip _captureErrorClip;
         [SerializeField] private AudioClip _missionCompleteClip;
 
-        private readonly Collider[] _scareHitBuffer = new Collider[24];
         private IPlayerInput _playerInput;
         private float _nextFireTime;
 
@@ -64,11 +63,6 @@ namespace VARG.Player
 
         private void Update()
         {
-            HandleFiring();
-        }
-
-        private void HandleFiring()
-        {
             if (_playerInput == null || !_playerInput.FirePressed) return;
             if (Time.time < _nextFireTime) return;
 
@@ -78,113 +72,48 @@ namespace VARG.Player
 
         private void Fire()
         {
-            PlayFireAudio();
+            PlayClip(_fireClip, 0.7f);
 
-            var camTransform = _interactor != null && _interactor.GetComponent<Camera>() != null
-                ? _interactor.transform
-                : Camera.main != null ? Camera.main.transform : transform;
+            var camTransform = _interactor != null ? _interactor.transform : transform;
+            var origin = _muzzlePoint != null
+                ? _muzzlePoint.position
+                : camTransform.position + camTransform.forward * 0.3f - camTransform.up * 0.15f;
 
-            var origin = _muzzlePoint != null ? _muzzlePoint.position : camTransform.position + camTransform.forward * 0.3f - camTransform.up * 0.15f;
-            var targetDetected = _interactor != null ? _interactor.CurrentTarget : null;
+            var endPoint = origin + camTransform.forward * _maxRange;
 
-            if (targetDetected is Target target)
+            if (_interactor != null && _interactor.CurrentTarget is Target target)
             {
-                var hitPoint = _interactor.LastHit.point;
-                if (hitPoint == Vector3.zero) hitPoint = target.transform.position;
-
-                if (_beamFX != null)
-                {
-                    _beamFX.PlayBeam(origin, hitPoint);
-                }
+                endPoint = _interactor.LastHit.point != Vector3.zero
+                    ? _interactor.LastHit.point
+                    : target.transform.position;
 
                 target.StartShrinkCapture();
             }
             else if (_interactor != null && _interactor.LastHit.collider != null)
             {
-                var hitPoint = _interactor.LastHit.point;
-                if (_beamFX != null)
-                {
-                    _beamFX.PlayBeam(origin, hitPoint);
-                }
-
-                ScareNearbyTargets(hitPoint);
+                endPoint = _interactor.LastHit.point;
             }
-            else
+
+            if (_beamFX != null)
             {
-                var endPoint = origin + camTransform.forward * _maxRange;
-                if (_beamFX != null)
-                {
-                    _beamFX.PlayBeam(origin, endPoint);
-                }
+                _beamFX.PlayBeam(origin, endPoint);
             }
         }
 
-        private void ScareNearbyTargets(Vector3 center)
+        private void HandleCorrectCapture(TargetData data) => PlayClip(_captureSuccessClip, 0.85f);
+
+        private void HandleOutOfOrderCapture(TargetData captured, TargetData expected) => PlayClip(_captureErrorClip, 0.9f);
+
+        private void HandleNotInListCapture(TargetData data) => PlayClip(_captureErrorClip, 0.9f);
+
+        private void HandleMissionComplete() => PlayClip(_missionCompleteClip, 0.95f);
+
+        private void PlayClip(AudioClip clip, float volume)
         {
-            var hitCount = Physics.OverlapSphereNonAlloc(center, _scareRadius, _scareHitBuffer);
-            for (var i = 0; i < hitCount; i++)
+            if (_audioSource != null && clip != null)
             {
-                var target = _scareHitBuffer[i].GetComponentInParent<Target>();
-                if (target != null)
-                {
-                    var targetAi = target.GetComponent<TargetAI>();
-                    if (targetAi != null)
-                    {
-                        targetAi.AlertDanger(center);
-                    }
-                }
+                _audioSource.PlayOneShot(clip, volume);
             }
-        }
-
-        private void PlayFireAudio()
-        {
-            if (_audioSource == null) return;
-
-            var clip = _fireClip != null ? _fireClip : ProceduralAudioUtility.GetLaserShootClip();
-            _audioSource.pitch = Random.Range(1.05f, 1.25f);
-            _audioSource.PlayOneShot(clip, 0.7f);
-        }
-
-        private void HandleCorrectCapture(TargetData data)
-        {
-            if (_audioSource == null) return;
-
-            var clip = _captureSuccessClip != null ? _captureSuccessClip : ProceduralAudioUtility.GetCaptureSuccessClip();
-            _audioSource.pitch = 1.0f;
-            _audioSource.PlayOneShot(clip, 0.85f);
-        }
-
-        private void HandleOutOfOrderCapture(TargetData captured, TargetData expected)
-        {
-            PlayErrorSound();
-        }
-
-        private void HandleNotInListCapture(TargetData data)
-        {
-            PlayErrorSound();
-        }
-
-        private void PlayErrorSound()
-        {
-            if (_audioSource == null) return;
-
-            var clip = _captureErrorClip != null ? _captureErrorClip : ProceduralAudioUtility.GetCaptureErrorClip();
-            _audioSource.pitch = 1.0f;
-            _audioSource.PlayOneShot(clip, 0.9f);
-        }
-
-        private void HandleMissionComplete()
-        {
-            if (_audioSource == null) return;
-
-            var clip = _missionCompleteClip != null ? _missionCompleteClip : ProceduralAudioUtility.GetMissionCompleteClip();
-            _audioSource.pitch = 1.0f;
-            _audioSource.PlayOneShot(clip, 0.95f);
-        }
-
-        public void SetInputSource(IPlayerInput inputSource)
-        {
-            _playerInput = inputSource;
         }
     }
 }

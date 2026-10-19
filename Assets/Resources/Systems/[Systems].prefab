@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a34cfeef057af559c5324fc5a35478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Core.GameManager
+  _dontDestroyOnLoad: 1
   _campaignConfig: {fileID: 11400000, guid: ae418d412fc7cc8618aef2bebee2b372, type: 2}
   _gameConfig: {fileID: 11400000, guid: 9b22b933c401cb8a3a8fd4050212e7dd, type: 2}
   _scoringConfig: {fileID: 11400000, guid: 766ece70e26439578917ee579a2227b2, type: 2}
@@ -67,6 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dbd7539473f7a51591b803752067008, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Mission.MissionManager
+  _dontDestroyOnLoad: 1
   _availableTargets:
   - {fileID: 11400000, guid: 58c288895ecc8b61181ef7d72e54dfde, type: 2}
   - {fileID: 11400000, guid: f28f0d2b456590d87987fc6edf098cd8, type: 2}
@@ -85,6 +87,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 284aeda247b83402ea2389a9dd93659d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Inventory.InventoryManager
+  _dontDestroyOnLoad: 1
 --- !u!114 &454286779028910771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,6 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bab3ada620c5b78c9f4501b15718ba0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Mission.TimerManager
+  _dontDestroyOnLoad: 1
 --- !u!114 &2921158033709295128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,6 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1842f74918442541c99658d42b3b16ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Mission.LivesManager
+  _dontDestroyOnLoad: 1
 --- !u!114 &6717714060433724774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,10 +126,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8814d7d2e26b80ba2f3b5eecda0c7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Humor.BossDialogueManager
+  _dontDestroyOnLoad: 1
   _lines: {fileID: 11400000, guid: 185fee748459e8e9a8d3315b139fc71c, type: 2}
   _minCooldown: 3.5
-  _idleThreshold: 20
-  _enableIdleDetection: 1
+  _audioSource: {fileID: 0}
+  _bossVoiceClip: {fileID: 8300000, guid: 96805da6a7fe41985beaff9e6617e9c8, type: 3}
 --- !u!114 &7669703832512416783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a59540dad3a8852287dc7759cfab714, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Core.SceneLoader
-  _transitionUI: {fileID: 0}
+  _dontDestroyOnLoad: 1
 --- !u!114 &8685155739470529266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,3 +156,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0499ec02d9530d6097054ee51367f93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Input.InputManager
+  _dontDestroyOnLoad: 1
+  _udpPort: 5555
+  _tiltDeadzone: 0.08
+  _maxTiltDegrees: 28
+  _steerSmoothing: 12
+  _axisSensitivity: {x: 1, y: 1}
+  _shakeThresholdG: 2
+  _shakeRequiredPeaks: 2
+  _shakeWindowSeconds: 0.5

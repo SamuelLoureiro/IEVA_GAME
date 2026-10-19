@@ -10,6 +10,10 @@ namespace VARG.Humor
         [SerializeField] private BossLineSet _lines;
         [SerializeField] private float _minCooldown = 3.5f;
 
+        [Header("Boss Audio")]
+        [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _bossVoiceClip;
+
         public static event Action<string, BossExpression> OnBossSpokeStatic;
         public event Action<string, BossExpression> OnBossSpoke;
 
@@ -21,6 +25,14 @@ namespace VARG.Humor
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStaticEvents() => OnBossSpokeStatic = null;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
+            if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
+            _audioSource.playOnAwake = false;
+        }
 
         private void OnEnable()
         {
@@ -39,11 +51,6 @@ namespace VARG.Humor
             GameEvents.OnIdle += () => SpeakRandom(_lines?.IdleLines, BossExpression.Annoyed);
         }
 
-        private void OnDisable()
-        {
-            GameEvents.OnCorrectCapture -= d => {};
-        }
-
         public void Speak(string rawLine, BossExpression expression, bool highPriority = false)
         {
             if (string.IsNullOrEmpty(rawLine)) return;
@@ -53,8 +60,18 @@ namespace VARG.Humor
             LastSpokenExpression = expression;
             _nextAllowedSpeechTime = Time.time + _minCooldown;
 
+            PlayVoice();
+
             OnBossSpoke?.Invoke(rawLine, expression);
             OnBossSpokeStatic?.Invoke(rawLine, expression);
+        }
+
+        public void PlayVoice()
+        {
+            if (_audioSource != null && _bossVoiceClip != null)
+            {
+                _audioSource.PlayOneShot(_bossVoiceClip, 0.85f);
+            }
         }
 
         public string PickLine(string categoryKey, string[] lines)
