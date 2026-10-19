@@ -14,6 +14,15 @@ namespace VARG.Sorting
 
         public IReadOnlyList<GameObject> SpawnedObjects => _spawnedObjects;
 
+        private void Awake()
+        {
+            if (_spawnAnchor == null)
+            {
+                var found = transform.Find("SpawnAnchor");
+                if (found != null) _spawnAnchor = found;
+            }
+        }
+
         private void Start()
         {
             if (InventoryManager.Instance != null)
@@ -39,10 +48,10 @@ namespace VARG.Sorting
             if (item.Data == null || item.Data.MiniPrefab == null) return null;
 
             var anchor = _spawnAnchor != null ? _spawnAnchor.position : transform.position;
-            var randomPos = anchor + new Vector3(
-                Random.Range(-_spawnAreaSize.x * 0.5f, _spawnAreaSize.x * 0.5f),
-                0.2f,
-                Random.Range(-_spawnAreaSize.z * 0.5f, _spawnAreaSize.z * 0.5f)
+            var randomPos = new Vector3(
+                anchor.x + Random.Range(-_spawnAreaSize.x * 0.5f, _spawnAreaSize.x * 0.5f),
+                Mathf.Max(anchor.y, 0.35f),
+                anchor.z + Random.Range(-_spawnAreaSize.z * 0.5f, _spawnAreaSize.z * 0.5f)
             );
 
             var instance = Instantiate(item.Data.MiniPrefab, randomPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
