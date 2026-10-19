@@ -60,6 +60,38 @@ namespace VARG.Editor
             }
         }
 
+        [MenuItem("VARG/Art/Measure Target Ground Alignment")]
+        public static void MeasureAllTargets()
+        {
+            MeasureOne("Pig", TargetPigPrefabPath);
+            MeasureOne("Cow", TargetCowPrefabPath);
+            MeasureOne("Chicken", TargetChickenPrefabPath);
+            MeasureOne("Human", "Assets/_Project/Prefabs/Targets/Target_Human.prefab");
+        }
+
+        private static void MeasureOne(string name, string prefabPath)
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab == null) return;
+            var inst = Object.Instantiate(prefab);
+            inst.transform.position = Vector3.zero;
+
+            var renderers = inst.GetComponentsInChildren<Renderer>();
+            var min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+            foreach (var r in renderers)
+            {
+                if (!r.enabled) continue;
+                min = Vector3.Min(min, r.bounds.min);
+                max = Vector3.Max(max, r.bounds.max);
+            }
+            var agent = inst.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            var col = inst.GetComponent<Collider>();
+            var elev = (agent != null ? agent.baseOffset : 0f) + min.y;
+            Debug.Log($"[MEASURE] {name}: Visual min.y={min.y:F3}, max.y={max.y:F3}, agent.baseOffset={(agent != null ? agent.baseOffset : 0f):F3} => FEET ELEVATION FROM NAVMESH: {elev:F3}m (Collider min.y={(col != null ? col.bounds.min.y : 0f):F3})");
+            Object.DestroyImmediate(inst);
+        }
+
         [MenuItem("VARG/Art/Setup Chicken Model")]
         [MenuItem("Tools/VARG/Setup Chicken Model")]
         [MenuItem("Window/VARG/Setup Chicken Model")]
@@ -195,8 +227,8 @@ namespace VARG.Editor
             var collider = root.GetComponent<BoxCollider>();
             if (collider != null)
             {
-                collider.center = new Vector3(0f, 0.20f, 0f);
-                collider.size = new Vector3(0.9f, 0.9f, 1.1f);
+                collider.center = new Vector3(0f, 0.17f, 0f);
+                collider.size = new Vector3(0.9f, 0.95f, 1.1f);
             }
 
             var agent = root.GetComponent<UnityEngine.AI.NavMeshAgent>();
@@ -204,7 +236,7 @@ namespace VARG.Editor
             {
                 agent.radius = 0.45f;
                 agent.height = 0.9f;
-                agent.baseOffset = 0.45f;
+                agent.baseOffset = 0.306f;
             }
 
             EditorUtility.SetDirty(root.transform);
@@ -283,8 +315,8 @@ namespace VARG.Editor
             var collider = root.GetComponent<BoxCollider>();
             if (collider != null)
             {
-                collider.center = new Vector3(0f, 0.45f, 0f);
-                collider.size = new Vector3(1.5f, 1.8f, 2.2f);
+                collider.center = new Vector3(0f, 0.29f, 0f);
+                collider.size = new Vector3(1.5f, 1.80f, 2.2f);
             }
 
             var agent = root.GetComponent<UnityEngine.AI.NavMeshAgent>();
@@ -292,7 +324,7 @@ namespace VARG.Editor
             {
                 agent.radius = 0.75f;
                 agent.height = 1.8f;
-                agent.baseOffset = 0.9f;
+                agent.baseOffset = 0.612f;
             }
 
             EditorUtility.SetDirty(root.transform);
@@ -386,8 +418,8 @@ namespace VARG.Editor
             var sphere = root.GetComponent<SphereCollider>();
             if (sphere != null)
             {
-                sphere.center = new Vector3(0f, 0.22f, 0f);
-                sphere.radius = 0.24f;
+                sphere.center = new Vector3(0f, 0.10f, 0f);
+                sphere.radius = 0.25f;
             }
 
             var agent = root.GetComponent<UnityEngine.AI.NavMeshAgent>();
@@ -395,7 +427,7 @@ namespace VARG.Editor
             {
                 agent.radius = 0.25f;
                 agent.height = 0.5f;
-                agent.baseOffset = 0.25f;
+                agent.baseOffset = 0.154f;
             }
 
             EditorUtility.SetDirty(root.transform);

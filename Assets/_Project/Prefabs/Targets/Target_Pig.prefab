@@ -37,7 +37,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1468972874113357303}
+  - {fileID: 5101451699111376843}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3826474504616172471
@@ -67,8 +67,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.9, y: 0.9, z: 1.1}
-  m_Center: {x: 0, y: 0.2, z: 0}
+  m_Size: {x: 0.9, y: 0.95, z: 1.1}
+  m_Center: {x: 0, y: 0.17, z: 0}
 --- !u!23 &3885262119343340985
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -137,7 +137,7 @@ NavMeshAgent:
   m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 0.9
-  m_BaseOffset: 0.45
+  m_BaseOffset: 0.306
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &5025262537708256068
@@ -305,7 +305,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1001 &5426340368355842328
+--- !u!1001 &1866482087286602532
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -375,25 +375,25 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6081896307724654165, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2894782478254427147}
+      addedObject: {fileID: 3032366206713617395}
   m_SourcePrefab: {fileID: 100100000, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
---- !u!4 &1468972874113357303 stripped
+--- !u!4 &5101451699111376843 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6858116759732374767, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
-  m_PrefabInstance: {fileID: 5426340368355842328}
+  m_PrefabInstance: {fileID: 1866482087286602532}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2245334304412815181 stripped
+--- !u!1 &5584516203749633393 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6081896307724654165, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
-  m_PrefabInstance: {fileID: 5426340368355842328}
+  m_PrefabInstance: {fileID: 1866482087286602532}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2894782478254427147
+--- !u!114 &3032366206713617395
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2245334304412815181}
+  m_GameObject: {fileID: 5584516203749633393}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8119795a0bfc57b6ba9f35564fe0ccc9, type: 3}
