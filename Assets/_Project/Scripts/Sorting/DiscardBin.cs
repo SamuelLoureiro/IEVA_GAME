@@ -93,17 +93,7 @@ namespace VARG.Sorting
                 grabbable.enabled = false;
             }
 
-
-            var rb = item.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.isKinematic = false;
-                rb.useGravity = true;
-                var vy = Mathf.Min(rb.linearVelocity.y, 0.5f);
-                rb.linearVelocity = new Vector3(rb.linearVelocity.x * 0.35f, vy, rb.linearVelocity.z * 0.35f);
-                rb.angularVelocity *= 0.5f;
-                StartCoroutine(SettleRoutine(rb, item.transform));
-            }
+            Destroy(item.gameObject, 0.2f);
 
             if (_audioSource != null && _shredClip != null)
             {
@@ -127,19 +117,10 @@ namespace VARG.Sorting
         {
             _rejectedUntilGrabbed.Add(item);
 
-            var safeEjectPos = transform.TransformPoint(new Vector3(0f, 0.7f, -2.0f));
-
             var rb = item.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.isKinematic = false;
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-
-                item.transform.position = safeEjectPos;
-
-                var launchDir = (-transform.forward * 0.82f + Vector3.up * 0.55f).normalized;
-                rb.AddForce(launchDir * 8.5f, ForceMode.VelocityChange);
+                rb.linearVelocity = -transform.forward * 8.5f + Vector3.up * 2f;
             }
 
             if (_audioSource != null && _wrongDiscardClip != null)
@@ -166,33 +147,6 @@ namespace VARG.Sorting
             _shredClip = shredClip;
             _wrongDiscardClip = wrongDiscardClip;
             _shredParticles = shredParticles;
-        }
-
-        private IEnumerator SettleRoutine(Rigidbody rb, Transform itemTransform)
-        {
-            var elapsed = 0f;
-            const float timeout = 3.0f;
-            while (elapsed < timeout)
-            {
-                yield return new WaitForSeconds(0.1f);
-                elapsed += 0.1f;
-                if (rb == null) yield break;
-                if (elapsed > 0.4f && rb.linearVelocity.sqrMagnitude < 0.04f)
-                {
-                    break;
-                }
-            }
-
-            if (rb != null)
-            {
-                rb.isKinematic = true;
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-                if (itemTransform != null)
-                {
-                    itemTransform.SetParent(transform, true);
-                }
-            }
         }
 
         private bool IsValidDiscard(SortableItem item)

@@ -18,16 +18,8 @@ namespace VARG.UI
         [Header("Showcase Configuration")]
         [SerializeField] private Transform _showcaseAnchor;
         [SerializeField] private Vector3 _defaultAnchorPosition = new(0.5f, 1.4f, 0f);
-        [Tooltip("Base scale of 3D targets when 3 or fewer are displayed.")]
         [SerializeField] private float _modelScale = 2.0f;
-        [Tooltip("Maximum horizontal spacing between targets.")]
-        [SerializeField] private float _modelSpacing = 3.6f;
-        [Tooltip("Minimum horizontal spacing between targets to prevent overlap.")]
-        [SerializeField] private float _minSpacing = 1.6f;
-        [Tooltip("Maximum total width occupied by the showcase sequence.")]
-        [SerializeField] private float _maxShowcaseWidth = 9.0f;
-        [Tooltip("Minimum scale multiplier when sequence has many targets.")]
-        [SerializeField] private float _minScaleMultiplier = 0.65f;
+        [SerializeField] private float _modelSpacing = 2.5f;
 
         [Header("Timer & Controls")]
         [SerializeField] private GameObject _timerPanel;
@@ -254,19 +246,8 @@ namespace VARG.UI
 
         private (float spacing, float scale) CalculateLayout(int count)
         {
-            if (count <= 1)
-            {
-                return (0f, _modelScale);
-            }
-
-            var desiredSpacing = _maxShowcaseWidth / (count - 1);
-            var spacing = Mathf.Clamp(desiredSpacing, _minSpacing, _modelSpacing);
-
-            var spacingRatio = Mathf.InverseLerp(_minSpacing, _modelSpacing, spacing);
-            var scaleMultiplier = Mathf.Lerp(_minScaleMultiplier, 1.0f, spacingRatio);
-            var scale = _modelScale * scaleMultiplier;
-
-            return (spacing, scale);
+            var spacing = count <= 1 ? 0f : Mathf.Clamp(7.0f / (count - 1), 1.6f, _modelSpacing);
+            return (spacing, _modelScale);
         }
 
         private IEnumerator MemoryCountdownRoutine(float duration)
