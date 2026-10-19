@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using VARG.Core;
 using VARG.Data;
 using VARG.Mission;
@@ -14,22 +15,37 @@ namespace VARG.UI
         [SerializeField] private TextMeshProUGUI _levelTitleText;
         [SerializeField] private GameObject _bossAvatar;
 
+        [Header("Spreadsheet Level")]
+        [SerializeField] private Button _spreadsheetButton;
+        [SerializeField] private TextMeshProUGUI _spreadsheetButtonText;
+
         [Header("Settings")]
         [SerializeField] private float _secondsPerItem = 3.0f;
         [SerializeField] private float _minMemoryDuration = 8.0f;
         [SerializeField] private string _bossSpeakerName = "COMMANDER ZORP";
 
+        private bool _isBossInCorner;
+
         private void Start()
         {
+            EnsureSpreadsheetButton();
             InitializeBriefing();
         }
 
-        public void Configure(DialogueBox dialogueBox, TargetShowcaseUI showcaseUI, TextMeshProUGUI levelTitleText, GameObject bossAvatar = null)
+        public void Configure(
+            DialogueBox dialogueBox,
+            TargetShowcaseUI showcaseUI,
+            TextMeshProUGUI levelTitleText,
+            GameObject bossAvatar = null,
+            Button spreadsheetButton = null,
+            TextMeshProUGUI spreadsheetButtonText = null)
         {
             _dialogueBox = dialogueBox;
             _showcaseUI = showcaseUI;
             _levelTitleText = levelTitleText;
             _bossAvatar = bossAvatar;
+            _spreadsheetButton = spreadsheetButton;
+            _spreadsheetButtonText = spreadsheetButtonText;
         }
 
         private void InitializeBriefing()
@@ -44,7 +60,14 @@ namespace VARG.UI
 
             if (_levelTitleText != null)
             {
-                _levelTitleText.text = $"CAPTURE MISSION  |  LEVEL {currentLevel}";
+                _levelTitleText.text = GameManager.Instance != null && GameManager.Instance.IsCustomSpreadsheetLevel
+                    ? "CAPTURE MISSION  |  CUSTOM SPREADSHEET LEVEL"
+                    : $"CAPTURE MISSION  |  LEVEL {currentLevel}";
+            }
+
+            if (_spreadsheetButtonText != null && GameManager.Instance != null && GameManager.Instance.IsCustomSpreadsheetLevel)
+            {
+                _spreadsheetButtonText.text = "<b>✔ SPREADSHEET ACTIVE</b>";
             }
 
             if (_showcaseUI != null)
@@ -66,6 +89,11 @@ namespace VARG.UI
 
         private string GetBossOpeningLine(int level)
         {
+            if (GameManager.Instance != null && GameManager.Instance.IsCustomSpreadsheetLevel)
+            {
+                return "Atenção recruta! Missão customizada via planilha autorizada pela matriz! Memorize a sequência e não ouse capturar o alvo proibido!";
+            }
+
             if (level == 1)
             {
                 return "Attention, rookie! Here are the targets you must capture on Earth and their exact order. Memorize the sequence before deploying the ship! Do NOT capture the forbidden target under any circumstances!";
@@ -107,6 +135,8 @@ namespace VARG.UI
                 }
             }
 
+            _isBossInCorner = true;
+
             if (_dialogueBox != null)
             {
                 var forbiddenStr = MissionManager.Instance != null ? MissionManager.Instance.ForbiddenType.ToString().ToUpper() : "HUMAN";
@@ -118,6 +148,139 @@ namespace VARG.UI
             {
                 var order = MissionManager.Instance != null ? MissionManager.Instance.RequiredOrder : null;
                 _showcaseUI.DisplayShowcase(order);
+            }
+        }
+
+        private void EnsureSpreadsheetButton()
+        {
+            if (_spreadsheetButton != null)
+            {
+                _spreadsheetButton.onClick.RemoveListener(OnLoadSpreadsheetLevelClicked);
+                _spreadsheetButton.onClick.AddListener(OnLoadSpreadsheetLevelClicked);
+                return;
+            }
+
+            var canvas = _levelTitleText != null ? _levelTitleText.canvas : FindFirstObjectByType<Canvas>();
+            if (canvas == null) return;
+
+            var buttonObj = new GameObject("SpreadsheetButton", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+            buttonObj.transform.SetParent(canvas.transform, false);
+
+            var rect = buttonObj.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(1f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(1f, 1f);
+            rect.anchoredPosition = new Vector2(-24f, -16f);
+            rect.sizeDelta = new Vector2(280f, 42f);
+
+            var image = buttonObj.GetComponent<Image>();
+            image.color = new Color(0.12f, 0.22f, 0.32f, 0.95f);
+
+            var button = buttonObj.GetComponent<Button>();
+            var colors = button.colors;
+            colors.normalColor = new Color(0.12f, 0.22f, 0.32f, 0.95f);
+            colors.highlightedColor = new Color(0.18f, 0.38f, 0.55f, 1f);
+            colors.pressedColor = new Color(0.10f, 0.60f, 0.45f, 1f);
+            colors.selectedColor = new Color(0.18f, 0.38f, 0.55f, 1f);
+            button.colors = colors;
+            button.targetGraphic = image;
+
+            var textObj = new GameObject("Text", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+            textObj.transform.SetParent(buttonObj.transform, false);
+
+            var textRect = textObj.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.sizeDelta = Vector2.zero;
+            textRect.anchoredPosition = Vector2.zero;
+
+            var tmp = textObj.GetComponent<TextMeshProUGUI>();
+            if (_levelTitleText != null)
+            {
+                tmp.font = _levelTitleText.font;
+                tmp.fontSharedMaterial = _levelTitleText.fontSharedMaterial;
+            }
+            tmp.text = "<b>📄 SPREADSHEET LEVEL</b>";
+            tmp.fontSize = 15;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = new Color(0.40f, 0.88f, 0.95f, 1f);
+
+            _spreadsheetButton = button;
+            _spreadsheetButtonText = tmp;
+            _spreadsheetButton.onClick.AddListener(OnLoadSpreadsheetLevelClicked);
+        }
+
+        public void OnLoadSpreadsheetLevelClicked()
+        {
+            if (SpreadsheetLevelLoader.TryLoadCustomLevel(out var levelData, out var statusMessage))
+            {
+                var customConfig = ScriptableObject.CreateInstance<LevelConfig>();
+                customConfig.Setup(
+                    levelData.TargetSequence.Count,
+                    levelData.CaptureTime,
+                    levelData.SortingTime,
+                    levelData.ExtraSpawns,
+                    levelData.ForbiddenSpawns,
+                    levelData.FleeSpeedMultiplier
+                );
+
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.SetCustomSpreadsheetLevel(customConfig);
+                }
+
+                if (MissionManager.Instance != null)
+                {
+                    MissionManager.Instance.LoadCustomMission(levelData.TargetSequence, levelData.ForbiddenTarget);
+                }
+
+                if (_levelTitleText != null)
+                {
+                    _levelTitleText.text = "CAPTURE MISSION  |  CUSTOM SPREADSHEET LEVEL";
+                }
+
+                if (_spreadsheetButtonText != null)
+                {
+                    _spreadsheetButtonText.text = "<b>✔ SPREADSHEET LOADED</b>";
+                }
+
+                if (!_isBossInCorner)
+                {
+                    StopAllCoroutines();
+                    StartCoroutine(TransitionBossToCornerRoutine());
+                }
+                else
+                {
+                    if (_showcaseUI != null)
+                    {
+                        _showcaseUI.gameObject.SetActive(true);
+                        var order = MissionManager.Instance != null ? MissionManager.Instance.RequiredOrder : null;
+                        _showcaseUI.DisplayShowcase(order);
+
+                        var count = MissionManager.Instance != null && MissionManager.Instance.RequiredCount > 0
+                            ? MissionManager.Instance.RequiredCount
+                            : levelData.TargetSequence.Count;
+                        var memoryDuration = Mathf.Max(_minMemoryDuration, count * _secondsPerItem);
+                        _showcaseUI.StartCountdown(memoryDuration, ProceedToHunt);
+                    }
+
+                    if (_dialogueBox != null)
+                    {
+                        var forbiddenStr = levelData.ForbiddenTarget.ToString().ToUpper();
+                        var line = $"Planilha da matriz aprovada! Memorize os {levelData.TargetSequence.Count} alvos customizados! CUIDADO: {forbiddenStr} continua PROIBIDO!";
+                        _dialogueBox.Say(_bossSpeakerName, line, null);
+                    }
+                }
+
+                Debug.Log($"[BriefingController] {statusMessage}");
+            }
+            else
+            {
+                if (_dialogueBox != null)
+                {
+                    _dialogueBox.Say(_bossSpeakerName, $"Erro na planilha da matriz: {statusMessage}", null);
+                }
+                Debug.LogWarning($"[BriefingController] {statusMessage}");
             }
         }
 

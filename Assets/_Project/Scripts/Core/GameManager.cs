@@ -7,6 +7,7 @@ namespace VARG.Core
 {
     public class GameManager : Singleton<GameManager>
     {
+        private const string BootSceneName = "00_Boot";
         private const string BriefingSceneName = "01_BossBriefing";
         private const string ShipFlightSceneName = "02_ShipFlight";
         private const string CityHuntSceneName = "03_CityHunt";
@@ -27,6 +28,27 @@ namespace VARG.Core
 
         private LevelConfig _runtimeLevelConfig;
         private int _cachedRuntimeLevel = -1;
+        private LevelConfig _customSpreadsheetLevelConfig;
+
+        public bool IsCustomSpreadsheetLevel => _customSpreadsheetLevelConfig != null;
+
+        public void SetCustomSpreadsheetLevel(LevelConfig customConfig)
+        {
+            if (_customSpreadsheetLevelConfig != null && _customSpreadsheetLevelConfig != customConfig)
+            {
+                Destroy(_customSpreadsheetLevelConfig);
+            }
+            _customSpreadsheetLevelConfig = customConfig;
+        }
+
+        public void ClearCustomSpreadsheetLevel()
+        {
+            if (_customSpreadsheetLevelConfig != null)
+            {
+                Destroy(_customSpreadsheetLevelConfig);
+                _customSpreadsheetLevelConfig = null;
+            }
+        }
 
         protected override void Awake()
         {
@@ -40,6 +62,12 @@ namespace VARG.Core
             {
                 Destroy(_runtimeLevelConfig);
                 _runtimeLevelConfig = null;
+            }
+
+            if (_customSpreadsheetLevelConfig != null)
+            {
+                Destroy(_customSpreadsheetLevelConfig);
+                _customSpreadsheetLevelConfig = null;
             }
 
             base.OnDestroy();
@@ -70,6 +98,11 @@ namespace VARG.Core
 
         public LevelConfig GetCurrentLevelConfig()
         {
+            if (_customSpreadsheetLevelConfig != null)
+            {
+                return _customSpreadsheetLevelConfig;
+            }
+
             if (_campaignConfig == null || _campaignConfig.Levels == null || _campaignConfig.Levels.Length == 0)
             {
                 return null;
@@ -130,7 +163,7 @@ namespace VARG.Core
                 TimerManager.Instance.ResetTimers();
             }
 
-            if (MissionManager.Instance != null && levelConfig != null)
+            if (MissionManager.Instance != null && levelConfig != null && !IsCustomSpreadsheetLevel)
             {
                 MissionManager.Instance.GenerateMission(levelConfig);
             }
@@ -203,6 +236,7 @@ namespace VARG.Core
 
         public void NextLevel()
         {
+            ClearCustomSpreadsheetLevel();
             if (CurrentLevel >= MaxLevel)
             {
                 RestartCampaign();
@@ -216,6 +250,7 @@ namespace VARG.Core
 
         public void RestartCampaign()
         {
+            ClearCustomSpreadsheetLevel();
             CurrentLevel = 1;
             StartLevel();
         }
@@ -223,6 +258,24 @@ namespace VARG.Core
         public void RetryLevel()
         {
             StartLevel();
+        }
+
+        public void GoToMainMenu()
+        {
+            ClearCustomSpreadsheetLevel();
+            if (TimerManager.Instance != null)
+            {
+                TimerManager.Instance.StopAllTimers();
+            }
+
+            if (SceneLoader.Instance != null)
+            {
+                SceneLoader.Instance.Load(BootSceneName);
+            }
+            else
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(BootSceneName);
+            }
         }
 
         private void CalculateAndStoreResult()
