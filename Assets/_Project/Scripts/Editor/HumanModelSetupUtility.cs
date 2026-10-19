@@ -71,16 +71,16 @@ namespace VARG.Editor
 
             var modelObj = BuildHumanGameObject(skin, hair, shirt, pants, shoes, eyes, 1.0f);
             modelObj.transform.SetParent(root.transform, false);
-            modelObj.transform.localPosition = new Vector3(0f, -0.7f, 0f);
+            modelObj.transform.localPosition = new Vector3(0f, -0.65f, 0f);
             modelObj.transform.localRotation = Quaternion.identity;
             modelObj.transform.localScale = Vector3.one * 1.0f;
 
             var collider = root.GetComponent<CapsuleCollider>();
             if (collider != null)
             {
-                collider.center = new Vector3(0f, 0.15f, 0f);
-                collider.height = 1.7f;
-                collider.radius = 0.45f;
+                collider.center = new Vector3(0f, 0.02f, 0f);
+                collider.height = 1.35f;
+                collider.radius = 0.40f;
             }
 
             PrefabUtility.SaveAsPrefabAsset(root, TargetHumanPrefabPath);
@@ -99,16 +99,16 @@ namespace VARG.Editor
 
             var modelObj = BuildHumanGameObject(skin, hair, shirt, pants, shoes, eyes, 0.45f);
             modelObj.transform.SetParent(root.transform, false);
-            modelObj.transform.localPosition = new Vector3(0f, -0.2f, 0f);
+            modelObj.transform.localPosition = new Vector3(0f, -0.25f, 0f);
             modelObj.transform.localRotation = Quaternion.identity;
             modelObj.transform.localScale = Vector3.one * 0.45f;
 
             var collider = root.GetComponent<CapsuleCollider>();
             if (collider != null)
             {
-                collider.center = new Vector3(0f, 0.12f, 0f);
-                collider.height = 0.75f;
-                collider.radius = 0.22f;
+                collider.center = new Vector3(0f, 0.05f, 0f);
+                collider.height = 0.62f;
+                collider.radius = 0.18f;
             }
 
             PrefabUtility.SaveAsPrefabAsset(root, MiniHumanPrefabPath);
@@ -119,119 +119,119 @@ namespace VARG.Editor
         {
             var root = new GameObject("Model_Human");
 
-            // 1. Torso Root (Pivot at hip level Y = 0.68)
+            // 1. Torso Root (Pivot at hip level Y = 0.42)
             var torso = new GameObject("Torso");
             torso.transform.SetParent(root.transform, false);
-            torso.transform.localPosition = new Vector3(0f, 0.68f, 0f);
+            torso.transform.localPosition = new Vector3(0f, 0.42f, 0f);
 
             var shirtBody = CreateCube("ShirtBody", torso.transform,
-                new Vector3(0f, 0.26f, 0f),
-                new Vector3(0.48f, 0.52f, 0.30f),
+                new Vector3(0f, 0.19f, 0f),
+                new Vector3(0.52f, 0.38f, 0.36f),
                 shirt);
 
-            // 2. Head Pivot (Pivot at neck Y = 0.52 on Torso)
+            // 2. Head Pivot (Pivot at neck Y = 0.38 on Torso)
             var headPivot = new GameObject("HeadPivot");
             headPivot.transform.SetParent(torso.transform, false);
-            headPivot.transform.localPosition = new Vector3(0f, 0.52f, 0f);
+            headPivot.transform.localPosition = new Vector3(0f, 0.38f, 0f);
 
             var headMesh = CreateCube("HeadMesh", headPivot.transform,
-                new Vector3(0f, 0.26f, 0f),
-                new Vector3(0.52f, 0.52f, 0.52f),
+                new Vector3(0f, 0.24f, 0f),
+                new Vector3(0.58f, 0.48f, 0.54f),
                 skin);
 
             // Hair elements
             CreateCube("HairTop", headPivot.transform,
-                new Vector3(0f, 0.51f, -0.02f),
-                new Vector3(0.56f, 0.16f, 0.56f),
+                new Vector3(0f, 0.47f, -0.02f),
+                new Vector3(0.62f, 0.14f, 0.58f),
                 hair);
 
             CreateCube("HairBack", headPivot.transform,
-                new Vector3(0f, 0.30f, -0.24f),
-                new Vector3(0.56f, 0.38f, 0.12f),
+                new Vector3(0f, 0.26f, -0.25f),
+                new Vector3(0.62f, 0.34f, 0.12f),
                 hair);
 
             CreateCube("HairSideL", headPivot.transform,
-                new Vector3(-0.24f, 0.32f, -0.02f),
-                new Vector3(0.08f, 0.32f, 0.52f),
+                new Vector3(-0.27f, 0.28f, -0.02f),
+                new Vector3(0.08f, 0.30f, 0.54f),
                 hair);
 
             CreateCube("HairSideR", headPivot.transform,
-                new Vector3(0.24f, 0.32f, -0.02f),
-                new Vector3(0.08f, 0.32f, 0.52f),
+                new Vector3(0.27f, 0.28f, -0.02f),
+                new Vector3(0.08f, 0.30f, 0.54f),
                 hair);
 
             CreateCube("HairFringe", headPivot.transform,
-                new Vector3(0f, 0.46f, 0.24f),
-                new Vector3(0.48f, 0.12f, 0.10f),
+                new Vector3(0f, 0.42f, 0.25f),
+                new Vector3(0.52f, 0.10f, 0.10f),
                 hair);
 
             // Face details
             CreateCube("Nose", headPivot.transform,
-                new Vector3(0f, 0.20f, 0.28f),
+                new Vector3(0f, 0.18f, 0.29f),
                 new Vector3(0.08f, 0.06f, 0.06f),
                 skin);
 
             var eyesObj = CreateCube("Eyes", headPivot.transform,
-                new Vector3(0f, 0.28f, 0.265f),
-                new Vector3(0.38f, 0.18f, 0.01f),
+                new Vector3(0f, 0.25f, 0.275f),
+                new Vector3(0.36f, 0.16f, 0.01f),
                 eyes);
 
-            // 3. Arms (Pivots at shoulder level Y = 0.46 on Torso)
+            // 3. Arms (Pivots at shoulder level Y = 0.32 on Torso)
             var armPivotL = new GameObject("ArmPivotL");
             armPivotL.transform.SetParent(torso.transform, false);
-            armPivotL.transform.localPosition = new Vector3(-0.30f, 0.46f, 0f);
+            armPivotL.transform.localPosition = new Vector3(-0.32f, 0.32f, 0f);
 
             CreateCube("SleeveL", armPivotL.transform,
-                new Vector3(0f, -0.12f, 0f),
-                new Vector3(0.14f, 0.24f, 0.16f),
+                new Vector3(0f, -0.08f, 0f),
+                new Vector3(0.15f, 0.16f, 0.18f),
                 shirt);
 
             CreateCube("HandL", armPivotL.transform,
-                new Vector3(0f, -0.32f, 0f),
-                new Vector3(0.12f, 0.20f, 0.14f),
+                new Vector3(0f, -0.24f, 0f),
+                new Vector3(0.13f, 0.16f, 0.15f),
                 skin);
 
             var armPivotR = new GameObject("ArmPivotR");
             armPivotR.transform.SetParent(torso.transform, false);
-            armPivotR.transform.localPosition = new Vector3(0.30f, 0.46f, 0f);
+            armPivotR.transform.localPosition = new Vector3(0.32f, 0.32f, 0f);
 
             CreateCube("SleeveR", armPivotR.transform,
-                new Vector3(0f, -0.12f, 0f),
-                new Vector3(0.14f, 0.24f, 0.16f),
+                new Vector3(0f, -0.08f, 0f),
+                new Vector3(0.15f, 0.16f, 0.18f),
                 shirt);
 
             CreateCube("HandR", armPivotR.transform,
-                new Vector3(0f, -0.32f, 0f),
-                new Vector3(0.12f, 0.20f, 0.14f),
+                new Vector3(0f, -0.24f, 0f),
+                new Vector3(0.13f, 0.16f, 0.15f),
                 skin);
 
-            // 4. Legs (Pivots at hip level Y = 0.68 on Root)
+            // 4. Legs (Pivots at hip level Y = 0.42 on Root)
             var legPivotL = new GameObject("LegPivotL");
             legPivotL.transform.SetParent(root.transform, false);
-            legPivotL.transform.localPosition = new Vector3(-0.12f, 0.68f, 0f);
+            legPivotL.transform.localPosition = new Vector3(-0.13f, 0.42f, 0f);
 
             CreateCube("PantsL", legPivotL.transform,
-                new Vector3(0f, -0.26f, 0f),
-                new Vector3(0.16f, 0.52f, 0.18f),
+                new Vector3(0f, -0.16f, 0f),
+                new Vector3(0.18f, 0.32f, 0.20f),
                 pants);
 
             CreateCube("ShoeL", legPivotL.transform,
-                new Vector3(0f, -0.55f, 0.03f),
-                new Vector3(0.17f, 0.14f, 0.24f),
+                new Vector3(0f, -0.37f, 0.03f),
+                new Vector3(0.19f, 0.10f, 0.26f),
                 shoes);
 
             var legPivotR = new GameObject("LegPivotR");
             legPivotR.transform.SetParent(root.transform, false);
-            legPivotR.transform.localPosition = new Vector3(0.12f, 0.68f, 0f);
+            legPivotR.transform.localPosition = new Vector3(0.13f, 0.42f, 0f);
 
             CreateCube("PantsR", legPivotR.transform,
-                new Vector3(0f, -0.26f, 0f),
-                new Vector3(0.16f, 0.52f, 0.18f),
+                new Vector3(0f, -0.16f, 0f),
+                new Vector3(0.18f, 0.32f, 0.20f),
                 pants);
 
             CreateCube("ShoeR", legPivotR.transform,
-                new Vector3(0f, -0.55f, 0.03f),
-                new Vector3(0.17f, 0.14f, 0.24f),
+                new Vector3(0f, -0.37f, 0.03f),
+                new Vector3(0.19f, 0.10f, 0.26f),
                 shoes);
 
             // 5. Animation Component

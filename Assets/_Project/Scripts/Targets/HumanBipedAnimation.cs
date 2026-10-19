@@ -113,9 +113,10 @@ namespace VARG.Targets
             var sin = Mathf.Sin(_cycle);
             var cos = Mathf.Cos(_cycle);
 
-            // Legs swing opposite to each other
-            var legAngleL = sin * _maxLegAngle;
-            var legAngleR = -sin * _maxLegAngle;
+            // Legs swing opposite to each other with energetic stride
+            var legMultiplier = isFleeing ? 1.25f : 1.0f;
+            var legAngleL = sin * (_maxLegAngle * legMultiplier);
+            var legAngleR = -sin * (_maxLegAngle * legMultiplier);
 
             if (_legPivotL != null)
             {
@@ -126,40 +127,43 @@ namespace VARG.Targets
                 _legPivotR.localRotation = _initialLegRotR * Quaternion.Euler(legAngleR, 0f, 0f);
             }
 
-            // Arms: When fleeing, comical flailing up in panic! When walking, normal opposing arm swing
-            if (isFleeing)
+            // Arms: Natural cartoon running pump! Arms swing forward and back opposing legs, biased forward (-20 deg)
+            var armSwing = isFleeing ? (_maxArmAngle * 1.6f) : _maxArmAngle;
+            var armForwardBias = isFleeing ? -22f : -10f;
+            var armAngleL = -sin * armSwing + armForwardBias;
+            var armAngleR = sin * armSwing + armForwardBias;
+
+            if (_armPivotL != null)
             {
-                var flailL = 135f + Mathf.Sin(_cycle * 1.5f) * 25f;
-                var flailR = 135f + Mathf.Cos(_cycle * 1.5f) * 25f;
-                if (_armPivotL != null) _armPivotL.localRotation = Quaternion.Euler(flailL, 0f, 15f);
-                if (_armPivotR != null) _armPivotR.localRotation = Quaternion.Euler(flailR, 0f, -15f);
+                _armPivotL.localRotation = _initialArmRotL * Quaternion.Euler(armAngleL, 0f, 5f);
             }
-            else
+            if (_armPivotR != null)
             {
-                var armAngleL = -sin * _maxArmAngle;
-                var armAngleR = sin * _maxArmAngle;
-                if (_armPivotL != null) _armPivotL.localRotation = _initialArmRotL * Quaternion.Euler(armAngleL, 0f, 0f);
-                if (_armPivotR != null) _armPivotR.localRotation = _initialArmRotR * Quaternion.Euler(armAngleR, 0f, 0f);
+                _armPivotR.localRotation = _initialArmRotR * Quaternion.Euler(armAngleR, 0f, -5f);
             }
 
-            // Torso bobbing on footsteps
+            // Torso: Footstep bounce + forward sprint lean when running
             if (_torso != null)
             {
-                var bob = Mathf.Abs(cos) * _bobHeight;
+                var bob = Mathf.Abs(cos) * (isFleeing ? _bobHeight * 1.3f : _bobHeight);
                 _torso.localPosition = _initialTorsoPos + new Vector3(0f, bob, 0f);
+
+                var leanX = isFleeing ? 12f : 4f;
+                var swayY = sin * (isFleeing ? 4f : 2f);
+                _torso.localRotation = Quaternion.Euler(leanX, swayY, 0f);
             }
 
-            // Head subtle sway
+            // Head subtle sway and looking forward
             if (_headPivot != null)
             {
-                var headTilt = sin * (isFleeing ? 6f : 3f);
-                _headPivot.localRotation = _initialHeadRot * Quaternion.Euler(0f, 0f, headTilt);
+                var headTilt = -sin * (isFleeing ? 4f : 2f);
+                _headPivot.localRotation = _initialHeadRot * Quaternion.Euler(isFleeing ? -6f : 0f, 0f, headTilt);
             }
         }
 
         private void AnimateIdle()
         {
-            // Smoothly return limbs to rest
+            // Smoothly return limbs and torso to rest
             if (_legPivotL != null)
             {
                 _legPivotL.localRotation = Quaternion.Slerp(_legPivotL.localRotation, _initialLegRotL, Time.deltaTime * 6f);
@@ -182,6 +186,7 @@ namespace VARG.Targets
             {
                 var breath = Mathf.Sin(_cycle) * (_bobHeight * 0.25f);
                 _torso.localPosition = _initialTorsoPos + new Vector3(0f, breath, 0f);
+                _torso.localRotation = Quaternion.Slerp(_torso.localRotation, Quaternion.identity, Time.deltaTime * 6f);
             }
 
             if (_headPivot != null)
