@@ -130,7 +130,8 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 - [x] **B05** `MissionManager` completo: `GenerateMission` (§R.2: 1 tipo proibido, 3 tipos na lista, repetição permitida) + `ValidateCapture` (§R.5: penalidades, vida, inventário, eventos, avanço da ordem).
   - Pronto quando: um teste (EditMode ou botão de debug) cobre os 3 resultados e confirma que a ordem só avança com `Correct`.
 - [x] **B06** `GameEvents` (§C.4, com limpeza em `SubsystemRegistration`) + `DebugMissionSeeder` + `DebugInventorySeeder` (itens dos 3 resultados).
-- [ ] **B07** *(Adiado para Sprint 3 junto com as UIs)* Kit UI planilha: `SpreadsheetPanel`, `SpreadsheetRow`, `SpreadsheetCell`, `FormulaBar`, `SheetTabs`. *A e B usam no Sprint 3.*
+- [x] **B07** Nível Customizado via Planilha (`CustomLevel.csv`, `SpreadsheetLevelLoader`, `SpreadsheetLevelData`, integração com `BriefingController`, `MissionManager`, `GameManager` e atalhos no Editor).
+  - Pronto quando: `CustomLevel.csv` pode ser editado no Excel e carregado no Briefing via botão ou tecla `[ P ]`, configurando sequência de alvos, tempos e alvos proibidos.
 
 ### Sprint 2 — Triagem (Passos 7, 8, 9)
 - [x] **B08** Greybox de `04_ShipSorting` (interior da nave, caixa, 4 gaiolas + lixeira) + Prefab Variant `ETPlayer_Sorting`.
