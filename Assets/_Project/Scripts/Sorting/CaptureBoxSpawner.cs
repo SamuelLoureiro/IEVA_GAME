@@ -90,16 +90,6 @@ namespace VARG.Sorting
                 instance.AddComponent<Grabbable>();
             }
 
-            if (instance.GetComponent<HighlightOnHover>() == null)
-            {
-                instance.AddComponent<HighlightOnHover>();
-            }
-
-            if (instance.GetComponent<SortingEscapeeAI>() == null)
-            {
-                instance.AddComponent<SortingEscapeeAI>();
-            }
-
             var rb = instance.GetComponent<Rigidbody>();
             if (rb != null)
             {

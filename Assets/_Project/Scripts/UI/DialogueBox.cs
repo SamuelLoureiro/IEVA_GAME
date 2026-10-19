@@ -10,7 +10,7 @@ namespace VARG.UI
     {
         [Header("Components")]
         [SerializeField] private TextMeshProUGUI _speakerNameText;
-        [SerializeField] private TypewriterText _typewriter;
+        [SerializeField] private TextMeshProUGUI _dialogueText;
         [SerializeField] private GameObject _continueIndicator;
         [SerializeField] private Button _advanceButton;
 
@@ -53,43 +53,25 @@ namespace VARG.UI
                 _speakerNameText.text = speakerName ?? string.Empty;
             }
 
-            if (_continueIndicator != null)
+            if (_dialogueText != null)
             {
-                _continueIndicator.SetActive(false);
+                _dialogueText.text = text ?? string.Empty;
             }
 
-            if (_typewriter != null)
+            _isLineFinished = true;
+            if (_continueIndicator != null)
             {
-                _typewriter.ShowText(text, OnTypingFinished);
-            }
-            else
-            {
-                OnTypingFinished();
+                _continueIndicator.SetActive(true);
             }
         }
 
         public void HandleAdvanceRequested()
         {
-            if (_typewriter != null && _typewriter.IsTyping)
-            {
-                _typewriter.Skip();
-                return;
-            }
-
             if (_isLineFinished)
             {
                 var callback = _onDialogueComplete;
                 _onDialogueComplete = null;
                 callback?.Invoke();
-            }
-        }
-
-        private void OnTypingFinished()
-        {
-            _isLineFinished = true;
-            if (_continueIndicator != null)
-            {
-                _continueIndicator.SetActive(true);
             }
         }
     }

@@ -68,9 +68,6 @@ namespace VARG.Sorting
 
             if (item.TimeSinceReleased < _settleDelay) return;
 
-            var escapee = item.GetComponent<SortingEscapeeAI>();
-            if (escapee != null && escapee.IsEscaping) return;
-
             ValidateItem(item);
         }
 
@@ -126,12 +123,6 @@ namespace VARG.Sorting
                 grabbable.enabled = false;
             }
 
-            var highlight = item.GetComponent<HighlightOnHover>();
-            if (highlight != null)
-            {
-                highlight.SetHighlight(false);
-                highlight.enabled = false;
-            }
 
             var rb = item.GetComponent<Rigidbody>();
             if (rb != null)
@@ -225,11 +216,6 @@ namespace VARG.Sorting
                 TimerManager.Instance.ApplyPenalty(TimerPhase.Sorting, penalty);
             }
 
-            var escapee = item.GetComponent<SortingEscapeeAI>();
-            if (escapee != null)
-            {
-                escapee.TriggerEscape();
-            }
 
             GameEvents.TriggerWrongCage(item.Data);
         }

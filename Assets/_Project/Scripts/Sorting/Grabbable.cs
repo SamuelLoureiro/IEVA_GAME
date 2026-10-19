@@ -7,7 +7,6 @@ namespace VARG.Sorting
     {
         private Rigidbody _rb;
         private SortableItem _sortableItem;
-        private HighlightOnHover _highlighter;
 
         public bool IsHeld { get; private set; }
         public Rigidbody Rigidbody => _rb;
@@ -17,18 +16,11 @@ namespace VARG.Sorting
         {
             _rb = GetComponent<Rigidbody>();
             _sortableItem = GetComponent<SortableItem>();
-            _highlighter = GetComponent<HighlightOnHover>();
         }
 
         public void OnGrabbed()
         {
             if (_sortableItem != null && _sortableItem.IsSorted) return;
-
-            var escapee = GetComponent<SortingEscapeeAI>();
-            if (escapee != null)
-            {
-                escapee.StopEscape();
-            }
 
             IsHeld = true;
             _rb.isKinematic = false;
@@ -40,8 +32,6 @@ namespace VARG.Sorting
             {
                 _sortableItem.IsHeld = true;
             }
-
-            SetHighlight(false);
         }
 
         public void OnReleased(Vector3 impulse = default)
@@ -74,16 +64,6 @@ namespace VARG.Sorting
 
         public void SetHighlight(bool enable)
         {
-            if (_sortableItem != null && _sortableItem.IsSorted)
-            {
-                if (_highlighter != null) _highlighter.SetHighlight(false);
-                return;
-            }
-
-            if (_highlighter != null && !IsHeld)
-            {
-                _highlighter.SetHighlight(enable);
-            }
         }
     }
 }

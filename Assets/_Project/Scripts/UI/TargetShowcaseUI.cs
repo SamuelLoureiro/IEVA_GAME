@@ -247,12 +247,6 @@ namespace VARG.UI
                     var grabbable = instance.GetComponent<Sorting.Grabbable>();
                     if (grabbable != null) Destroy(grabbable);
 
-                    var highlighter = instance.GetComponent<Sorting.HighlightOnHover>();
-                    if (highlighter != null) Destroy(highlighter);
-
-                    var spin = instance.AddComponent<SpinAndBob>();
-                    spin.Initialize(pos, i * 0.4f);
-
                     _spawnedShowcaseObjects.Add(instance);
                 }
             }

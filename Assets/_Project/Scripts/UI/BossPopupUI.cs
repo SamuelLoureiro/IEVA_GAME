@@ -14,7 +14,6 @@ namespace VARG.UI
         [SerializeField] private TextMeshProUGUI _speakerNameText;
         [SerializeField] private TextMeshProUGUI _dialogueText;
         [SerializeField] private Image _avatarImage;
-        [SerializeField] private AlienVoice _alienVoice;
 
         [Header("Expressions (Optional Sprites)")]
         [SerializeField] private Sprite _neutralSprite;
@@ -24,7 +23,6 @@ namespace VARG.UI
         [SerializeField] private Sprite _smugSprite;
 
         [Header("Settings")]
-        [SerializeField] private float _charactersPerSecond = 32f;
         [SerializeField] private float _displayDuration = 3.5f;
         [SerializeField] private float _fadeDuration = 0.2f;
 
@@ -80,11 +78,6 @@ namespace VARG.UI
                 _canvasGroup = GetComponent<CanvasGroup>();
             }
 
-            if (_alienVoice == null)
-            {
-                _alienVoice = GetComponentInChildren<AlienVoice>();
-            }
-
             if (_canvasGroup != null)
             {
                 _canvasGroup.alpha = 0f;
@@ -124,41 +117,10 @@ namespace VARG.UI
             if (_dialogueText != null)
             {
                 _dialogueText.text = line;
-                _dialogueText.maxVisibleCharacters = 0;
             }
 
             yield return StartFade(1f);
-
-            var charDelay = 1f / Mathf.Max(1f, _charactersPerSecond);
-            var charIndex = 0;
-
-            while (charIndex < line.Length)
-            {
-                charIndex++;
-                if (_dialogueText != null)
-                {
-                    _dialogueText.maxVisibleCharacters = charIndex;
-                }
-
-                var currentChar = line[charIndex - 1];
-                if (!char.IsWhiteSpace(currentChar) && charIndex % 2 == 0)
-                {
-                    if (_alienVoice != null)
-                    {
-                        _alienVoice.PlayBeep();
-                    }
-                }
-
-                yield return new WaitForSeconds(charDelay);
-            }
-
-            if (_dialogueText != null)
-            {
-                _dialogueText.maxVisibleCharacters = int.MaxValue;
-            }
-
             yield return new WaitForSeconds(_displayDuration);
-
             yield return StartFade(0f);
             _displayCoroutine = null;
         }
