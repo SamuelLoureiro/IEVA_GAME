@@ -200,68 +200,128 @@ namespace VARG.UI
         {
             if (_playCampaignButton != null) return;
 
-            var canvas = FindFirstObjectByType<Canvas>() ?? new GameObject("MainMenuCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster)).GetComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            var canvas = FindFirstObjectByType<Canvas>();
+            if (canvas == null)
+            {
+                var canvasObj = new GameObject("MainMenuCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+                canvas = canvasObj.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+                var scaler = canvasObj.GetComponent<CanvasScaler>();
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1920, 1080);
+                scaler.matchWidthOrHeight = 0.5f;
+            }
 
             if (FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
             {
-                new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.InputSystem.UI.InputSystemUIInputModule));
+                var eventSys = new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.InputSystem.UI.InputSystemUIInputModule));
             }
 
-            var bg = CreatePanel("Background", canvas.transform, Vector2.zero, Vector2.one, new Color(0.04f, 0.06f, 0.09f, 1f));
-            _titleText = CreateText("Title", bg.transform, "PROJECT V.A.R.G.", 52, new Vector2(0.5f, 0.80f), new Vector2(1000, 70));
-            _subtitleText = CreateText("Subtitle", bg.transform, "METHODICAL ABDUCTION  |  MISSIONS & SPREADSHEETS", 20, new Vector2(0.5f, 0.73f), new Vector2(1000, 40));
+            // Background panel
+            var bgObj = CreatePanel("Background", canvas.transform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, new Color(0.04f, 0.06f, 0.09f, 1f));
 
-            var container = CreatePanel("ButtonContainer", bg.transform, new Vector2(0.5f, 0.44f), new Vector2(0.5f, 0.44f), Color.clear);
-            container.GetComponent<RectTransform>().sizeDelta = new Vector2(480, 320);
-            var layout = container.AddComponent<VerticalLayoutGroup>();
+            // Title
+            _titleText = CreateText("Title", bgObj.transform, "PROJECT V.A.R.G.", 52, TextAlignmentOptions.Center, FontStyles.Bold, new Color(0.92f, 0.96f, 1f));
+            _titleText.rectTransform.anchorMin = new Vector2(0.5f, 0.80f);
+            _titleText.rectTransform.anchorMax = new Vector2(0.5f, 0.80f);
+            _titleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            _titleText.rectTransform.sizeDelta = new Vector2(1000, 70);
+
+            _subtitleText = CreateText("Subtitle", bgObj.transform, "METHODICAL ABDUCTION  |  MISSIONS & SPREADSHEETS", 20, TextAlignmentOptions.Center, FontStyles.Normal, new Color(0.40f, 0.75f, 0.90f));
+            _subtitleText.rectTransform.anchorMin = new Vector2(0.5f, 0.73f);
+            _subtitleText.rectTransform.anchorMax = new Vector2(0.5f, 0.73f);
+            _subtitleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            _subtitleText.rectTransform.sizeDelta = new Vector2(1000, 40);
+
+            // Button container
+            var btnContainer = CreatePanel("ButtonContainer", bgObj.transform, new Vector2(0.5f, 0.44f), new Vector2(0.5f, 0.44f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(480, 320), Color.clear);
+            var layout = btnContainer.AddComponent<VerticalLayoutGroup>();
             layout.spacing = 16f;
             layout.childAlignment = TextAnchor.MiddleCenter;
             layout.childControlWidth = true;
+            layout.childControlHeight = false;
 
-            _playCampaignButton = CreateMenuButton("PlayCampaignBtn", container.transform, "<b>▶ PLAY CAMPAIGN</b>", new Color(0.10f, 0.75f, 0.45f));
-            _playCustomButton = CreateMenuButton("PlayCustomBtn", container.transform, "<b>📄 PLAY CUSTOM (SPREADSHEET)</b>", new Color(0.15f, 0.45f, 0.85f));
-            _openSpreadsheetButton = CreateMenuButton("OpenCsvBtn", container.transform, "<b>📁 OPEN SPREADSHEET (EXCEL)</b>", new Color(0.18f, 0.28f, 0.38f));
-            _quitButton = CreateMenuButton("QuitBtn", container.transform, "<b>QUIT</b>", new Color(0.45f, 0.15f, 0.18f));
+            _playCampaignButton = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ PLAY CAMPAIGN</b>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
+            _playCustomButton = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 PLAY CUSTOM (SPREADSHEET)</b>", new Color(0.15f, 0.45f, 0.85f), new Color(0.25f, 0.65f, 1f));
+            _openSpreadsheetButton = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 OPEN SPREADSHEET (EXCEL)</b>", new Color(0.18f, 0.28f, 0.38f), new Color(0.28f, 0.42f, 0.58f));
+            _quitButton = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>QUIT</b>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
 
-            _statusText = CreateText("StatusText", bg.transform, "Select a game mode to begin.", 18, new Vector2(0.5f, 0.16f), new Vector2(900, 50));
+            // Status text
+            _statusText = CreateText("StatusText", bgObj.transform, "Select a game mode to begin.", 18, TextAlignmentOptions.Center, FontStyles.Italic, new Color(0.70f, 0.80f, 0.90f));
+            _statusText.rectTransform.anchorMin = new Vector2(0.5f, 0.16f);
+            _statusText.rectTransform.anchorMax = new Vector2(0.5f, 0.16f);
+            _statusText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            _statusText.rectTransform.sizeDelta = new Vector2(900, 50);
         }
 
-        private static Button CreateMenuButton(string name, Transform parent, string label, Color color)
+        private static Button CreateMenuButton(string name, Transform parent, string label, Color normalColor, Color highlightColor)
         {
-            var btnObj = CreatePanel(name, parent, Vector2.zero, Vector2.one, color);
+            var btnObj = CreatePanel(name, parent, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(460, 56), normalColor);
             var layoutElem = btnObj.AddComponent<LayoutElement>();
             layoutElem.preferredHeight = 56f;
             layoutElem.preferredWidth = 460f;
 
             var btn = btnObj.AddComponent<Button>();
-            CreateText("BtnText", btnObj.transform, label, 20, Vector2.zero, Vector2.zero);
+            var colors = btn.colors;
+            colors.normalColor = normalColor;
+            colors.highlightedColor = highlightColor;
+            colors.pressedColor = normalColor * 0.8f;
+            colors.selectedColor = highlightColor;
+            btn.colors = colors;
+
+            var text = CreateText("BtnText", btnObj.transform, label, 20, TextAlignmentOptions.Center, FontStyles.Bold, Color.white);
+            text.rectTransform.anchorMin = Vector2.zero;
+            text.rectTransform.anchorMax = Vector2.one;
+            text.rectTransform.offsetMin = Vector2.zero;
+            text.rectTransform.offsetMax = Vector2.zero;
+
             return btn;
         }
 
-        private static GameObject CreatePanel(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Color color)
+        private static GameObject CreatePanel(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 pos, Vector2 size, Color color)
         {
             var panel = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-            panel.transform.SetParent(parent, false);
+            if (parent != null) panel.transform.SetParent(parent, false);
+
             var rect = panel.GetComponent<RectTransform>();
             rect.anchorMin = anchorMin;
             rect.anchorMax = anchorMax;
-            rect.offsetMin = rect.offsetMax = Vector2.zero;
-            panel.GetComponent<Image>().color = color;
+            rect.pivot = pivot;
+            rect.anchoredPosition = pos;
+
+            if (size != Vector2.zero)
+            {
+                rect.sizeDelta = size;
+            }
+            else
+            {
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+            }
+
+            var img = panel.GetComponent<Image>();
+            img.color = color;
             return panel;
         }
 
-        private static TextMeshProUGUI CreateText(string name, Transform parent, string text, float size, Vector2 anchor, Vector2 sizeDelta)
+        private static TextMeshProUGUI CreateText(string name, Transform parent, string text, float size, TextAlignmentOptions align, FontStyles style, Color color)
         {
             var textObj = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
             textObj.transform.SetParent(parent, false);
+
             var rect = textObj.GetComponent<RectTransform>();
-            rect.anchorMin = rect.anchorMax = anchor;
-            rect.sizeDelta = sizeDelta;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
             var tmp = textObj.GetComponent<TextMeshProUGUI>();
             tmp.text = text;
             tmp.fontSize = size;
-            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.alignment = align;
+            tmp.fontStyle = style;
+            tmp.color = color;
             return tmp;
         }
     }

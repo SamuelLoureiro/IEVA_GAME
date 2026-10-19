@@ -26,6 +26,19 @@ namespace VARG.UI
             {
                 _advanceButton.onClick.AddListener(HandleAdvanceRequested);
             }
+
+            if (_dialogueText == null)
+            {
+                var tmps = GetComponentsInChildren<TextMeshProUGUI>();
+                for (var i = 0; i < tmps.Length; i++)
+                {
+                    if (tmps[i] != _speakerNameText)
+                    {
+                        _dialogueText = tmps[i];
+                        break;
+                    }
+                }
+            }
         }
 
         private void Start()
