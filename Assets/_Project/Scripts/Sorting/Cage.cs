@@ -11,6 +11,7 @@ namespace VARG.Sorting
         [Header("Settings")]
         [SerializeField] private TargetType _acceptedType;
         [SerializeField] private Transform _snapPoint;
+        [SerializeField] private Transform _ejectPoint;
         [SerializeField] private float _ejectForce = 8.5f;
         [SerializeField] private PenaltyConfig _penaltyConfig;
 
@@ -24,6 +25,8 @@ namespace VARG.Sorting
 
         public TargetType AcceptedType => _acceptedType;
         public Transform SnapPoint => _snapPoint != null ? _snapPoint : transform;
+        public Transform EjectPoint => _ejectPoint != null ? _ejectPoint : transform;
+        public float EjectForce => _ejectForce;
         public int LockedCount => _lockedItems.Count;
 
         private void Awake()
@@ -36,6 +39,7 @@ namespace VARG.Sorting
         {
             _acceptedType = acceptedType;
             _snapPoint = snapPoint;
+            _ejectPoint = ejectPoint;
         }
 
         public void ProcessTriggerStay(Collider other)
