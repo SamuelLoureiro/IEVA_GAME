@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using VARG.Core;
 using VARG.Data;
 using VARG.Mission;
 using VARG.Sorting;
@@ -9,65 +8,8 @@ namespace VARG.UI
 {
     public class SortingTimerUI : MonoBehaviour
     {
-        [Header("UI Elements")]
         [SerializeField] private TextMeshProUGUI _timeText;
         [SerializeField] private TextMeshProUGUI _itemsCountText;
-
-        [Header("Appearance")]
-        [SerializeField] private Color _normalColor = Color.white;
-        [SerializeField] private Color _warningColor = new Color(1f, 0.28f, 0.28f);
-        [SerializeField] private float _warningThreshold = 15f;
-
-        private void OnEnable()
-        {
-            if (TimerManager.Instance != null)
-            {
-                TimerManager.Instance.OnTimeChanged += HandleTimeChanged;
-                TimerManager.Instance.OnPenaltyApplied += HandlePenaltyApplied;
-            }
-
-            if (SortingManager.Instance != null)
-            {
-                SortingManager.Instance.OnItemCountsChanged += HandleItemCountsChanged;
-            }
-        }
-
-        private void OnDisable()
-        {
-            if (TimerManager.Instance != null)
-            {
-                TimerManager.Instance.OnTimeChanged -= HandleTimeChanged;
-                TimerManager.Instance.OnPenaltyApplied -= HandlePenaltyApplied;
-            }
-
-            if (SortingManager.Instance != null)
-            {
-                SortingManager.Instance.OnItemCountsChanged -= HandleItemCountsChanged;
-            }
-        }
-
-        private void Start()
-        {
-            InitializeTimerIfNeeded();
-            RefreshInitialState();
-        }
-
-        private void InitializeTimerIfNeeded()
-        {
-            if (!TimerManager.HasInstance || TimerManager.Instance.IsRunning(TimerPhase.Sorting)) return;
-
-            var duration = 45f;
-            if (GameManager.HasInstance)
-            {
-                var levelConfig = GameManager.Instance.GetCurrentLevelConfig();
-                if (levelConfig != null && levelConfig.SortingTime > 0f)
-                {
-                    duration = levelConfig.SortingTime;
-                }
-            }
-
-            TimerManager.Instance.StartTimer(TimerPhase.Sorting, duration);
-        }
 
         public void Configure(TextMeshProUGUI timeText, TextMeshProUGUI itemsCountText)
         {
@@ -75,51 +17,18 @@ namespace VARG.UI
             _itemsCountText = itemsCountText;
         }
 
-        private void RefreshInitialState()
+        private void Update()
         {
-            if (TimerManager.Instance != null)
+            if (_timeText != null && TimerManager.Instance != null)
             {
-                var remaining = TimerManager.Instance.GetRemaining(TimerPhase.Sorting);
-                UpdateTimeDisplay(remaining);
+                var remaining = Mathf.Max(0f, TimerManager.Instance.GetRemaining(TimerPhase.Sorting));
+                _timeText.text = $"{(int)remaining / 60:00}:{(int)remaining % 60:00}";
             }
 
-            if (SortingManager.Instance != null)
+            if (_itemsCountText != null && SortingManager.Instance != null)
             {
-                HandleItemCountsChanged(SortingManager.Instance.RemainingItems, SortingManager.Instance.TotalItems);
+                _itemsCountText.text = $"Targets: {SortingManager.Instance.RemainingItems}/{SortingManager.Instance.TotalItems}";
             }
-        }
-
-        private void HandleTimeChanged(TimerPhase phase, float remaining)
-        {
-            if (phase != TimerPhase.Sorting) return;
-            UpdateTimeDisplay(remaining);
-        }
-
-        private void HandlePenaltyApplied(TimerPhase phase, float penalty)
-        {
-            if (phase != TimerPhase.Sorting) return;
-            if (_timeText != null)
-            {
-                _timeText.color = _warningColor;
-            }
-        }
-
-        private void UpdateTimeDisplay(float remaining)
-        {
-            if (_timeText == null) return;
-
-            var totalSeconds = Mathf.Max(0, Mathf.CeilToInt(remaining));
-            var minutes = totalSeconds / 60;
-            var seconds = totalSeconds % 60;
-
-            _timeText.text = $"{minutes:00}:{seconds:00}";
-            _timeText.color = remaining <= _warningThreshold ? _warningColor : _normalColor;
-        }
-
-        private void HandleItemCountsChanged(int remaining, int total)
-        {
-            if (_itemsCountText == null) return;
-            _itemsCountText.text = $"Targets: {remaining}/{total}";
         }
     }
 }

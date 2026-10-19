@@ -11,16 +11,12 @@ namespace VARG.Mission
 
         private float _captureRemaining;
         private float _sortingRemaining;
-
         private bool _isCaptureRunning;
         private bool _isSortingRunning;
-        private bool _isPaused;
-
         private bool _captureTimeLowTriggered;
         private bool _sortingTimeLowTriggered;
 
         public float SortingDebt { get; private set; }
-        public bool IsPaused => _isPaused;
 
         public event Action<TimerPhase, float> OnTimeChanged;
         public event Action<TimerPhase, float> OnPenaltyApplied;
@@ -28,26 +24,14 @@ namespace VARG.Mission
 
         private void Update()
         {
-            if (_isPaused) return;
-
-            var deltaTime = Time.deltaTime;
-
-            if (_isCaptureRunning)
-            {
-                TickPhase(TimerPhase.Capture, ref _captureRemaining, ref _captureTimeLowTriggered, ref _isCaptureRunning, deltaTime);
-            }
-
-            if (_isSortingRunning)
-            {
-                TickPhase(TimerPhase.Sorting, ref _sortingRemaining, ref _sortingTimeLowTriggered, ref _isSortingRunning, deltaTime);
-            }
+            var dt = Time.deltaTime;
+            if (_isCaptureRunning) TickPhase(TimerPhase.Capture, ref _captureRemaining, ref _captureTimeLowTriggered, ref _isCaptureRunning, dt);
+            if (_isSortingRunning) TickPhase(TimerPhase.Sorting, ref _sortingRemaining, ref _sortingTimeLowTriggered, ref _isSortingRunning, dt);
         }
 
-        private void TickPhase(TimerPhase phase, ref float remaining, ref bool lowTriggered, ref bool isRunning, float deltaTime)
+        private void TickPhase(TimerPhase phase, ref float remaining, ref bool lowTriggered, ref bool isRunning, float dt)
         {
-            remaining -= deltaTime;
-            if (remaining < 0f) remaining = 0f;
-
+            remaining = Mathf.Max(0f, remaining - dt);
             OnTimeChanged?.Invoke(phase, remaining);
 
             if (!lowTriggered && remaining <= TimeLowThreshold && remaining > 0f)
@@ -60,12 +44,7 @@ namespace VARG.Mission
             {
                 isRunning = false;
                 OnTimeUp?.Invoke(phase);
-
-                var reason = phase == TimerPhase.Capture ? DefeatReason.CaptureTimeUp : DefeatReason.SortingTimeUp;
-                if (GameManager.Instance != null)
-                {
-                    GameManager.Instance.Defeat(reason);
-                }
+                GameManager.Instance?.Defeat(phase == TimerPhase.Capture ? DefeatReason.CaptureTimeUp : DefeatReason.SortingTimeUp);
             }
         }
 
@@ -82,8 +61,7 @@ namespace VARG.Mission
             else
             {
                 _isCaptureRunning = false;
-                var finalDuration = Mathf.Max(0f, duration - SortingDebt);
-                _sortingRemaining = finalDuration;
+                _sortingRemaining = Mathf.Max(0f, duration - SortingDebt);
                 _isSortingRunning = true;
                 _sortingTimeLowTriggered = false;
                 ResetDebt();
@@ -93,77 +71,39 @@ namespace VARG.Mission
 
         public void StopTimer(TimerPhase phase)
         {
-            if (phase == TimerPhase.Capture)
-            {
-                _isCaptureRunning = false;
-            }
-            else
-            {
-                _isSortingRunning = false;
-            }
+            if (phase == TimerPhase.Capture) _isCaptureRunning = false;
+            else _isSortingRunning = false;
         }
 
-        public void StopAllTimers()
-        {
-            _isCaptureRunning = false;
-            _isSortingRunning = false;
-        }
+        public void StopAllTimers() => _isCaptureRunning = _isSortingRunning = false;
 
         public void ResetTimers()
         {
             StopAllTimers();
             ResetDebt();
-            _captureRemaining = 0f;
-            _sortingRemaining = 0f;
-            _captureTimeLowTriggered = false;
-            _sortingTimeLowTriggered = false;
-        }
-
-        public void Pause(bool paused)
-        {
-            _isPaused = paused;
+            _captureRemaining = _sortingRemaining = 0f;
+            _captureTimeLowTriggered = _sortingTimeLowTriggered = false;
         }
 
         public void ApplyPenalty(TimerPhase phase, float seconds)
         {
             if (seconds <= 0f) return;
 
-            if (phase == TimerPhase.Capture)
+            if (phase == TimerPhase.Capture && _isCaptureRunning)
             {
-                if (_isCaptureRunning)
-                {
-                    _captureRemaining = Mathf.Max(0f, _captureRemaining - seconds);
-                    OnPenaltyApplied?.Invoke(TimerPhase.Capture, seconds);
-                    OnTimeChanged?.Invoke(TimerPhase.Capture, _captureRemaining);
-
-                    if (_captureRemaining <= 0f)
-                    {
-                        _isCaptureRunning = false;
-                        OnTimeUp?.Invoke(TimerPhase.Capture);
-                        if (GameManager.Instance != null)
-                        {
-                            GameManager.Instance.Defeat(DefeatReason.CaptureTimeUp);
-                        }
-                    }
-                }
+                _captureRemaining = Mathf.Max(0f, _captureRemaining - seconds);
+                OnPenaltyApplied?.Invoke(TimerPhase.Capture, seconds);
+                OnTimeChanged?.Invoke(TimerPhase.Capture, _captureRemaining);
+                if (_captureRemaining <= 0f) TickPhase(TimerPhase.Capture, ref _captureRemaining, ref _captureTimeLowTriggered, ref _isCaptureRunning, 0f);
             }
-            else
+            else if (phase == TimerPhase.Sorting)
             {
                 if (_isSortingRunning)
                 {
                     _sortingRemaining = Mathf.Max(0f, _sortingRemaining - seconds);
                     OnPenaltyApplied?.Invoke(TimerPhase.Sorting, seconds);
                     OnTimeChanged?.Invoke(TimerPhase.Sorting, _sortingRemaining);
-
-                    if (_sortingRemaining <= 0f)
-                    {
-                        _isSortingRunning = false;
-                        OnTimeUp?.Invoke(TimerPhase.Sorting);
-                        if (GameManager.Instance != null)
-                        {
-                            GameManager.Instance.Defeat(DefeatReason.SortingTimeUp);
-                        }
-                    }
+                    if (_sortingRemaining <= 0f) TickPhase(TimerPhase.Sorting, ref _sortingRemaining, ref _sortingTimeLowTriggered, ref _isSortingRunning, 0f);
                 }
                 else
                 {
@@ -173,19 +113,8 @@ namespace VARG.Mission
             }
         }
 
-        public float GetRemaining(TimerPhase phase)
-        {
-            return phase == TimerPhase.Capture ? _captureRemaining : _sortingRemaining;
-        }
-
-        public bool IsRunning(TimerPhase phase)
-        {
-            return phase == TimerPhase.Capture ? _isCaptureRunning : _isSortingRunning;
-        }
-
-        public void ResetDebt()
-        {
-            SortingDebt = 0f;
-        }
+        public float GetRemaining(TimerPhase phase) => phase == TimerPhase.Capture ? _captureRemaining : _sortingRemaining;
+        public bool IsRunning(TimerPhase phase) => phase == TimerPhase.Capture ? _isCaptureRunning : _isSortingRunning;
+        public void ResetDebt() => SortingDebt = 0f;
     }
 }

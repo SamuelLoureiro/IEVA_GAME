@@ -10,66 +10,42 @@ namespace VARG.Sorting
 {
     public class SortingManager : Singleton<SortingManager>
     {
-        private static readonly Predicate<SortableItem> IsNullPredicate = IsItemNull;
-
         [SerializeField] private float _fallbackSortingDuration = 45f;
 
         private readonly HashSet<SortableItem> _registeredItems = new();
         private readonly HashSet<SortableItem> _resolvedItems = new();
-
         private GrabController _grabController;
-        private int _totalItems;
-        private int _remainingItems;
         private bool _isVictoryTriggered;
 
-        public int TotalItems => _totalItems;
-        public int RemainingItems => _remainingItems;
-        public bool IsComplete => _remainingItems <= 0 && _totalItems > 0;
+        public int TotalItems => _registeredItems.Count;
+        public int RemainingItems => Mathf.Max(0, _registeredItems.Count - _resolvedItems.Count);
+        public bool IsComplete => RemainingItems <= 0 && TotalItems > 0;
 
         public event Action<int, int> OnItemCountsChanged;
-
         protected override bool IsPersistent => false;
-
-        protected override void Awake()
-        {
-            base.Awake();
-            StartSortingTimer();
-        }
 
         private void Start()
         {
             _grabController = FindFirstObjectByType<GrabController>();
             ScanSceneItems();
+
             if (!TimerManager.HasInstance || !TimerManager.Instance.IsRunning(TimerPhase.Sorting))
             {
-                StartSortingTimer();
+                var cfg = GameManager.Instance != null ? GameManager.Instance.GetCurrentLevelConfig() : null;
+                TimerManager.Instance?.StartTimer(TimerPhase.Sorting, cfg != null ? cfg.SortingTime : _fallbackSortingDuration);
             }
-        }
-
-        private void StartSortingTimer()
-        {
-            if (TimerManager.Instance == null) return;
-
-            var config = GameManager.Instance != null ? GameManager.Instance.GetCurrentLevelConfig() : null;
-            var duration = config != null ? config.SortingTime : _fallbackSortingDuration;
-            TimerManager.Instance.StartTimer(TimerPhase.Sorting, duration);
         }
 
         public void ScanSceneItems()
         {
             var items = FindObjectsByType<SortableItem>(FindObjectsSortMode.None);
-            foreach (var item in items)
-            {
-                RegisterItem(item);
-            }
+            for (var i = 0; i < items.Length; i++) RegisterItem(items[i]);
         }
 
         public void ClearItems()
         {
             _registeredItems.Clear();
             _resolvedItems.Clear();
-            _totalItems = 0;
-            _remainingItems = 0;
             _isVictoryTriggered = false;
             OnItemCountsChanged?.Invoke(0, 0);
         }
@@ -77,97 +53,56 @@ namespace VARG.Sorting
         public void UnregisterItem(SortableItem item)
         {
             if (item == null) return;
-            if (_registeredItems.Remove(item))
-            {
-                _resolvedItems.Remove(item);
-                PruneDestroyedItems();
-                _totalItems = _registeredItems.Count;
-                _remainingItems = Mathf.Max(0, _totalItems - _resolvedItems.Count);
-                OnItemCountsChanged?.Invoke(_remainingItems, _totalItems);
-            }
+            _registeredItems.Remove(item);
+            _resolvedItems.Remove(item);
+            OnItemCountsChanged?.Invoke(RemainingItems, TotalItems);
         }
 
         public void RegisterItem(SortableItem item)
         {
             if (item == null || _registeredItems.Contains(item)) return;
-
-            PruneDestroyedItems();
             _registeredItems.Add(item);
-            _totalItems = _registeredItems.Count;
-            _remainingItems = Mathf.Max(0, _totalItems - _resolvedItems.Count);
-            OnItemCountsChanged?.Invoke(_remainingItems, _totalItems);
+            OnItemCountsChanged?.Invoke(RemainingItems, TotalItems);
         }
 
         public void NotifyItemResolved(SortableItem item)
         {
             if (item == null || _resolvedItems.Contains(item)) return;
-
             _resolvedItems.Add(item);
-            PruneDestroyedItems();
-            _totalItems = _registeredItems.Count;
-            _remainingItems = Mathf.Max(0, _totalItems - _resolvedItems.Count);
-            OnItemCountsChanged?.Invoke(_remainingItems, _totalItems);
+            OnItemCountsChanged?.Invoke(RemainingItems, TotalItems);
 
-            if (_remainingItems <= 0 && !_isVictoryTriggered)
+            if (RemainingItems <= 0 && !_isVictoryTriggered)
             {
                 _isVictoryTriggered = true;
-                StartCoroutine(VictorySequenceRoutine());
+                StartCoroutine(VictoryRoutine());
             }
         }
 
         public int GetUnsortedCountForType(TargetType type)
         {
             var count = 0;
-            foreach (var registered in _registeredItems)
+            foreach (var item in _registeredItems)
             {
-                if (registered != null && !registered.IsSorted && registered.Type == type)
-                {
-                    count++;
-                }
+                if (item != null && !item.IsSorted && item.Type == type) count++;
             }
             return count;
         }
 
-        private void PruneDestroyedItems()
-        {
-            _registeredItems.RemoveWhere(IsNullPredicate);
-        }
-
-        private static bool IsItemNull(SortableItem item)
-        {
-            return item == null;
-        }
-
-        private IEnumerator VictorySequenceRoutine()
+        private IEnumerator VictoryRoutine()
         {
             yield return new WaitForSeconds(0.6f);
-
-            while (_grabController != null && _grabController.IsHolding)
-            {
-                yield return null;
-            }
-
+            while (_grabController != null && _grabController.IsHolding) yield return null;
             yield return new WaitForSeconds(0.3f);
 
-            if (TimerManager.Instance != null)
-            {
-                TimerManager.Instance.StopTimer(TimerPhase.Sorting);
-            }
-
+            TimerManager.Instance?.StopTimer(TimerPhase.Sorting);
             GameEvents.TriggerVictory();
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.Victory();
-            }
+            GameManager.Instance?.Victory();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            if (TimerManager.Instance != null && TimerManager.Instance.IsRunning(TimerPhase.Sorting))
-            {
-                TimerManager.Instance.StopTimer(TimerPhase.Sorting);
-            }
+            TimerManager.Instance?.StopTimer(TimerPhase.Sorting);
         }
     }
 }
