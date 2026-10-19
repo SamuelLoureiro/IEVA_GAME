@@ -24,25 +24,50 @@ namespace VARG.Humor
 
         private void OnEnable()
         {
-            GameEvents.OnCorrectCapture += d => SpeakRandom(_lines?.CorrectCaptureLines, BossExpression.Smug, d);
-            GameEvents.OnOutOfOrderCapture += (c, e) => SpeakRandom(_lines?.OutOfOrderCaptureLines, BossExpression.Angry, c, e);
-            GameEvents.OnNotInListCapture += d => SpeakRandom(_lines?.NotInListCaptureLines, BossExpression.Furious, d);
-            GameEvents.OnBeamDenied += () => SpeakRandom(_lines?.BeamDeniedLines, BossExpression.Annoyed);
-            GameEvents.OnCorrectCage += d => SpeakRandom(_lines?.CorrectCageLines, BossExpression.Smug, d);
-            GameEvents.OnWrongCage += d => SpeakRandom(_lines?.WrongCageLines, BossExpression.Angry, d);
-            GameEvents.OnCorrectDiscard += d => SpeakRandom(_lines?.CorrectDiscardLines, BossExpression.Neutral, d);
-            GameEvents.OnWrongDiscard += d => SpeakRandom(_lines?.WrongDiscardLines, BossExpression.Furious, d);
+            GameEvents.OnCorrectCapture += HandleCorrectCapture;
+            GameEvents.OnOutOfOrderCapture += HandleOutOfOrderCapture;
+            GameEvents.OnNotInListCapture += HandleNotInListCapture;
+            GameEvents.OnBeamDenied += HandleBeamDenied;
+            GameEvents.OnCorrectCage += HandleCorrectCage;
+            GameEvents.OnWrongCage += HandleWrongCage;
+            GameEvents.OnCorrectDiscard += HandleCorrectDiscard;
+            GameEvents.OnWrongDiscard += HandleWrongDiscard;
             GameEvents.OnLifeLost += HandleLifeLost;
-            GameEvents.OnTimeLow += p => SpeakRandom(_lines?.TimeLowLines, BossExpression.Angry);
-            GameEvents.OnVictory += () => SpeakRandom(_lines?.VictoryLines, BossExpression.Smug, highPriority: true);
-            GameEvents.OnDefeat += r => SpeakRandom(_lines?.DefeatLines, BossExpression.Furious, highPriority: true);
-            GameEvents.OnIdle += () => SpeakRandom(_lines?.IdleLines, BossExpression.Annoyed);
+            GameEvents.OnTimeLow += HandleTimeLow;
+            GameEvents.OnVictory += HandleVictory;
+            GameEvents.OnDefeat += HandleDefeat;
+            GameEvents.OnIdle += HandleIdle;
         }
 
         private void OnDisable()
         {
-            GameEvents.OnCorrectCapture -= d => {};
+            GameEvents.OnCorrectCapture -= HandleCorrectCapture;
+            GameEvents.OnOutOfOrderCapture -= HandleOutOfOrderCapture;
+            GameEvents.OnNotInListCapture -= HandleNotInListCapture;
+            GameEvents.OnBeamDenied -= HandleBeamDenied;
+            GameEvents.OnCorrectCage -= HandleCorrectCage;
+            GameEvents.OnWrongCage -= HandleWrongCage;
+            GameEvents.OnCorrectDiscard -= HandleCorrectDiscard;
+            GameEvents.OnWrongDiscard -= HandleWrongDiscard;
+            GameEvents.OnLifeLost -= HandleLifeLost;
+            GameEvents.OnTimeLow -= HandleTimeLow;
+            GameEvents.OnVictory -= HandleVictory;
+            GameEvents.OnDefeat -= HandleDefeat;
+            GameEvents.OnIdle -= HandleIdle;
         }
+
+        private void HandleCorrectCapture(TargetData d) => SpeakRandom(_lines?.CorrectCaptureLines, BossExpression.Smug, d);
+        private void HandleOutOfOrderCapture(TargetData c, TargetData e) => SpeakRandom(_lines?.OutOfOrderCaptureLines, BossExpression.Angry, c, e);
+        private void HandleNotInListCapture(TargetData d) => SpeakRandom(_lines?.NotInListCaptureLines, BossExpression.Furious, d);
+        private void HandleBeamDenied() => SpeakRandom(_lines?.BeamDeniedLines, BossExpression.Annoyed);
+        private void HandleCorrectCage(TargetData d) => SpeakRandom(_lines?.CorrectCageLines, BossExpression.Smug, d);
+        private void HandleWrongCage(TargetData d) => SpeakRandom(_lines?.WrongCageLines, BossExpression.Angry, d);
+        private void HandleCorrectDiscard(TargetData d) => SpeakRandom(_lines?.CorrectDiscardLines, BossExpression.Neutral, d);
+        private void HandleWrongDiscard(TargetData d) => SpeakRandom(_lines?.WrongDiscardLines, BossExpression.Furious, d);
+        private void HandleTimeLow(TimerPhase p) => SpeakRandom(_lines?.TimeLowLines, BossExpression.Angry);
+        private void HandleVictory() => SpeakRandom(_lines?.VictoryLines, BossExpression.Smug, highPriority: true);
+        private void HandleDefeat(DefeatReason r) => SpeakRandom(_lines?.DefeatLines, BossExpression.Furious, highPriority: true);
+        private void HandleIdle() => SpeakRandom(_lines?.IdleLines, BossExpression.Annoyed);
 
         public void Speak(string rawLine, BossExpression expression, bool highPriority = false)
         {

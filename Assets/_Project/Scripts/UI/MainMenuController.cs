@@ -102,20 +102,8 @@ namespace VARG.UI
         public void PlayCampaign()
         {
             SetStatus("Starting Campaign...", new Color(0.35f, 0.90f, 0.55f));
-
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.ClearCustomSpreadsheetLevel();
-                GameManager.Instance.StartLevel();
-            }
-            else if (SceneLoader.Instance != null)
-            {
-                SceneLoader.Instance.Load("01_BossBriefing");
-            }
-            else
-            {
-                UnityEngine.SceneManagement.SceneManager.LoadScene("01_BossBriefing");
-            }
+            GameManager.Instance?.ClearCustomSpreadsheetLevel();
+            StartBriefing();
         }
 
         public void PlayCustomSpreadsheet()
@@ -132,36 +120,24 @@ namespace VARG.UI
                     levelData.FleeSpeedMultiplier
                 );
 
-                if (GameManager.Instance != null)
-                {
-                    GameManager.Instance.SetCustomSpreadsheetLevel(customConfig);
-                }
-
-                if (MissionManager.Instance != null)
-                {
-                    MissionManager.Instance.LoadCustomMission(levelData.TargetSequence, levelData.ForbiddenTarget);
-                }
+                GameManager.Instance?.SetCustomSpreadsheetLevel(customConfig);
+                MissionManager.Instance?.LoadCustomMission(levelData.TargetSequence, levelData.ForbiddenTarget);
 
                 SetStatus("Spreadsheet loaded! Starting mission...", new Color(0.35f, 0.85f, 1f));
-
-                if (GameManager.Instance != null)
-                {
-                    GameManager.Instance.StartLevel();
-                }
-                else if (SceneLoader.Instance != null)
-                {
-                    SceneLoader.Instance.Load("01_BossBriefing");
-                }
-                else
-                {
-                    UnityEngine.SceneManagement.SceneManager.LoadScene("01_BossBriefing");
-                }
+                StartBriefing();
             }
             else
             {
                 SetStatus(statusMessage, new Color(1f, 0.45f, 0.45f));
                 Debug.LogWarning($"[MainMenuController] {statusMessage}");
             }
+        }
+
+        private void StartBriefing()
+        {
+            if (GameManager.Instance != null) GameManager.Instance.StartLevel();
+            else if (SceneLoader.Instance != null) SceneLoader.Instance.Load("01_BossBriefing");
+            else UnityEngine.SceneManagement.SceneManager.LoadScene("01_BossBriefing");
         }
 
         public void OpenSpreadsheetFile()
@@ -270,12 +246,7 @@ namespace VARG.UI
             colors.selectedColor = highlightColor;
             btn.colors = colors;
 
-            var text = CreateText("BtnText", btnObj.transform, label, 20, TextAlignmentOptions.Center, FontStyles.Bold, Color.white);
-            text.rectTransform.anchorMin = Vector2.zero;
-            text.rectTransform.anchorMax = Vector2.one;
-            text.rectTransform.offsetMin = Vector2.zero;
-            text.rectTransform.offsetMax = Vector2.zero;
-
+            CreateText("BtnText", btnObj.transform, label, 20, TextAlignmentOptions.Center, FontStyles.Bold, Color.white);
             return btn;
         }
 
@@ -289,19 +260,10 @@ namespace VARG.UI
             rect.anchorMax = anchorMax;
             rect.pivot = pivot;
             rect.anchoredPosition = pos;
+            if (size != Vector2.zero) rect.sizeDelta = size;
+            else { rect.offsetMin = rect.offsetMax = Vector2.zero; }
 
-            if (size != Vector2.zero)
-            {
-                rect.sizeDelta = size;
-            }
-            else
-            {
-                rect.offsetMin = Vector2.zero;
-                rect.offsetMax = Vector2.zero;
-            }
-
-            var img = panel.GetComponent<Image>();
-            img.color = color;
+            panel.GetComponent<Image>().color = color;
             return panel;
         }
 
@@ -313,8 +275,7 @@ namespace VARG.UI
             var rect = textObj.GetComponent<RectTransform>();
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
+            rect.offsetMin = rect.offsetMax = Vector2.zero;
 
             var tmp = textObj.GetComponent<TextMeshProUGUI>();
             tmp.text = text;

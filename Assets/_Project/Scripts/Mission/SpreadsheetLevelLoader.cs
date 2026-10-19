@@ -74,110 +74,60 @@ namespace VARG.Mission
                 var lines = File.ReadAllLines(path);
                 var data = new SpreadsheetLevelData();
                 var foundSequence = false;
-                var delimiter = DetectDelimiter(lines);
-                var keyColIndex = 0;
-                var valueColIndex = 1;
-                var headerProcessed = false;
 
                 foreach (var rawLine in lines)
                 {
                     var line = rawLine.Trim();
-                    if (string.IsNullOrEmpty(line) || line.StartsWith("#") || line.StartsWith("//"))
-                    {
-                        continue;
-                    }
+                    if (string.IsNullOrEmpty(line) || line.StartsWith("#") || line.StartsWith("//")) continue;
 
-                    var parts = SplitCsvLine(line, delimiter);
+                    var delimiter = line.Contains(';') ? ';' : ',';
+                    var parts = SplitRow(line, delimiter);
                     if (parts.Count < 2) continue;
 
-                    var firstNorm = NormalizeKey(parts[0]);
-                    if (!headerProcessed && (firstNorm == "parameter" || firstNorm == "parametro" || firstNorm == "key"))
-                    {
-                        headerProcessed = true;
-                        for (var c = 0; c < parts.Count; c++)
-                        {
-                            var colNorm = NormalizeKey(parts[c]);
-                            if (colNorm == "parameter" || colNorm == "parametro" || colNorm == "key")
-                            {
-                                keyColIndex = c;
-                            }
-                            else if (colNorm == "value" || colNorm == "valor")
-                            {
-                                valueColIndex = c;
-                            }
-                        }
-                        continue;
-                    }
+                    var key = NormalizeKey(parts[0]);
+                    if (key == "parameter" || key == "parametro" || key == "key") continue;
 
-                    if (firstNorm == "parameter" || firstNorm == "parametro") continue;
-                    if (keyColIndex >= parts.Count || valueColIndex >= parts.Count) continue;
-
-                    var key = NormalizeKey(parts[keyColIndex]);
-                    var value = parts[valueColIndex].Trim().Trim('"');
+                    var value = parts[1].Trim().Trim('"');
 
                     switch (key)
                     {
-                        case "sequenciaalvos":
                         case "targetsequence":
-                        case "targets":
-                        case "alvos":
-                        case "sequence":
+                        case "sequenciaalvos":
                             ParseTargetSequence(value, data.TargetSequence);
                             foundSequence = data.TargetSequence.Count > 0;
                             break;
 
-                        case "alvoproibido":
                         case "forbiddentarget":
-                        case "forbidden":
-                        case "proibido":
-                            if (TryParseTargetType(value, out var forbidden))
-                            {
-                                data.ForbiddenTarget = forbidden;
-                            }
+                        case "alvoproibido":
+                            if (TryParseTargetType(value, out var forbidden)) data.ForbiddenTarget = forbidden;
                             break;
 
-                        case "tempocaca":
                         case "capturetime":
-                        case "timehunt":
+                        case "tempocaca":
                             if (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var cTime))
-                            {
                                 data.CaptureTime = Mathf.Max(10f, cTime);
-                            }
                             break;
 
-                        case "tempotriagem":
                         case "sortingtime":
-                        case "timesort":
+                        case "tempotriagem":
                             if (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var sTime))
-                            {
                                 data.SortingTime = Mathf.Max(10f, sTime);
-                            }
                             break;
 
-                        case "alvosextras":
                         case "extraspawns":
-                        case "extras":
-                            if (int.TryParse(value, out var extras))
-                            {
-                                data.ExtraSpawns = Mathf.Max(0, extras);
-                            }
+                        case "alvosextras":
+                            if (int.TryParse(value, out var extras)) data.ExtraSpawns = Mathf.Max(0, extras);
                             break;
 
-                        case "alvosproibidos":
                         case "forbiddenspawns":
-                            if (int.TryParse(value, out var fSpawns))
-                            {
-                                data.ForbiddenSpawns = Mathf.Max(0, fSpawns);
-                            }
+                        case "alvosproibidos":
+                            if (int.TryParse(value, out var fSpawns)) data.ForbiddenSpawns = Mathf.Max(0, fSpawns);
                             break;
 
-                        case "velocidadefuga":
                         case "fleespeedmultiplier":
-                        case "fleespeed":
+                        case "velocidadefuga":
                             if (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var fSpeed))
-                            {
                                 data.FleeSpeedMultiplier = Mathf.Clamp(fSpeed, 0.2f, 3.0f);
-                            }
                             break;
                     }
                 }
@@ -190,7 +140,7 @@ namespace VARG.Mission
 
                 if (data.TargetSequence.Contains(data.ForbiddenTarget))
                 {
-                    statusMessage = $"ForbiddenTarget '{data.ForbiddenTarget}' cannot be in TargetSequence! Change ForbiddenTarget to another species (Cow, Pig, Chicken, or Human).";
+                    statusMessage = $"ForbiddenTarget '{data.ForbiddenTarget}' cannot be in TargetSequence! Change ForbiddenTarget to another species.";
                     return false;
                 }
 
@@ -207,63 +157,26 @@ namespace VARG.Mission
             }
         }
 
-        private static string NormalizeKey(string key)
+        private static string NormalizeKey(string key) => key.Trim().ToLowerInvariant().Replace(" ", "").Replace("_", "").Replace("-", "");
+
+        private static List<string> SplitRow(string line, char delimiter)
         {
-            return key.Trim().ToLowerInvariant().Replace(" ", "").Replace("_", "").Replace("-", "");
-        }
-
-        private static char DetectDelimiter(string[] lines)
-        {
-            var commaCount = 0;
-            var semiCount = 0;
-            var tabCount = 0;
-
-            foreach (var rawLine in lines)
-            {
-                var line = rawLine.Trim();
-                if (string.IsNullOrEmpty(line) || line.StartsWith("#") || line.StartsWith("//")) continue;
-
-                var norm = NormalizeKey(line);
-                if (norm.Contains("parameter") || norm.Contains("targetsequence") || norm.Contains("capturetime") || norm.Contains("forbiddentarget") ||
-                    norm.Contains("sortingtime") || norm.Contains("parametro") || norm.Contains("tempocaca") || norm.Contains("alvoproibido"))
-                {
-                    if (line.Contains(';')) semiCount++;
-                    else if (line.Contains(',')) commaCount++;
-                    else if (line.Contains('\t')) tabCount++;
-                }
-            }
-
-            if (semiCount > commaCount && semiCount > tabCount) return ';';
-            if (tabCount > commaCount && tabCount > semiCount) return '\t';
-            return ',';
-        }
-
-        private static List<string> SplitCsvLine(string line, char delimiter)
-        {
-            var result = new List<string>();
-            var sb = new System.Text.StringBuilder();
+            var parts = new List<string>();
             var inQuotes = false;
+            var start = 0;
 
             for (var i = 0; i < line.Length; i++)
             {
-                var c = line[i];
-                if (c == '"')
+                if (line[i] == '"') inQuotes = !inQuotes;
+                else if (line[i] == delimiter && !inQuotes)
                 {
-                    inQuotes = !inQuotes;
-                }
-                else if (c == delimiter && !inQuotes)
-                {
-                    result.Add(sb.ToString().Trim().Trim('"'));
-                    sb.Clear();
-                }
-                else
-                {
-                    sb.Append(c);
+                    parts.Add(line.Substring(start, i - start).Trim().Trim('"'));
+                    start = i + 1;
                 }
             }
 
-            result.Add(sb.ToString().Trim().Trim('"'));
-            return result;
+            parts.Add(line.Substring(start).Trim().Trim('"'));
+            return parts;
         }
 
         private static void ParseTargetSequence(string valueString, List<TargetType> list)
@@ -272,12 +185,9 @@ namespace VARG.Mission
             if (string.IsNullOrWhiteSpace(valueString)) return;
 
             var tokens = valueString.Split(new[] { ',', ';', '|', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var token in tokens)
+            for (var i = 0; i < tokens.Length; i++)
             {
-                if (TryParseTargetType(token.Trim(), out var target))
-                {
-                    list.Add(target);
-                }
+                if (TryParseTargetType(tokens[i].Trim(), out var target)) list.Add(target);
             }
         }
 
@@ -286,24 +196,11 @@ namespace VARG.Mission
             var cleaned = name.Trim().ToLowerInvariant();
             switch (cleaned)
             {
-                case "cow":
-                case "vaca":
-                    type = TargetType.Cow;
-                    return true;
-                case "pig":
-                case "porco":
-                    type = TargetType.Pig;
-                    return true;
-                case "chicken":
-                case "galinha":
-                    type = TargetType.Chicken;
-                    return true;
-                case "human":
-                case "humano":
-                    type = TargetType.Human;
-                    return true;
-                default:
-                    return Enum.TryParse(name.Trim(), true, out type);
+                case "cow": case "vaca": type = TargetType.Cow; return true;
+                case "pig": case "porco": type = TargetType.Pig; return true;
+                case "chicken": case "galinha": type = TargetType.Chicken; return true;
+                case "human": case "humano": type = TargetType.Human; return true;
+                default: return Enum.TryParse(name.Trim(), true, out type);
             }
         }
     }

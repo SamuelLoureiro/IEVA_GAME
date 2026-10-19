@@ -131,11 +131,7 @@ namespace VARG.Sorting
 
             if (_heldGrabbable != null && _playerCamera != null)
             {
-                var sortable = _heldGrabbable.SortableItem;
-                var targetType = (sortable != null && sortable.Data != null) ? sortable.Data.Type : VARG.Data.TargetType.Chicken;
-                var mass = _heldGrabbable.Rigidbody != null ? _heldGrabbable.Rigidbody.mass : 1f;
-                var desiredHoldPos = _playerCamera.transform.position + _playerCamera.transform.forward * _holdDistance;
-                _beamVisual.UpdateBeam(_heldGrabbable.transform.position, desiredHoldPos, targetType, mass, _heldGrabbable.transform.position.y);
+                _beamVisual.UpdateBeam(_heldGrabbable.transform.position);
             }
             else
             {

@@ -109,41 +109,9 @@ namespace VARG.UI
             }
         }
 
-        public void Populate(IReadOnlyList<TargetData> order, float memoryDuration, Action onCompleted)
-        {
-            _isCompleted = false;
-            _onMemorizationFinished = onCompleted;
-
-            gameObject.SetActive(true);
-            ClearShowcase();
-
-            if (order != null && order.Count > 0)
-            {
-                SpawnShowcaseTargets(order);
-            }
-
-            if (_countdownCoroutine != null)
-            {
-                StopCoroutine(_countdownCoroutine);
-            }
-
-            _countdownCoroutine = StartCoroutine(MemoryCountdownRoutine(memoryDuration));
-        }
-
         public void HideShowcase()
         {
-            if (_countdownCoroutine != null)
-            {
-                StopCoroutine(_countdownCoroutine);
-                _countdownCoroutine = null;
-            }
-
-            if (_timerPanel != null)
-            {
-                _timerPanel.SetActive(false);
-            }
-
-            ClearShowcase();
+            StopCountdownAndClearUI();
             gameObject.SetActive(false);
         }
 
@@ -152,48 +120,32 @@ namespace VARG.UI
             if (_isCompleted) return;
             _isCompleted = true;
 
-            if (_countdownCoroutine != null)
-            {
-                StopCoroutine(_countdownCoroutine);
-                _countdownCoroutine = null;
-            }
-
-            if (_timerPanel != null)
-            {
-                _timerPanel.SetActive(false);
-            }
-
-            ClearShowcase();
+            StopCountdownAndClearUI();
 
             var callback = _onMemorizationFinished;
             _onMemorizationFinished = null;
             callback?.Invoke();
         }
 
+        private void StopCountdownAndClearUI()
+        {
+            if (_countdownCoroutine != null)
+            {
+                StopCoroutine(_countdownCoroutine);
+                _countdownCoroutine = null;
+            }
+
+            if (_timerPanel != null) _timerPanel.SetActive(false);
+            ClearShowcase();
+        }
+
         private void ClearShowcase()
         {
             for (var i = 0; i < _spawnedShowcaseObjects.Count; i++)
             {
-                if (_spawnedShowcaseObjects[i] != null)
-                {
-                    Destroy(_spawnedShowcaseObjects[i]);
-                }
+                if (_spawnedShowcaseObjects[i] != null) Destroy(_spawnedShowcaseObjects[i]);
             }
             _spawnedShowcaseObjects.Clear();
-
-            var children = new List<GameObject>();
-            foreach (Transform child in transform)
-            {
-                if (child.name.StartsWith("Showcase_"))
-                {
-                    children.Add(child.gameObject);
-                }
-            }
-
-            foreach (var child in children)
-            {
-                Destroy(child);
-            }
         }
 
         private void SpawnShowcaseTargets(IReadOnlyList<TargetData> order)

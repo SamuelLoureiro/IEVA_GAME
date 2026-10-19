@@ -33,7 +33,7 @@ namespace VARG.Sorting
             }
         }
 
-        public void UpdateBeam(Vector3 currentItemPos, Vector3 desiredHoldPos, TargetType targetType, float mass, float initialGrabY)
+        public void UpdateBeam(Vector3 currentItemPos)
         {
             if (_lineRenderer == null) return;
 

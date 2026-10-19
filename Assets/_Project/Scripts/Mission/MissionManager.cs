@@ -39,35 +39,24 @@ namespace VARG.Mission
         public void GenerateMission(LevelConfig level)
         {
             LoadDependenciesIfMissing();
-
             _requiredOrder.Clear();
             CurrentIndex = 0;
 
             var allTypes = (TargetType[])Enum.GetValues(typeof(TargetType));
-            var forbiddenIndex = UnityEngine.Random.Range(0, allTypes.Length);
-            ForbiddenType = allTypes[forbiddenIndex];
+            ForbiddenType = allTypes[UnityEngine.Random.Range(0, allTypes.Length)];
 
             var allowedTypes = new List<TargetType>();
             for (var i = 0; i < allTypes.Length; i++)
             {
-                if (allTypes[i] != ForbiddenType)
-                {
-                    allowedTypes.Add(allTypes[i]);
-                }
+                if (allTypes[i] != ForbiddenType) allowedTypes.Add(allTypes[i]);
             }
 
             var listSize = level != null ? level.ListSize : 3;
-            var chosenTypes = new List<TargetType>();
-
-            for (var i = 0; i < allowedTypes.Count; i++)
-            {
-                chosenTypes.Add(allowedTypes[i]);
-            }
+            var chosenTypes = new List<TargetType>(allowedTypes);
 
             while (chosenTypes.Count < listSize)
             {
-                var randomType = allowedTypes[UnityEngine.Random.Range(0, allowedTypes.Count)];
-                chosenTypes.Add(randomType);
+                chosenTypes.Add(allowedTypes[UnityEngine.Random.Range(0, allowedTypes.Count)]);
             }
 
             for (var i = 0; i < chosenTypes.Count; i++)
@@ -79,17 +68,13 @@ namespace VARG.Mission
             for (var i = 0; i < chosenTypes.Count; i++)
             {
                 var targetData = GetTargetDataForType(chosenTypes[i]);
-                if (targetData != null)
-                {
-                    _requiredOrder.Add(targetData);
-                }
+                if (targetData != null) _requiredOrder.Add(targetData);
             }
         }
 
         public void LoadCustomMission(IReadOnlyList<TargetType> targetSequence, TargetType forbiddenType)
         {
             LoadDependenciesIfMissing();
-
             _requiredOrder.Clear();
             CurrentIndex = 0;
             ForbiddenType = forbiddenType;
@@ -97,45 +82,28 @@ namespace VARG.Mission
             for (var i = 0; i < targetSequence.Count; i++)
             {
                 var targetData = GetTargetDataForType(targetSequence[i]);
-                if (targetData != null)
-                {
-                    _requiredOrder.Add(targetData);
-                }
+                if (targetData != null) _requiredOrder.Add(targetData);
             }
         }
 
         public TargetData GetTargetDataForType(TargetType type)
         {
-            if (_availableTargets == null || _availableTargets.Length == 0)
-            {
-                return null;
-            }
-
+            if (_availableTargets == null) return null;
             for (var i = 0; i < _availableTargets.Length; i++)
             {
-                if (_availableTargets[i] != null && _availableTargets[i].Type == type)
-                {
-                    return _availableTargets[i];
-                }
+                if (_availableTargets[i] != null && _availableTargets[i].Type == type) return _availableTargets[i];
             }
-
             return null;
         }
 
-        public bool IsForbidden(TargetType targetType)
-        {
-            return targetType == ForbiddenType;
-        }
+        public bool IsForbidden(TargetType targetType) => targetType == ForbiddenType;
 
         public int GetRequiredCountForType(TargetType type)
         {
             var count = 0;
             for (var i = 0; i < _requiredOrder.Count; i++)
             {
-                if (_requiredOrder[i] != null && _requiredOrder[i].Type == type)
-                {
-                    count++;
-                }
+                if (_requiredOrder[i] != null && _requiredOrder[i].Type == type) count++;
             }
             return count;
         }
@@ -147,29 +115,13 @@ namespace VARG.Mission
             var outOfOrderPenalty = _penaltyConfig != null ? _penaltyConfig.OutOfOrderCapturePenalty : DefaultPenalty;
             var notInListDebt = _penaltyConfig != null ? _penaltyConfig.NotInListSortingDebt : DefaultPenalty;
 
-            TargetData expected = null;
-            if (!IsComplete && CurrentIndex < _requiredOrder.Count)
-            {
-                expected = _requiredOrder[CurrentIndex];
-            }
+            TargetData expected = (!IsComplete && CurrentIndex < _requiredOrder.Count) ? _requiredOrder[CurrentIndex] : null;
 
             if (captured.Type == ForbiddenType)
             {
-                if (InventoryManager.Instance != null)
-                {
-                    InventoryManager.Instance.Add(captured, CaptureResult.NotInList);
-                }
-
-                if (TimerManager.Instance != null)
-                {
-                    TimerManager.Instance.ApplyPenalty(TimerPhase.Sorting, notInListDebt);
-                }
-
-                if (LivesManager.Instance != null)
-                {
-                    LivesManager.Instance.LoseLife();
-                }
-
+                InventoryManager.Instance?.Add(captured, CaptureResult.NotInList);
+                TimerManager.Instance?.ApplyPenalty(TimerPhase.Sorting, notInListDebt);
+                LivesManager.Instance?.LoseLife();
                 GameEvents.TriggerNotInListCapture(captured);
                 return CaptureResult.NotInList;
             }
@@ -177,37 +129,15 @@ namespace VARG.Mission
             if (!IsComplete && expected != null && captured == expected)
             {
                 CurrentIndex++;
-
-                if (InventoryManager.Instance != null)
-                {
-                    InventoryManager.Instance.Add(captured, CaptureResult.Correct);
-                }
-
+                InventoryManager.Instance?.Add(captured, CaptureResult.Correct);
                 GameEvents.TriggerCorrectCapture(captured);
-
-                if (IsComplete)
-                {
-                    GameEvents.TriggerMissionComplete();
-                }
-
+                if (IsComplete) GameEvents.TriggerMissionComplete();
                 return CaptureResult.Correct;
             }
 
-            if (InventoryManager.Instance != null)
-            {
-                InventoryManager.Instance.Add(captured, CaptureResult.OutOfOrder);
-            }
-
-            if (TimerManager.Instance != null)
-            {
-                TimerManager.Instance.ApplyPenalty(TimerPhase.Capture, outOfOrderPenalty);
-            }
-
-            if (LivesManager.Instance != null)
-            {
-                LivesManager.Instance.LoseLife();
-            }
-
+            InventoryManager.Instance?.Add(captured, CaptureResult.OutOfOrder);
+            TimerManager.Instance?.ApplyPenalty(TimerPhase.Capture, outOfOrderPenalty);
+            LivesManager.Instance?.LoseLife();
             GameEvents.TriggerOutOfOrderCapture(captured, expected);
             return CaptureResult.OutOfOrder;
         }
