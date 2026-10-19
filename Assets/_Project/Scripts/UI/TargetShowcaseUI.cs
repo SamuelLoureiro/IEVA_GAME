@@ -215,7 +215,18 @@ namespace VARG.UI
 
                 if (prefab != null)
                 {
-                    var instance = Instantiate(prefab, pos, Quaternion.identity);
+                    var rot = Quaternion.Euler(0f, 180f, 0f);
+                    if (Camera.main != null)
+                    {
+                        var dirToCam = Camera.main.transform.position - pos;
+                        dirToCam.y = 0f;
+                        if (dirToCam.sqrMagnitude > 0.001f)
+                        {
+                            rot = Quaternion.LookRotation(dirToCam);
+                        }
+                    }
+
+                    var instance = Instantiate(prefab, pos, rot);
                     instance.name = $"Showcase_{i + 1}_{target.name}";
                     instance.transform.SetParent(transform, true);
                     instance.transform.localScale = Vector3.one * scale;
