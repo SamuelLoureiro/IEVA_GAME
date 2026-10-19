@@ -160,10 +160,10 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
 ## Fase Extra — Etapa 2: Nave + Celular (Passo 13 / #25)
 > Só começa com o loop principal completo no PC (fim do Sprint 4). O celular é usado **apenas** nesta cena. Arquitetura do celular ❓ P3 — confirmar com o professor antes do X3.
 
-- [ ] **X1 [A]** Cena `02_ShipFlight`: `ShipController`, `ShipFollowCamera`, `LandingZone`, `KeyboardShipInput`; ligar `GameConfig.useShipFlight = true`.
+- [x] **X1 [A]** Cena `02_ShipFlight`: `ShipController`, `ShipFollowCamera`, `LandingZone`, `KeyboardShipInput`; ligar `GameConfig.useShipFlight = true`.
   - Pronto quando: Briefing → voo → pousar com E → Caça.
-- [ ] **X2 [A]** Teste rápido de viabilidade (*spike*) da ponte celular ↔ jogo (pode ser antecipado para quando o professor responder).
-- [ ] **X3 [A]** `MobileShipInput` (giroscópio com calibração, deadzone, suavização) + `ShakeDetector` (descer).
+- [x] **X2 [A]** Teste rápido de viabilidade (*spike*) da ponte celular ↔ jogo (pode ser antecipado para quando o professor responder).
+- [x] **X3 [A]** `MobileShipInput` (giroscópio com calibração, deadzone, suavização) + `ShakeDetector` (descer).
 - [ ] **X4 [B]** `GyroCalibrationUI` + visual dos controles no tema planilha.
 - [ ] **X5 [A+B]** Teste no aparelho e checagem de tamanho final.
 
