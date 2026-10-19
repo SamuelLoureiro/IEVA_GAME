@@ -11,8 +11,6 @@ namespace VARG.Humor
     {
         [SerializeField] private BossLineSet _lines;
         [SerializeField] private float _minCooldown = 3.5f;
-        [SerializeField] private float _idleThreshold = 20f;
-        [SerializeField] private bool _enableIdleDetection = true;
 
         public static event Action<string, BossExpression> OnBossSpokeStatic;
         public event Action<string, BossExpression> OnBossSpoke;
@@ -22,10 +20,7 @@ namespace VARG.Humor
         public BossExpression LastSpokenExpression { get; private set; }
         public float LastSpokenTime { get; private set; }
 
-        private readonly Dictionary<string, List<int>> _recentHistory = new();
-        private readonly List<int> _candidateIndices = new();
         private float _nextAllowedSpeechTime;
-        private float _idleTimer;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStaticEvents()
@@ -71,25 +66,6 @@ namespace VARG.Humor
             GameEvents.OnIdle -= HandleIdle;
         }
 
-        private void Update()
-        {
-            if (!_enableIdleDetection) return;
-
-            if (CheckPlayerActivity())
-            {
-                _idleTimer = 0f;
-            }
-            else
-            {
-                _idleTimer += Time.deltaTime;
-                if (_idleTimer >= _idleThreshold)
-                {
-                    _idleTimer = 0f;
-                    GameEvents.TriggerIdle();
-                }
-            }
-        }
-
         public void Speak(string rawLine, BossExpression expression, bool highPriority = false)
         {
             if (string.IsNullOrEmpty(rawLine)) return;
@@ -104,8 +80,6 @@ namespace VARG.Humor
             LastSpokenTime = Time.time;
             _nextAllowedSpeechTime = Time.time + _minCooldown;
 
-            Debug.Log($"[Chefe ({expression})]: {rawLine}");
-
             OnBossSpoke?.Invoke(rawLine, expression);
             OnBossSpokeStatic?.Invoke(rawLine, expression);
         }
@@ -113,49 +87,12 @@ namespace VARG.Humor
         public string PickLine(string categoryKey, string[] lines)
         {
             if (lines == null || lines.Length == 0) return string.Empty;
-            if (lines.Length == 1) return lines[0];
-
-            if (!_recentHistory.TryGetValue(categoryKey, out var history))
-            {
-                history = new List<int>();
-                _recentHistory[categoryKey] = history;
-            }
-
-            var maxHistory = Mathf.Min(3, lines.Length - 1);
-            _candidateIndices.Clear();
-
-            for (var i = 0; i < lines.Length; i++)
-            {
-                if (!history.Contains(i))
-                {
-                    _candidateIndices.Add(i);
-                }
-            }
-
-            if (_candidateIndices.Count == 0)
-            {
-                history.Clear();
-                for (var i = 0; i < lines.Length; i++)
-                {
-                    _candidateIndices.Add(i);
-                }
-            }
-
-            var selectedIndex = _candidateIndices[UnityEngine.Random.Range(0, _candidateIndices.Count)];
-            history.Add(selectedIndex);
-
-            while (history.Count > maxHistory)
-            {
-                history.RemoveAt(0);
-            }
-
-            return lines[selectedIndex];
+            return lines[UnityEngine.Random.Range(0, lines.Length)];
         }
 
         public void SetLineSet(BossLineSet lineSet)
         {
             _lines = lineSet;
-            _recentHistory.Clear();
         }
 
         private void HandleCorrectCapture(TargetData data)
@@ -302,22 +239,6 @@ namespace VARG.Humor
             if (!string.IsNullOrEmpty(reason)) text = text.Replace("{reason}", reason);
 
             return text;
-        }
-
-        private bool CheckPlayerActivity()
-        {
-            if (!InputManager.HasInstance || InputManager.Instance.Player == null)
-            {
-                return false;
-            }
-
-            var player = InputManager.Instance.Player;
-            return player.Move.sqrMagnitude > 0.01f ||
-                   player.Look.sqrMagnitude > 0.01f ||
-                   player.FirePressed ||
-                   player.InteractPressed ||
-                   player.GrabHeld ||
-                   player.ThrowPressed;
         }
     }
 }

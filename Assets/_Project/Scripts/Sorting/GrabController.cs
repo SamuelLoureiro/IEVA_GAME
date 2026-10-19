@@ -11,10 +11,7 @@ namespace VARG.Sorting
         [Header("Grabbing Settings")]
         [SerializeField] private LayerMask _grabbableLayer;
         [SerializeField] private float _raycastDistance = 4.5f;
-        [SerializeField] private float _minHoldDistance = 1.2f;
-        [SerializeField] private float _maxHoldDistance = 3.5f;
-        [SerializeField] private float _defaultHoldDistance = 2.0f;
-        [SerializeField] private float _scrollSensitivity = 0.35f;
+        [SerializeField] private float _holdDistance = 2.0f;
         [SerializeField] private float _followForce = 18f;
         [SerializeField] private float _throwForce = 14f;
 
@@ -22,10 +19,7 @@ namespace VARG.Sorting
         [SerializeField] private TractorBeamVisual _beamVisual;
 
         private IPlayerInput _fallbackInput;
-        private Grabbable _hoveredGrabbable;
         private Grabbable _heldGrabbable;
-        private float _currentHoldDistance;
-        private float _initialGrabY;
 
         public bool IsHolding => _heldGrabbable != null;
         public Grabbable HeldGrabbable => _heldGrabbable;
@@ -34,11 +28,7 @@ namespace VARG.Sorting
         {
             if (_playerCamera == null)
             {
-                _playerCamera = GetComponentInChildren<Camera>();
-                if (_playerCamera == null)
-                {
-                    _playerCamera = Camera.main;
-                }
+                _playerCamera = GetComponentInChildren<Camera>() ?? Camera.main;
             }
 
             if (_grabbableLayer.value == 0)
@@ -53,7 +43,6 @@ namespace VARG.Sorting
             }
 
             _fallbackInput = new KeyboardMouseInput();
-            _currentHoldDistance = _defaultHoldDistance;
         }
 
         public void Configure(Camera playerCamera, TractorBeamVisual beamVisual = null)
@@ -75,7 +64,6 @@ namespace VARG.Sorting
             }
 
             var input = GetInput();
-            UpdateHover();
             UpdateGrabbing(input);
             UpdateBeamVisual();
         }
@@ -84,45 +72,8 @@ namespace VARG.Sorting
         {
             if (_heldGrabbable != null && _playerCamera != null)
             {
-                var targetPosition = _playerCamera.transform.position + _playerCamera.transform.forward * _currentHoldDistance;
+                var targetPosition = _playerCamera.transform.position + _playerCamera.transform.forward * _holdDistance;
                 _heldGrabbable.FollowTarget(targetPosition, _followForce);
-            }
-        }
-
-        private void UpdateHover()
-        {
-            if (_heldGrabbable != null)
-            {
-                ClearHover();
-                return;
-            }
-
-            var ray = new Ray(_playerCamera.transform.position, _playerCamera.transform.forward);
-            if (Physics.Raycast(ray, out var hit, _raycastDistance, _grabbableLayer))
-            {
-                var grabbable = hit.collider.GetComponentInParent<Grabbable>();
-                if (grabbable != _hoveredGrabbable)
-                {
-                    ClearHover();
-                    _hoveredGrabbable = grabbable;
-                    if (_hoveredGrabbable != null)
-                    {
-                        _hoveredGrabbable.SetHighlight(true);
-                    }
-                }
-            }
-            else
-            {
-                ClearHover();
-            }
-        }
-
-        private void ClearHover()
-        {
-            if (_hoveredGrabbable != null)
-            {
-                _hoveredGrabbable.SetHighlight(false);
-                _hoveredGrabbable = null;
             }
         }
 
@@ -130,27 +81,22 @@ namespace VARG.Sorting
         {
             if (_heldGrabbable == null)
             {
-                if (input.GrabHeld && _hoveredGrabbable != null)
+                if (input.GrabHeld)
                 {
-                    _heldGrabbable = _hoveredGrabbable;
-                    ClearHover();
-
-                    var initialDistance = Vector3.Distance(_playerCamera.transform.position, _heldGrabbable.transform.position);
-                    _currentHoldDistance = Mathf.Clamp(initialDistance, _minHoldDistance, _maxHoldDistance);
-                    _initialGrabY = _heldGrabbable.transform.position.y;
-
-                    _heldGrabbable.OnGrabbed();
+                    var ray = new Ray(_playerCamera.transform.position, _playerCamera.transform.forward);
+                    if (Physics.Raycast(ray, out var hit, _raycastDistance, _grabbableLayer))
+                    {
+                        var grabbable = hit.collider.GetComponentInParent<Grabbable>();
+                        if (grabbable != null && !grabbable.IsHeld)
+                        {
+                            _heldGrabbable = grabbable;
+                            _heldGrabbable.OnGrabbed();
+                        }
+                    }
                 }
             }
             else
             {
-                var scroll = input.HoldDistanceDelta;
-                if (Mathf.Abs(scroll) > 0.01f)
-                {
-                    var delta = Mathf.Sign(scroll) * _scrollSensitivity;
-                    _currentHoldDistance = Mathf.Clamp(_currentHoldDistance + delta, _minHoldDistance, _maxHoldDistance);
-                }
-
                 if (input.ThrowPressed)
                 {
                     var impulse = _playerCamera.transform.forward * _throwForce;
@@ -188,8 +134,8 @@ namespace VARG.Sorting
                 var sortable = _heldGrabbable.SortableItem;
                 var targetType = (sortable != null && sortable.Data != null) ? sortable.Data.Type : VARG.Data.TargetType.Chicken;
                 var mass = _heldGrabbable.Rigidbody != null ? _heldGrabbable.Rigidbody.mass : 1f;
-                var desiredHoldPos = _playerCamera.transform.position + _playerCamera.transform.forward * _currentHoldDistance;
-                _beamVisual.UpdateBeam(_heldGrabbable.transform.position, desiredHoldPos, targetType, mass, _initialGrabY);
+                var desiredHoldPos = _playerCamera.transform.position + _playerCamera.transform.forward * _holdDistance;
+                _beamVisual.UpdateBeam(_heldGrabbable.transform.position, desiredHoldPos, targetType, mass, _heldGrabbable.transform.position.y);
             }
             else
             {
@@ -208,7 +154,6 @@ namespace VARG.Sorting
 
         private void OnDisable()
         {
-            ClearHover();
             DropHeld();
         }
     }
