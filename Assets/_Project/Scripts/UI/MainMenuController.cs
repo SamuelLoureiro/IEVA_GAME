@@ -42,7 +42,6 @@ namespace VARG.UI
             EnsureMenuUI();
             SetupListeners();
 
-            // Ensure CustomLevel.csv exists in background so players have it ready to edit
             SpreadsheetLevelLoader.EnsureTemplateExists(out _);
         }
 
@@ -194,10 +193,8 @@ namespace VARG.UI
                 var eventSys = new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.InputSystem.UI.InputSystemUIInputModule));
             }
 
-            // Background panel
             var bgObj = CreatePanel("Background", canvas.transform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, new Color(0.04f, 0.06f, 0.09f, 1f));
 
-            // Title
             _titleText = CreateText("Title", bgObj.transform, "PROJECT V.A.R.G.", 52, TextAlignmentOptions.Center, FontStyles.Bold, new Color(0.92f, 0.96f, 1f));
             _titleText.rectTransform.anchorMin = new Vector2(0.5f, 0.80f);
             _titleText.rectTransform.anchorMax = new Vector2(0.5f, 0.80f);
@@ -210,7 +207,6 @@ namespace VARG.UI
             _subtitleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             _subtitleText.rectTransform.sizeDelta = new Vector2(1000, 40);
 
-            // Button container
             var btnContainer = CreatePanel("ButtonContainer", bgObj.transform, new Vector2(0.5f, 0.44f), new Vector2(0.5f, 0.44f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(480, 320), Color.clear);
             var layout = btnContainer.AddComponent<VerticalLayoutGroup>();
             layout.spacing = 16f;
@@ -223,7 +219,6 @@ namespace VARG.UI
             _openSpreadsheetButton = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 OPEN SPREADSHEET (EXCEL)</b>", new Color(0.18f, 0.28f, 0.38f), new Color(0.28f, 0.42f, 0.58f));
             _quitButton = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>QUIT</b>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
 
-            // Status text
             _statusText = CreateText("StatusText", bgObj.transform, "Select a game mode to begin.", 18, TextAlignmentOptions.Center, FontStyles.Italic, new Color(0.70f, 0.80f, 0.90f));
             _statusText.rectTransform.anchorMin = new Vector2(0.5f, 0.16f);
             _statusText.rectTransform.anchorMax = new Vector2(0.5f, 0.16f);
