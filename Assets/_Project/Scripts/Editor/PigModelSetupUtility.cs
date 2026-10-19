@@ -246,7 +246,14 @@ namespace VARG.Editor
             modelInstance.transform.localScale = Vector3.one * 1.8f;
 
             ApplyMaterials(modelInstance, cowMat, eyesMat);
-            AddHorns(modelInstance.transform, hornMat, 1.0f);
+
+            var mainTransform = FindMainTransform(modelInstance.transform);
+            AddHorns(mainTransform, hornMat);
+
+            if (modelInstance.GetComponent<CowFeaturesSetup>() == null)
+            {
+                modelInstance.AddComponent<CowFeaturesSetup>();
+            }
 
             if (modelInstance.GetComponent<PigAnimationController>() == null)
             {
@@ -281,7 +288,14 @@ namespace VARG.Editor
             modelInstance.transform.localScale = Vector3.one * 0.7f;
 
             ApplyMaterials(modelInstance, cowMat, eyesMat);
-            AddHorns(modelInstance.transform, hornMat, 0.5f);
+
+            var mainTransform = FindMainTransform(modelInstance.transform);
+            AddHorns(mainTransform, hornMat);
+
+            if (modelInstance.GetComponent<CowFeaturesSetup>() == null)
+            {
+                modelInstance.AddComponent<CowFeaturesSetup>();
+            }
 
             if (modelInstance.GetComponent<PigAnimationController>() == null)
             {
@@ -313,10 +327,10 @@ namespace VARG.Editor
             modelInstance.name = "Model_Chicken";
             modelInstance.transform.localPosition = new Vector3(0f, -0.35f, 0f);
             modelInstance.transform.localRotation = Quaternion.identity;
-            modelInstance.transform.localScale = Vector3.one * 1.0f;
-
             ApplyMaterials(modelInstance, chickenMat, eyesMat);
-            AddChickenFeatures(modelInstance.transform, beakMat, combMat);
+
+            var mainTransform = FindMainTransform(modelInstance.transform);
+            AddChickenFeatures(mainTransform, modelInstance.transform, beakMat, combMat);
             RetractUnusedChickenParts(modelInstance.transform);
 
             var biped = modelInstance.GetComponent<ChickenBipedSetup>();
@@ -362,7 +376,9 @@ namespace VARG.Editor
             modelInstance.transform.localScale = Vector3.one * 0.45f;
 
             ApplyMaterials(modelInstance, chickenMat, eyesMat);
-            AddChickenFeatures(modelInstance.transform, beakMat, combMat);
+
+            var mainTransform = FindMainTransform(modelInstance.transform);
+            AddChickenFeatures(mainTransform, modelInstance.transform, beakMat, combMat);
             RetractUnusedChickenParts(modelInstance.transform);
 
             var miniBiped = modelInstance.GetComponent<ChickenBipedSetup>();
@@ -415,34 +431,61 @@ namespace VARG.Editor
             }
         }
 
-        private static void AddHorns(Transform parent, Material hornMat, float scale)
+        private static Transform FindMainTransform(Transform modelRoot)
         {
+            foreach (var t in modelRoot.GetComponentsInChildren<Transform>(true))
+            {
+                if (t.name == "+ Main") return t;
+            }
+            foreach (var t in modelRoot.GetComponentsInChildren<Transform>(true))
+            {
+                if (t.name == "RigHub") return t;
+            }
+            return modelRoot;
+        }
+
+        private static void AddHorns(Transform mainTransform, Material hornMat)
+        {
+            var existingHornL = mainTransform.Find("Horn_L");
+            if (existingHornL != null) Object.DestroyImmediate(existingHornL.gameObject);
+            var existingHornR = mainTransform.Find("Horn_R");
+            if (existingHornR != null) Object.DestroyImmediate(existingHornR.gameObject);
+
+            // Left horn positioned directly on the skull where the left ear was
             var hornL = GameObject.CreatePrimitive(PrimitiveType.Cube);
             hornL.name = "Horn_L";
             Object.DestroyImmediate(hornL.GetComponent<Collider>());
-            hornL.transform.SetParent(parent, false);
-            hornL.transform.localPosition = new Vector3(-0.18f, 0.52f, 0.10f) * scale;
+            hornL.transform.SetParent(mainTransform, false);
+            hornL.transform.localPosition = new Vector3(-0.24f, 1.02f, 0.16f);
             hornL.transform.localRotation = Quaternion.Euler(15f, 0f, -25f);
-            hornL.transform.localScale = new Vector3(0.08f, 0.20f, 0.08f) * scale;
+            hornL.transform.localScale = new Vector3(0.10f, 0.28f, 0.10f);
             if (hornMat != null) hornL.GetComponent<Renderer>().sharedMaterial = hornMat;
 
+            // Right horn positioned directly on the skull where the right ear was
             var hornR = GameObject.CreatePrimitive(PrimitiveType.Cube);
             hornR.name = "Horn_R";
             Object.DestroyImmediate(hornR.GetComponent<Collider>());
-            hornR.transform.SetParent(parent, false);
-            hornR.transform.localPosition = new Vector3(0.18f, 0.52f, 0.10f) * scale;
+            hornR.transform.SetParent(mainTransform, false);
+            hornR.transform.localPosition = new Vector3(0.24f, 1.02f, 0.16f);
             hornR.transform.localRotation = Quaternion.Euler(15f, 0f, 25f);
-            hornR.transform.localScale = new Vector3(0.08f, 0.20f, 0.08f) * scale;
+            hornR.transform.localScale = new Vector3(0.10f, 0.28f, 0.10f);
             if (hornMat != null) hornR.GetComponent<Renderer>().sharedMaterial = hornMat;
         }
 
-        private static void AddChickenFeatures(Transform parent, Material beakMat, Material combMat)
+        private static void AddChickenFeatures(Transform mainTransform, Transform modelRoot, Material beakMat, Material combMat)
         {
+            var existingBeak = mainTransform.Find("Beak_Orange");
+            if (existingBeak != null) Object.DestroyImmediate(existingBeak.gameObject);
+            var existingWattle = mainTransform.Find("Wattle_Red");
+            if (existingWattle != null) Object.DestroyImmediate(existingWattle.gameObject);
+            var existingComb = mainTransform.Find("Comb_Red");
+            if (existingComb != null) Object.DestroyImmediate(existingComb.gameObject);
+
             // Orange 3D Beak protruding from the face at mouth/snout level
             var beak = GameObject.CreatePrimitive(PrimitiveType.Cube);
             beak.name = "Beak_Orange";
             Object.DestroyImmediate(beak.GetComponent<Collider>());
-            beak.transform.SetParent(parent, false);
+            beak.transform.SetParent(mainTransform, false);
             beak.transform.localPosition = new Vector3(0f, 0.60f, 0.52f);
             beak.transform.localRotation = Quaternion.Euler(15f, 0f, 0f);
             beak.transform.localScale = new Vector3(0.24f, 0.16f, 0.28f);
@@ -452,14 +495,14 @@ namespace VARG.Editor
             var wattle = GameObject.CreatePrimitive(PrimitiveType.Cube);
             wattle.name = "Wattle_Red";
             Object.DestroyImmediate(wattle.GetComponent<Collider>());
-            wattle.transform.SetParent(parent, false);
+            wattle.transform.SetParent(mainTransform, false);
             wattle.transform.localPosition = new Vector3(0f, 0.46f, 0.48f);
             wattle.transform.localScale = new Vector3(0.09f, 0.16f, 0.12f);
             if (combMat != null) wattle.GetComponent<Renderer>().sharedMaterial = combMat;
 
             // Red Comb with 3 lobes resting directly on top of the head surface (Y = 1.05f)
             var combContainer = new GameObject("Comb_Red");
-            combContainer.transform.SetParent(parent, false);
+            combContainer.transform.SetParent(mainTransform, false);
             combContainer.transform.localPosition = new Vector3(0f, 1.05f, 0.15f);
 
             var combCenter = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -487,7 +530,7 @@ namespace VARG.Editor
             if (combMat != null) combBack.GetComponent<Renderer>().sharedMaterial = combMat;
 
             // Orange chicken feet attached to the two active walking legs
-            foreach (var t in parent.GetComponentsInChildren<Transform>(true))
+            foreach (var t in modelRoot.GetComponentsInChildren<Transform>(true))
             {
                 if (t.name == "RigR1Leg1" || t.name == "RigL2Leg1")
                 {
