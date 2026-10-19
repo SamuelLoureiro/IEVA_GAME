@@ -31,6 +31,19 @@ namespace VARG.UI
         {
             if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>();
             if (_canvasGroup != null) _canvasGroup.alpha = 0f;
+
+            if (_dialogueText == null)
+            {
+                var tmps = GetComponentsInChildren<TextMeshProUGUI>();
+                for (var i = 0; i < tmps.Length; i++)
+                {
+                    if (tmps[i] != _speakerNameText)
+                    {
+                        _dialogueText = tmps[i];
+                        break;
+                    }
+                }
+            }
         }
 
         public void Show(string line, BossExpression expression)
