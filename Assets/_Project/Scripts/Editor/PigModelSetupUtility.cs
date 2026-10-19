@@ -5,6 +5,7 @@ using VARG.Targets;
 
 namespace VARG.Editor
 {
+    [InitializeOnLoad]
     public static class PigModelSetupUtility
     {
         private const string PigModelPrefabPath = "Assets/Free Cube Pig Cute Pro Series/Prefabs/Full/Pig No Root.prefab";
@@ -25,12 +26,15 @@ namespace VARG.Editor
         private const string MiniChickenPrefabPath = "Assets/_Project/Prefabs/Targets/Mini_Chicken.prefab";
 
         [InitializeOnLoadMethod]
-        private static void AutoSetupOnLoad()
+        private static void AutoInit()
         {
-            EditorApplication.delayCall += () =>
-            {
-                SetupAllAnimals(silent: true);
-            };
+            EditorApplication.update += RunOnceOnUpdate;
+        }
+
+        private static void RunOnceOnUpdate()
+        {
+            EditorApplication.update -= RunOnceOnUpdate;
+            SetupAllAnimals(silent: true);
         }
 
         [MenuItem("VARG/Art/Setup All Targets (Pig + Cow + Chicken + Human)")]
@@ -169,6 +173,7 @@ namespace VARG.Editor
         private static void SetupTargetPig(GameObject modelPrefab)
         {
             var root = PrefabUtility.LoadPrefabContents(TargetPigPrefabPath);
+            root.transform.localScale = Vector3.one;
 
             var renderer = root.GetComponent<MeshRenderer>();
             if (renderer != null) renderer.enabled = false;
@@ -178,9 +183,9 @@ namespace VARG.Editor
 
             var modelInstance = (GameObject)PrefabUtility.InstantiatePrefab(modelPrefab, root.transform);
             modelInstance.name = "Model_Pig";
-            modelInstance.transform.localPosition = new Vector3(0f, -0.5f, 0f);
+            modelInstance.transform.localPosition = new Vector3(0f, -0.30f, 0f);
             modelInstance.transform.localRotation = Quaternion.identity;
-            modelInstance.transform.localScale = Vector3.one * 1.5f;
+            modelInstance.transform.localScale = Vector3.one * 0.9f;
 
             if (modelInstance.GetComponent<PigAnimationController>() == null)
             {
@@ -190,10 +195,20 @@ namespace VARG.Editor
             var collider = root.GetComponent<BoxCollider>();
             if (collider != null)
             {
-                collider.center = new Vector3(0f, 0.25f, 0f);
-                collider.size = new Vector3(1.2f, 1.2f, 1.5f);
+                collider.center = new Vector3(0f, 0.20f, 0f);
+                collider.size = new Vector3(0.9f, 0.9f, 1.1f);
             }
 
+            var agent = root.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            if (agent != null)
+            {
+                agent.radius = 0.45f;
+                agent.height = 0.9f;
+                agent.baseOffset = 0.45f;
+            }
+
+            EditorUtility.SetDirty(root.transform);
+            EditorUtility.SetDirty(root);
             PrefabUtility.SaveAsPrefabAsset(root, TargetPigPrefabPath);
             PrefabUtility.UnloadPrefabContents(root);
         }
@@ -201,6 +216,7 @@ namespace VARG.Editor
         private static void SetupMiniPig(GameObject modelPrefab)
         {
             var root = PrefabUtility.LoadPrefabContents(MiniPigPrefabPath);
+            root.transform.localScale = Vector3.one * 0.35f;
 
             var renderer = root.GetComponent<MeshRenderer>();
             if (renderer != null) renderer.enabled = false;
@@ -212,7 +228,7 @@ namespace VARG.Editor
             modelInstance.name = "Model_Pig";
             modelInstance.transform.localPosition = new Vector3(0f, -0.2f, 0f);
             modelInstance.transform.localRotation = Quaternion.identity;
-            modelInstance.transform.localScale = Vector3.one * 0.6f;
+            modelInstance.transform.localScale = Vector3.one * 0.55f;
 
             if (modelInstance.GetComponent<PigAnimationController>() == null)
             {
@@ -223,9 +239,11 @@ namespace VARG.Editor
             if (collider != null)
             {
                 collider.center = new Vector3(0f, 0.1f, 0f);
-                collider.size = new Vector3(0.6f, 0.6f, 0.7f);
+                collider.size = new Vector3(0.5f, 0.5f, 0.65f);
             }
 
+            EditorUtility.SetDirty(root.transform);
+            EditorUtility.SetDirty(root);
             PrefabUtility.SaveAsPrefabAsset(root, MiniPigPrefabPath);
             PrefabUtility.UnloadPrefabContents(root);
         }
@@ -233,6 +251,7 @@ namespace VARG.Editor
         private static void SetupTargetCow(GameObject modelPrefab, Material cowMat, Material eyesMat, Material hornMat)
         {
             var root = PrefabUtility.LoadPrefabContents(TargetCowPrefabPath);
+            root.transform.localScale = Vector3.one;
 
             var renderer = root.GetComponent<MeshRenderer>();
             if (renderer != null) renderer.enabled = false;
@@ -264,10 +283,20 @@ namespace VARG.Editor
             var collider = root.GetComponent<BoxCollider>();
             if (collider != null)
             {
-                collider.center = new Vector3(0f, 0.35f, 0f);
-                collider.size = new Vector3(1.4f, 1.4f, 1.8f);
+                collider.center = new Vector3(0f, 0.45f, 0f);
+                collider.size = new Vector3(1.5f, 1.8f, 2.2f);
             }
 
+            var agent = root.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            if (agent != null)
+            {
+                agent.radius = 0.75f;
+                agent.height = 1.8f;
+                agent.baseOffset = 0.9f;
+            }
+
+            EditorUtility.SetDirty(root.transform);
+            EditorUtility.SetDirty(root);
             PrefabUtility.SaveAsPrefabAsset(root, TargetCowPrefabPath);
             PrefabUtility.UnloadPrefabContents(root);
         }
@@ -275,6 +304,7 @@ namespace VARG.Editor
         private static void SetupMiniCow(GameObject modelPrefab, Material cowMat, Material eyesMat, Material hornMat)
         {
             var root = PrefabUtility.LoadPrefabContents(MiniCowPrefabPath);
+            root.transform.localScale = Vector3.one * 0.35f;
 
             var renderer = root.GetComponent<MeshRenderer>();
             if (renderer != null) renderer.enabled = false;
@@ -286,7 +316,7 @@ namespace VARG.Editor
             modelInstance.name = "Model_Cow";
             modelInstance.transform.localPosition = new Vector3(0f, -0.25f, 0f);
             modelInstance.transform.localRotation = Quaternion.identity;
-            modelInstance.transform.localScale = Vector3.one * 0.7f;
+            modelInstance.transform.localScale = Vector3.one * 0.75f;
 
             ApplyMaterials(modelInstance, cowMat, eyesMat);
 
@@ -306,10 +336,12 @@ namespace VARG.Editor
             var collider = root.GetComponent<BoxCollider>();
             if (collider != null)
             {
-                collider.center = new Vector3(0f, 0.15f, 0f);
-                collider.size = new Vector3(0.7f, 0.7f, 0.9f);
+                collider.center = new Vector3(0f, 0.2f, 0f);
+                collider.size = new Vector3(0.7f, 0.75f, 0.95f);
             }
 
+            EditorUtility.SetDirty(root.transform);
+            EditorUtility.SetDirty(root);
             PrefabUtility.SaveAsPrefabAsset(root, MiniCowPrefabPath);
             PrefabUtility.UnloadPrefabContents(root);
         }
@@ -317,6 +349,7 @@ namespace VARG.Editor
         private static void SetupTargetChicken(GameObject modelPrefab, Material chickenMat, Material eyesMat, Material beakMat, Material combMat)
         {
             var root = PrefabUtility.LoadPrefabContents(TargetChickenPrefabPath);
+            root.transform.localScale = Vector3.one;
 
             var renderer = root.GetComponent<MeshRenderer>();
             if (renderer != null) renderer.enabled = false;
@@ -326,8 +359,9 @@ namespace VARG.Editor
 
             var modelInstance = (GameObject)PrefabUtility.InstantiatePrefab(modelPrefab, root.transform);
             modelInstance.name = "Model_Chicken";
-            modelInstance.transform.localPosition = new Vector3(0f, -0.35f, 0f);
+            modelInstance.transform.localPosition = new Vector3(0f, -0.15f, 0f);
             modelInstance.transform.localRotation = Quaternion.identity;
+            modelInstance.transform.localScale = Vector3.one * 0.45f;
             ApplyMaterials(modelInstance, chickenMat, eyesMat);
 
             var mainTransform = FindMainTransform(modelInstance.transform);
@@ -352,10 +386,20 @@ namespace VARG.Editor
             var sphere = root.GetComponent<SphereCollider>();
             if (sphere != null)
             {
-                sphere.center = new Vector3(0f, 0.35f, 0f);
-                sphere.radius = 0.55f;
+                sphere.center = new Vector3(0f, 0.22f, 0f);
+                sphere.radius = 0.24f;
             }
 
+            var agent = root.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            if (agent != null)
+            {
+                agent.radius = 0.25f;
+                agent.height = 0.5f;
+                agent.baseOffset = 0.25f;
+            }
+
+            EditorUtility.SetDirty(root.transform);
+            EditorUtility.SetDirty(root);
             PrefabUtility.SaveAsPrefabAsset(root, TargetChickenPrefabPath);
             PrefabUtility.UnloadPrefabContents(root);
         }
@@ -363,6 +407,7 @@ namespace VARG.Editor
         private static void SetupMiniChicken(GameObject modelPrefab, Material chickenMat, Material eyesMat, Material beakMat, Material combMat)
         {
             var root = PrefabUtility.LoadPrefabContents(MiniChickenPrefabPath);
+            root.transform.localScale = Vector3.one * 0.35f;
 
             var renderer = root.GetComponent<MeshRenderer>();
             if (renderer != null) renderer.enabled = false;
@@ -372,9 +417,9 @@ namespace VARG.Editor
 
             var modelInstance = (GameObject)PrefabUtility.InstantiatePrefab(modelPrefab, root.transform);
             modelInstance.name = "Model_Chicken";
-            modelInstance.transform.localPosition = new Vector3(0f, -0.15f, 0f);
+            modelInstance.transform.localPosition = new Vector3(0f, -0.1f, 0f);
             modelInstance.transform.localRotation = Quaternion.identity;
-            modelInstance.transform.localScale = Vector3.one * 0.45f;
+            modelInstance.transform.localScale = Vector3.one * 0.30f;
 
             ApplyMaterials(modelInstance, chickenMat, eyesMat);
 
@@ -400,10 +445,12 @@ namespace VARG.Editor
             var sphere = root.GetComponent<SphereCollider>();
             if (sphere != null)
             {
-                sphere.center = new Vector3(0f, 0.1f, 0f);
-                sphere.radius = 0.25f;
+                sphere.center = new Vector3(0f, 0.08f, 0f);
+                sphere.radius = 0.16f;
             }
 
+            EditorUtility.SetDirty(root.transform);
+            EditorUtility.SetDirty(root);
             PrefabUtility.SaveAsPrefabAsset(root, MiniChickenPrefabPath);
             PrefabUtility.UnloadPrefabContents(root);
         }

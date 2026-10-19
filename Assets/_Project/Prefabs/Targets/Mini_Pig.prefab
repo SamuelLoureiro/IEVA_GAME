@@ -34,7 +34,7 @@ Transform:
   m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6894150536469833056}
+  - {fileID: 5877150242756274485}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5251382719197649655
@@ -64,7 +64,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.6, y: 0.6, z: 0.7}
+  m_Size: {x: 0.5, y: 0.5, z: 0.65}
   m_Center: {x: 0, y: 0.1, z: 0}
 --- !u!23 &8416600306910844974
 MeshRenderer:
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Sorting.SortableItem
   _data: {fileID: 11400000, guid: b697f596817d9ca67b1c959ac62645dd, type: 2}
---- !u!1001 &36061480484481423
+--- !u!1001 &1054750349205104090
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -169,15 +169,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6858116759732374767, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.6
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: 6858116759732374767, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.6
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: 6858116759732374767, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.6
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: 6858116759732374767, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -225,20 +225,25 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6081896307724654165, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5010404757873307636}
+      addedObject: {fileID: 1067802966911081325}
   m_SourcePrefab: {fileID: 100100000, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
---- !u!1 &6117895788542181338 stripped
+--- !u!4 &5877150242756274485 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6858116759732374767, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
+  m_PrefabInstance: {fileID: 1054750349205104090}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6540358800604853135 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6081896307724654165, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
-  m_PrefabInstance: {fileID: 36061480484481423}
+  m_PrefabInstance: {fileID: 1054750349205104090}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5010404757873307636
+--- !u!114 &1067802966911081325
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6117895788542181338}
+  m_GameObject: {fileID: 6540358800604853135}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8119795a0bfc57b6ba9f35564fe0ccc9, type: 3}
@@ -246,8 +251,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Targets.PigAnimationController
   _moveThreshold: 0.1
   _transitionDuration: 0.15
---- !u!4 &6894150536469833056 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6858116759732374767, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
-  m_PrefabInstance: {fileID: 36061480484481423}
-  m_PrefabAsset: {fileID: 0}
