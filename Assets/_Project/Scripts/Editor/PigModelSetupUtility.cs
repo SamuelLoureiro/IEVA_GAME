@@ -33,9 +33,9 @@ namespace VARG.Editor
             };
         }
 
-        [MenuItem("VARG/Art/Setup All Animals (Pig + Cow + Chicken)")]
-        [MenuItem("Tools/VARG/Setup All Animals (Pig + Cow + Chicken)")]
-        [MenuItem("Window/VARG/Setup All Animals (Pig + Cow + Chicken)")]
+        [MenuItem("VARG/Art/Setup All Targets (Pig + Cow + Chicken + Human)")]
+        [MenuItem("Tools/VARG/Setup All Targets (Pig + Cow + Chicken + Human)")]
+        [MenuItem("Window/VARG/Setup All Targets (Pig + Cow + Chicken + Human)")]
         public static void SetupAllAnimalsMenu()
         {
             SetupAllAnimals(silent: false);
@@ -46,12 +46,13 @@ namespace VARG.Editor
             SetupPigModel(silent: true);
             SetupCowModel(silent: true);
             SetupChickenModel(silent: true);
+            HumanModelSetupUtility.SetupHumanModel(silent: true);
             AssetDatabase.SaveAssets();
 
-            Debug.Log("[AnimalModelSetup] Cute Cube Pig, Cow, and Chicken configured successfully!");
+            Debug.Log("[AnimalModelSetup] Cute Cube Pig, Cow, Chicken, and Human configured successfully!");
             if (!silent)
             {
-                EditorUtility.DisplayDialog("VARG", "Cute Cube Pig, Cow, and Chicken configured successfully!", "OK");
+                EditorUtility.DisplayDialog("VARG", "All 4 targets (Pig, Cow, Chicken, and Human) configured successfully!", "OK");
             }
         }
 

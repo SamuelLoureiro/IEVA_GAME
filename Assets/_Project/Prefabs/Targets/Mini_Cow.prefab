@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1656435421851587812
+--- !u!1 &5575106534202344486
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,46 +8,46 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 9137347881747467920}
-  - component: {fileID: 7497551672235356116}
-  - component: {fileID: 2445805060407081310}
+  - component: {fileID: 4064724022772405082}
+  - component: {fileID: 4914515135259858926}
+  - component: {fileID: 5656699710106843811}
   m_Layer: 0
-  m_Name: Horn_L
+  m_Name: Horn_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &9137347881747467920
+--- !u!4 &4064724022772405082
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1656435421851587812}
+  m_GameObject: {fileID: 5575106534202344486}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.12743221, y: 0.02825104, z: -0.21458796, w: 0.96794367}
-  m_LocalPosition: {x: -0.24, y: 1.02, z: 0.16}
+  m_LocalRotation: {x: 0.12743221, y: -0.02825104, z: 0.21458796, w: 0.96794367}
+  m_LocalPosition: {x: 0.24, y: 1.02, z: 0.16}
   m_LocalScale: {x: 0.1, y: 0.28, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7266549041444215024}
+  m_Father: {fileID: 3034738192817182249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &7497551672235356116
+--- !u!33 &4914515135259858926
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1656435421851587812}
+  m_GameObject: {fileID: 5575106534202344486}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &2445805060407081310
+--- !u!23 &5656699710106843811
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1656435421851587812}
+  m_GameObject: {fileID: 5575106534202344486}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -124,7 +124,7 @@ Transform:
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 748255473397790539}
+  - {fileID: 4947256931959765394}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8877834698070750210
@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Sorting.SortableItem
   _data: {fileID: 11400000, guid: f28f0d2b456590d87987fc6edf098cd8, type: 2}
---- !u!1 &8815524386765737960
+--- !u!1 &8528100125196323593
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -253,46 +253,46 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3844884575949502874}
-  - component: {fileID: 6127702653517706270}
-  - component: {fileID: 1956170595174341085}
+  - component: {fileID: 2534335794746540332}
+  - component: {fileID: 7648044885813923011}
+  - component: {fileID: 639399584196415262}
   m_Layer: 0
-  m_Name: Horn_R
+  m_Name: Horn_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3844884575949502874
+--- !u!4 &2534335794746540332
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8815524386765737960}
+  m_GameObject: {fileID: 8528100125196323593}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.12743221, y: -0.02825104, z: 0.21458796, w: 0.96794367}
-  m_LocalPosition: {x: 0.24, y: 1.02, z: 0.16}
+  m_LocalRotation: {x: 0.12743221, y: 0.02825104, z: -0.21458796, w: 0.96794367}
+  m_LocalPosition: {x: -0.24, y: 1.02, z: 0.16}
   m_LocalScale: {x: 0.1, y: 0.28, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7266549041444215024}
+  m_Father: {fileID: 3034738192817182249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &6127702653517706270
+--- !u!33 &7648044885813923011
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8815524386765737960}
+  m_GameObject: {fileID: 8528100125196323593}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1956170595174341085
+--- !u!23 &639399584196415262
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8815524386765737960}
+  m_GameObject: {fileID: 8528100125196323593}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -335,7 +335,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1001 &6147055841131215780
+--- !u!1001 &1982924332481688957
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -436,42 +436,52 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3573972864327574356, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 9137347881747467920}
+      addedObject: {fileID: 2534335794746540332}
     - targetCorrespondingSourceObject: {fileID: 3573972864327574356, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3844884575949502874}
+      addedObject: {fileID: 4064724022772405082}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6081896307724654165, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6957813846348420363}
+      addedObject: {fileID: 1420220196380555005}
     - targetCorrespondingSourceObject: {fileID: 6081896307724654165, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5060099774953095572}
+      addedObject: {fileID: 8337120953331289621}
   m_SourcePrefab: {fileID: 100100000, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
---- !u!1 &83746295586336241 stripped
+--- !u!4 &3034738192817182249 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3573972864327574356, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
+  m_PrefabInstance: {fileID: 1982924332481688957}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4947256931959765394 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6858116759732374767, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
+  m_PrefabInstance: {fileID: 1982924332481688957}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5756725516371272488 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6081896307724654165, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
-  m_PrefabInstance: {fileID: 6147055841131215780}
+  m_PrefabInstance: {fileID: 1982924332481688957}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6957813846348420363
+--- !u!114 &1420220196380555005
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 83746295586336241}
+  m_GameObject: {fileID: 5756725516371272488}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cbbf2a7193e31b6568a8a5ddc30c20d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Targets.CowFeaturesSetup
---- !u!114 &5060099774953095572
+--- !u!114 &8337120953331289621
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 83746295586336241}
+  m_GameObject: {fileID: 5756725516371272488}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8119795a0bfc57b6ba9f35564fe0ccc9, type: 3}
@@ -479,13 +489,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Targets.PigAnimationController
   _moveThreshold: 0.1
   _transitionDuration: 0.15
---- !u!4 &748255473397790539 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6858116759732374767, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
-  m_PrefabInstance: {fileID: 6147055841131215780}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7266549041444215024 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3573972864327574356, guid: 1dace64ff89a8f64aa3f5cbd6731b63f, type: 3}
-  m_PrefabInstance: {fileID: 6147055841131215780}
-  m_PrefabAsset: {fileID: 0}
