@@ -121,10 +121,10 @@ namespace VARG.Editor
             layout.childControlWidth = true;
             layout.childControlHeight = false;
 
-            var playCampaignBtn = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ JOGAR CAMPANHA</b>  <size=15>[ ENTER ]</size>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
-            var playCustomBtn = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 JOGAR CUSTOM (PLANILHA)</b>  <size=15>[ C ]</size>", new Color(0.15f, 0.48f, 0.85f), new Color(0.25f, 0.68f, 1f));
-            var openCsvBtn = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 ABRIR PLANILHA (EXCEL)</b>  <size=15>[ E ]</size>", new Color(0.16f, 0.24f, 0.34f), new Color(0.24f, 0.38f, 0.52f));
-            var quitBtn = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>SAIR</b>  <size=15>[ ESC ]</size>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
+            var playCampaignBtn = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ JOGAR CAMPANHA</b>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
+            var playCustomBtn = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 JOGAR CUSTOM (PLANILHA)</b>", new Color(0.15f, 0.48f, 0.85f), new Color(0.25f, 0.68f, 1f));
+            var openCsvBtn = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 ABRIR PLANILHA (EXCEL)</b>", new Color(0.16f, 0.24f, 0.34f), new Color(0.24f, 0.38f, 0.52f));
+            var quitBtn = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>SAIR</b>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
 
             // Status message
             var status = CreateText("StatusText", frameObj.transform, "Selecione um modo para iniciar.", 16, TextAlignmentOptions.Center, FontStyles.Italic, new Color(0.70f, 0.80f, 0.90f));

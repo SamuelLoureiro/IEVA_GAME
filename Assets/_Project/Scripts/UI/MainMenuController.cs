@@ -54,29 +54,6 @@ namespace VARG.UI
             if (_quitButton != null) _quitButton.onClick.RemoveListener(QuitGame);
         }
 
-        private void Update()
-        {
-            var keyboard = UnityEngine.InputSystem.Keyboard.current;
-            if (keyboard == null) return;
-
-            if (keyboard.enterKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame)
-            {
-                PlayCampaign();
-            }
-            else if (keyboard.cKey.wasPressedThisFrame || keyboard.pKey.wasPressedThisFrame)
-            {
-                PlayCustomSpreadsheet();
-            }
-            else if (keyboard.eKey.wasPressedThisFrame)
-            {
-                OpenSpreadsheetFile();
-            }
-            else if (keyboard.escapeKey.wasPressedThisFrame)
-            {
-                QuitGame();
-            }
-        }
-
         public void Configure(
             Button playCampaignButton,
             Button playCustomButton,
@@ -265,10 +242,10 @@ namespace VARG.UI
             layout.childControlWidth = true;
             layout.childControlHeight = false;
 
-            _playCampaignButton = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ JOGAR CAMPANHA</b>  <size=15>[ ENTER ]</size>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
-            _playCustomButton = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 JOGAR CUSTOM (PLANILHA)</b>  <size=15>[ C ]</size>", new Color(0.15f, 0.45f, 0.85f), new Color(0.25f, 0.65f, 1f));
-            _openSpreadsheetButton = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 ABRIR PLANILHA (EXCEL)</b>  <size=15>[ E ]</size>", new Color(0.18f, 0.28f, 0.38f), new Color(0.28f, 0.42f, 0.58f));
-            _quitButton = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>SAIR</b>  <size=15>[ ESC ]</size>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
+            _playCampaignButton = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ JOGAR CAMPANHA</b>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
+            _playCustomButton = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 JOGAR CUSTOM (PLANILHA)</b>", new Color(0.15f, 0.45f, 0.85f), new Color(0.25f, 0.65f, 1f));
+            _openSpreadsheetButton = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 ABRIR PLANILHA (EXCEL)</b>", new Color(0.18f, 0.28f, 0.38f), new Color(0.28f, 0.42f, 0.58f));
+            _quitButton = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>SAIR</b>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
 
             // Status text
             _statusText = CreateText("StatusText", bgObj.transform, "Selecione um modo para iniciar.", 18, TextAlignmentOptions.Center, FontStyles.Italic, new Color(0.70f, 0.80f, 0.90f));

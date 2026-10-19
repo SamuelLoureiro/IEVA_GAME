@@ -32,15 +32,6 @@ namespace VARG.UI
             InitializeBriefing();
         }
 
-        private void Update()
-        {
-            var keyboard = UnityEngine.InputSystem.Keyboard.current;
-            if (keyboard != null && (keyboard.pKey.wasPressedThisFrame || keyboard.f5Key.wasPressedThisFrame))
-            {
-                OnLoadSpreadsheetLevelClicked();
-            }
-        }
-
         public void Configure(
             DialogueBox dialogueBox,
             TargetShowcaseUI showcaseUI,
@@ -76,7 +67,7 @@ namespace VARG.UI
 
             if (_spreadsheetButtonText != null && GameManager.Instance != null && GameManager.Instance.IsCustomSpreadsheetLevel)
             {
-                _spreadsheetButtonText.text = "<b>✔ PLANILHA ATIVA</b> <size=13>[ P ]</size>";
+                _spreadsheetButtonText.text = "<b>✔ PLANILHA ATIVA</b>";
             }
 
             if (_showcaseUI != null)
@@ -209,7 +200,7 @@ namespace VARG.UI
                 tmp.font = _levelTitleText.font;
                 tmp.fontSharedMaterial = _levelTitleText.fontSharedMaterial;
             }
-            tmp.text = "<b>📄 NÍVEL DA PLANILHA</b> <size=13>[ P ]</size>";
+            tmp.text = "<b>📄 NÍVEL DA PLANILHA</b>";
             tmp.fontSize = 15;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = new Color(0.40f, 0.88f, 0.95f, 1f);
@@ -250,7 +241,7 @@ namespace VARG.UI
 
                 if (_spreadsheetButtonText != null)
                 {
-                    _spreadsheetButtonText.text = "<b>✔ PLANILHA CARREGADA</b> <size=13>[ P ]</size>";
+                    _spreadsheetButtonText.text = "<b>✔ PLANILHA CARREGADA</b>";
                 }
 
                 if (!_isBossInCorner)
