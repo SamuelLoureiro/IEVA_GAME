@@ -32,11 +32,11 @@ namespace VARG.Mission
 
             var content =
                 "Parameter,Value,Description\n" +
-                "TargetSequence,\"Cow, Pig, Chicken, Cow\",\"Targets to capture in exact order (options: Cow, Pig, Chicken)\"\n" +
-                "ForbiddenTarget,Human,\"Target species that is strictly forbidden\"\n" +
+                "TargetSequence,\"Cow, Pig, Chicken, Cow\",\"Targets to capture in exact order. Any combination of: Cow, Pig, Chicken, Human\"\n" +
+                "ForbiddenTarget,Human,\"Forbidden species (penalizes if captured). Can be Cow, Pig, Chicken, or Human (must not be in TargetSequence)\"\n" +
                 "CaptureTime,90,\"Time limit for the city hunt phase in seconds\"\n" +
                 "SortingTime,45,\"Time limit for the ship sorting phase in seconds\"\n" +
-                "ExtraSpawns,2,\"Additional distractor targets in the city\"\n" +
+                "ExtraSpawns,2,\"Additional distractor targets roaming the city\"\n" +
                 "ForbiddenSpawns,2,\"Number of forbidden targets spawned in the city\"\n" +
                 "FleeSpeedMultiplier,1.0,\"Speed multiplier for escaping targets (e.g. 1.0)\"\n";
 
@@ -161,7 +161,13 @@ namespace VARG.Mission
 
                 if (!foundSequence || data.TargetSequence.Count == 0)
                 {
-                    statusMessage = "Spreadsheet has no valid targets in 'TargetSequence'. Expected format: Cow, Pig, Chicken";
+                    statusMessage = "Spreadsheet has no valid targets in 'TargetSequence'. Expected format: Cow, Pig, Chicken, Human";
+                    return false;
+                }
+
+                if (data.TargetSequence.Contains(data.ForbiddenTarget))
+                {
+                    statusMessage = $"ForbiddenTarget '{data.ForbiddenTarget}' cannot be in TargetSequence! Change ForbiddenTarget to another species (Cow, Pig, Chicken, or Human).";
                     return false;
                 }
 
