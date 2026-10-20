@@ -63,19 +63,22 @@ namespace VARG.Core
                 MissionManager.Instance.GenerateMission(config);
             }
 
-            SceneLoader.Instance?.Load(BriefingSceneName);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.Load(BriefingSceneName);
+            else UnityEngine.SceneManagement.SceneManager.LoadScene(BriefingSceneName);
         }
 
         public void GoToHunt()
         {
             var targetScene = (_gameConfig != null && _gameConfig.UseShipFlight) ? ShipFlightSceneName : CityHuntSceneName;
-            SceneLoader.Instance?.Load(targetScene);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.Load(targetScene);
+            else UnityEngine.SceneManagement.SceneManager.LoadScene(targetScene);
         }
 
         public void GoToSorting()
         {
             TimerManager.Instance?.StopTimer(TimerPhase.Capture);
-            SceneLoader.Instance?.Load(ShipSortingSceneName);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.Load(ShipSortingSceneName);
+            else UnityEngine.SceneManagement.SceneManager.LoadScene(ShipSortingSceneName);
         }
 
         public void Victory()
@@ -85,7 +88,8 @@ namespace VARG.Core
             LastDefeatReason = null;
             CalculateAndStoreResult();
             GameEvents.TriggerVictory();
-            SceneLoader.Instance?.Load(ResultsSceneName);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.Load(ResultsSceneName);
+            else UnityEngine.SceneManagement.SceneManager.LoadScene(ResultsSceneName);
         }
 
         public void Defeat(DefeatReason reason)
@@ -95,7 +99,8 @@ namespace VARG.Core
             LastDefeatReason = reason;
             CalculateAndStoreResult();
             GameEvents.TriggerDefeat(reason);
-            SceneLoader.Instance?.Load(ResultsSceneName);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.Load(ResultsSceneName);
+            else UnityEngine.SceneManagement.SceneManager.LoadScene(ResultsSceneName);
         }
 
         public void NextLevel()

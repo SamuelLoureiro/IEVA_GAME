@@ -11,9 +11,15 @@ namespace VARG.Core
         public void Load(string sceneName)
         {
             if (_isLoading) return;
-            _isLoading = true;
-            SceneManager.LoadScene(sceneName);
-            _isLoading = false;
+            try
+            {
+                _isLoading = true;
+                SceneManager.LoadScene(sceneName);
+            }
+            finally
+            {
+                _isLoading = false;
+            }
         }
     }
 }

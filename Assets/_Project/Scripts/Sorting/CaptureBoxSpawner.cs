@@ -88,6 +88,7 @@ namespace VARG.Sorting
             );
 
             var instance = Instantiate(item.Data.MiniPrefab, randomPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
+            instance.transform.localScale *= 1.7f;
 
             var sortable = instance.GetComponent<SortableItem>() ?? instance.AddComponent<SortableItem>();
             sortable.Initialize(item);

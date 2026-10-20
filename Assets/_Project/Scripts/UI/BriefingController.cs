@@ -91,7 +91,7 @@ namespace VARG.UI
         {
             if (GameManager.Instance != null && GameManager.Instance.IsCustomSpreadsheetLevel)
             {
-                return "Atenção recruta! Missão customizada via planilha autorizada pela matriz! Memorize a sequência e não ouse capturar o alvo proibido!";
+                return "Attention recruit! Custom mission via spreadsheet authorized by headquarters! Memorize the sequence and do not dare capture the forbidden target!";
             }
 
             if (level == 1)
@@ -215,7 +215,7 @@ namespace VARG.UI
                     _showcaseUI.StartCountdown(Mathf.Max(_minMemoryDuration, count * _secondsPerItem), ProceedToHunt);
                 }
 
-                _dialogueBox?.Say(_bossSpeakerName, $"Planilha aprovada! Memorize os {levelData.TargetSequence.Count} alvos! {levelData.ForbiddenTarget.ToString().ToUpper()} continua PROIBIDO!", null);
+                _dialogueBox?.Say(_bossSpeakerName, $"Spreadsheet approved! Memorize the {levelData.TargetSequence.Count} targets! {levelData.ForbiddenTarget.ToString().ToUpper()} remains FORBIDDEN!", null);
             }
 
             Debug.Log($"[BriefingController] {statusMessage}");
