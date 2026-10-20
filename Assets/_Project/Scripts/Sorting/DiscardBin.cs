@@ -51,7 +51,21 @@ namespace VARG.Sorting
             var grabbable = item.GetComponent<Grabbable>();
             if (grabbable != null) grabbable.enabled = false;
 
-            Destroy(item.gameObject, 0.2f);
+            var rb = item.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = false;
+                rb.useGravity = true;
+                var dest = DestroyPoint.position;
+                item.transform.position = new Vector3(
+                    dest.x + Random.Range(-0.15f, 0.15f),
+                    dest.y + 0.9f,
+                    dest.z + Random.Range(-0.15f, 0.15f)
+                );
+                rb.linearVelocity = new Vector3(0f, -3.0f, 0f);
+            }
+
+            Destroy(item.gameObject, 0.6f);
 
             if (_audioSource != null && _shredClip != null) _audioSource.PlayOneShot(_shredClip);
             if (_shredParticles != null) _shredParticles.Play();
@@ -62,8 +76,7 @@ namespace VARG.Sorting
 
         private void EjectDiscard(SortableItem item)
         {
-            var rb = item.GetComponent<Rigidbody>();
-            if (rb != null) rb.linearVelocity = -transform.forward * 8.5f + Vector3.up * 2f;
+            TeleportToCenter(item);
 
             if (_audioSource != null && _wrongDiscardClip != null) _audioSource.PlayOneShot(_wrongDiscardClip);
 
@@ -72,6 +85,28 @@ namespace VARG.Sorting
             if (LivesManager.Instance != null) LivesManager.Instance.LoseLife();
 
             GameEvents.TriggerWrongDiscard(item.Data);
+        }
+
+        private static void TeleportToCenter(SortableItem item)
+        {
+            if (item == null) return;
+
+            var rb = item.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+
+            var anchor = GameObject.Find("SpawnAnchor");
+            var center = anchor != null ? anchor.transform.position : new Vector3(0f, 0.35f, 1.2f);
+
+            item.transform.position = new Vector3(
+                center.x + Random.Range(-0.4f, 0.4f),
+                Mathf.Max(center.y + 0.35f, 0.45f),
+                center.z + Random.Range(-0.4f, 0.4f)
+            );
+            item.transform.rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
         }
 
         public void ConfigureFeedback(AudioClip shredClip, AudioClip wrongDiscardClip, ParticleSystem shredParticles)

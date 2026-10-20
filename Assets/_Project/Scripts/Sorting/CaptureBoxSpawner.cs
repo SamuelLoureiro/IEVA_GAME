@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VARG.Data;
 using VARG.Inventory;
+using VARG.Mission;
 
 namespace VARG.Sorting
 {
@@ -19,13 +20,13 @@ namespace VARG.Sorting
             if (_spawnAnchor == null)
             {
                 var found = transform.Find("SpawnAnchor");
-                if (found != null) _spawnAnchor = found;
+                _spawnAnchor = found != null ? found : transform;
             }
         }
 
         private void Start()
         {
-            if (InventoryManager.Instance != null)
+            if (_spawnedObjects.Count == 0)
             {
                 SpawnExistingItems();
             }
@@ -37,9 +38,41 @@ namespace VARG.Sorting
             if (InventoryManager.Instance == null) return;
 
             var items = InventoryManager.Instance.Items;
+            if (items.Count == 0)
+            {
+                SeedFallbackItems();
+                return;
+            }
+
             for (var i = 0; i < items.Count; i++)
             {
                 SpawnItem(items[i]);
+            }
+        }
+
+        private void SeedFallbackItems()
+        {
+            if (MissionManager.Instance == null) return;
+
+            var targets = MissionManager.Instance.RequiredOrder;
+            if (targets == null || targets.Count == 0)
+            {
+                MissionManager.Instance.GenerateMission(null);
+                targets = MissionManager.Instance.RequiredOrder;
+            }
+
+            for (var i = 0; i < targets.Count; i++)
+            {
+                if (targets[i] != null)
+                {
+                    InventoryManager.Instance.Add(targets[i], CaptureResult.Correct);
+                }
+            }
+
+            var seeded = InventoryManager.Instance.Items;
+            for (var i = 0; i < seeded.Count; i++)
+            {
+                SpawnItem(seeded[i]);
             }
         }
 
@@ -55,6 +88,7 @@ namespace VARG.Sorting
             );
 
             var instance = Instantiate(item.Data.MiniPrefab, randomPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
+            instance.transform.localScale *= 1.7f;
 
             var sortable = instance.GetComponent<SortableItem>() ?? instance.AddComponent<SortableItem>();
             sortable.Initialize(item);
@@ -67,7 +101,7 @@ namespace VARG.Sorting
             var grabbableLayer = LayerMask.NameToLayer("Grabbable");
             if (grabbableLayer != -1)
             {
-                instance.layer = grabbableLayer;
+                SetLayerRecursively(instance, grabbableLayer);
             }
 
             if (SortingManager.Instance != null)
@@ -91,6 +125,16 @@ namespace VARG.Sorting
                 if (_spawnedObjects[i] != null) Destroy(_spawnedObjects[i]);
             }
             _spawnedObjects.Clear();
+        }
+
+        private static void SetLayerRecursively(GameObject obj, int layer)
+        {
+            obj.layer = layer;
+            var t = obj.transform;
+            for (var i = 0; i < t.childCount; i++)
+            {
+                SetLayerRecursively(t.GetChild(i).gameObject, layer);
+            }
         }
     }
 }

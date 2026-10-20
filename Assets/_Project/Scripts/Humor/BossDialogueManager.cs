@@ -2,24 +2,24 @@ using System;
 using UnityEngine;
 using VARG.Core;
 using VARG.Data;
+using VARG.UI;
 
 namespace VARG.Humor
 {
     public class BossDialogueManager : Singleton<BossDialogueManager>
     {
         [SerializeField] private BossLineSet _lines;
-        [SerializeField] private float _minCooldown = 3.5f;
+        [SerializeField] private float _minCooldown = 1.8f;
 
         [Header("Boss Audio")]
         [SerializeField] private AudioSource _audioSource;
         [SerializeField] private AudioClip _bossVoiceClip;
 
-        public static event Action<string, BossExpression> OnBossSpokeStatic;
-        public event Action<string, BossExpression> OnBossSpoke;
+        public static event Action<string> OnBossSpokeStatic;
+        public event Action<string> OnBossSpoke;
 
         public BossLineSet Lines => _lines;
         public string LastSpokenLine { get; private set; }
-        public BossExpression LastSpokenExpression { get; private set; }
 
         private float _nextAllowedSpeechTime;
 
@@ -32,6 +32,10 @@ namespace VARG.Humor
             if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
             if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.playOnAwake = false;
+            _audioSource.spatialBlend = 0f;
+
+            if (_lines == null) _lines = Resources.Load<BossLineSet>("Data/BossLineSet");
+            if (_bossVoiceClip == null) _bossVoiceClip = Resources.Load<AudioClip>("Audio/Et");
         }
 
         private void OnEnable()
@@ -39,16 +43,14 @@ namespace VARG.Humor
             GameEvents.OnCorrectCapture += HandleCorrectCapture;
             GameEvents.OnOutOfOrderCapture += HandleOutOfOrderCapture;
             GameEvents.OnNotInListCapture += HandleNotInListCapture;
-            GameEvents.OnBeamDenied += HandleBeamDenied;
+
             GameEvents.OnCorrectCage += HandleCorrectCage;
             GameEvents.OnWrongCage += HandleWrongCage;
             GameEvents.OnCorrectDiscard += HandleCorrectDiscard;
             GameEvents.OnWrongDiscard += HandleWrongDiscard;
-            GameEvents.OnLifeLost += HandleLifeLost;
-            GameEvents.OnTimeLow += HandleTimeLow;
+
             GameEvents.OnVictory += HandleVictory;
             GameEvents.OnDefeat += HandleDefeat;
-            GameEvents.OnIdle += HandleIdle;
         }
 
         private void OnDisable()
@@ -56,43 +58,41 @@ namespace VARG.Humor
             GameEvents.OnCorrectCapture -= HandleCorrectCapture;
             GameEvents.OnOutOfOrderCapture -= HandleOutOfOrderCapture;
             GameEvents.OnNotInListCapture -= HandleNotInListCapture;
-            GameEvents.OnBeamDenied -= HandleBeamDenied;
+
             GameEvents.OnCorrectCage -= HandleCorrectCage;
             GameEvents.OnWrongCage -= HandleWrongCage;
             GameEvents.OnCorrectDiscard -= HandleCorrectDiscard;
             GameEvents.OnWrongDiscard -= HandleWrongDiscard;
-            GameEvents.OnLifeLost -= HandleLifeLost;
-            GameEvents.OnTimeLow -= HandleTimeLow;
+
             GameEvents.OnVictory -= HandleVictory;
             GameEvents.OnDefeat -= HandleDefeat;
-            GameEvents.OnIdle -= HandleIdle;
         }
 
-        private void HandleCorrectCapture(TargetData d) => SpeakRandom(_lines?.CorrectCaptureLines, BossExpression.Smug, d);
-        private void HandleOutOfOrderCapture(TargetData c, TargetData e) => SpeakRandom(_lines?.OutOfOrderCaptureLines, BossExpression.Angry, c, e);
-        private void HandleNotInListCapture(TargetData d) => SpeakRandom(_lines?.NotInListCaptureLines, BossExpression.Furious, d);
-        private void HandleBeamDenied() => SpeakRandom(_lines?.BeamDeniedLines, BossExpression.Annoyed);
-        private void HandleCorrectCage(TargetData d) => SpeakRandom(_lines?.CorrectCageLines, BossExpression.Smug, d);
-        private void HandleWrongCage(TargetData d) => SpeakRandom(_lines?.WrongCageLines, BossExpression.Angry, d);
-        private void HandleCorrectDiscard(TargetData d) => SpeakRandom(_lines?.CorrectDiscardLines, BossExpression.Neutral, d);
-        private void HandleWrongDiscard(TargetData d) => SpeakRandom(_lines?.WrongDiscardLines, BossExpression.Furious, d);
-        private void HandleTimeLow(TimerPhase p) => SpeakRandom(_lines?.TimeLowLines, BossExpression.Angry);
-        private void HandleVictory() => SpeakRandom(_lines?.VictoryLines, BossExpression.Smug, highPriority: true);
-        private void HandleDefeat(DefeatReason r) => SpeakRandom(_lines?.DefeatLines, BossExpression.Furious, highPriority: true);
-        private void HandleIdle() => SpeakRandom(_lines?.IdleLines, BossExpression.Annoyed);
-        public void Speak(string rawLine, BossExpression expression, bool highPriority = false)
-        {
-            if (string.IsNullOrEmpty(rawLine)) return;
-            if (!highPriority && Time.time < _nextAllowedSpeechTime) return;
+        private void HandleCorrectCapture(TargetData d) => SpeakRandom(_lines?.CorrectCaptureLines, d);
+        private void HandleOutOfOrderCapture(TargetData c, TargetData e) => SpeakRandom(_lines?.OutOfOrderCaptureLines, c);
+        private void HandleNotInListCapture(TargetData d) => SpeakRandom(_lines?.NotInListCaptureLines, d);
 
-            LastSpokenLine = rawLine;
-            LastSpokenExpression = expression;
+        private void HandleCorrectCage(TargetData d) => SpeakRandom(_lines?.CorrectCageLines, d);
+        private void HandleWrongCage(TargetData d) => SpeakRandom(_lines?.WrongCageLines, d);
+        private void HandleCorrectDiscard(TargetData d) => SpeakRandom(_lines?.CorrectDiscardLines, d);
+        private void HandleWrongDiscard(TargetData d) => SpeakRandom(_lines?.WrongDiscardLines, d);
+
+        private void HandleVictory() => SpeakRandom(_lines?.VictoryLines);
+        private void HandleDefeat(DefeatReason r) => SpeakRandom(_lines?.DefeatLines);
+
+        public void Speak(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return;
+            if (Time.time < _nextAllowedSpeechTime) return;
+
+            LastSpokenLine = text;
             _nextAllowedSpeechTime = Time.time + _minCooldown;
 
             PlayVoice();
 
-            OnBossSpoke?.Invoke(rawLine, expression);
-            OnBossSpokeStatic?.Invoke(rawLine, expression);
+            OnBossSpoke?.Invoke(text);
+            OnBossSpokeStatic?.Invoke(text);
+            BossPopupUI.Show(text);
         }
 
         public void PlayVoice()
@@ -103,29 +103,12 @@ namespace VARG.Humor
             }
         }
 
-        public string PickLine(string categoryKey, string[] lines)
-        {
-            if (lines == null || lines.Length == 0) return string.Empty;
-            return lines[UnityEngine.Random.Range(0, lines.Length)];
-        }
-
-        public void SetLineSet(BossLineSet lineSet) => _lines = lineSet;
-
-        private void SpeakRandom(string[] array, BossExpression expr, TargetData captured = null, TargetData expected = null, bool highPriority = false)
+        private void SpeakRandom(string[] array, TargetData captured = null)
         {
             if (array == null || array.Length == 0) return;
-            var template = array[UnityEngine.Random.Range(0, array.Length)];
-            if (captured != null) template = template.Replace("{captured}", captured.DisplayName.ToUpper());
-            if (expected != null) template = template.Replace("{expected}", expected.DisplayName.ToUpper());
-            Speak(template, expr, highPriority);
-        }
-
-        private void HandleLifeLost(int livesLeft)
-        {
-            if (_lines == null) return;
-            var array = livesLeft <= 1 ? _lines.LifeLostTier3Lines : (livesLeft <= 3 ? _lines.LifeLostTier2Lines : _lines.LifeLostTier1Lines);
-            var expr = livesLeft <= 1 ? BossExpression.Furious : (livesLeft <= 3 ? BossExpression.Angry : BossExpression.Annoyed);
-            SpeakRandom(array, expr, highPriority: true);
+            var text = array[UnityEngine.Random.Range(0, array.Length)];
+            if (captured != null) text = text.Replace("{captured}", captured.DisplayName.ToUpper());
+            Speak(text);
         }
     }
 }

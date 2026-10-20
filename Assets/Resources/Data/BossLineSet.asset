@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 783b5b6aa362bcf128fa19563a0dde7b, type: 3}
+  m_Name: BossLineSet
+  m_EditorClassIdentifier: Assembly-CSharp::VARG.Humor.BossLineSet
+  _correctCaptureLines:
+  - "Excellent. One more for the quota and one less headache on my report."
+  - "Logged into inventory! Who knew you actually knew how to read the briefing?!"
+  - "Correct! Research and Development appreciates this specimen's cooperation."
+  - "Not bad, rookie. Keep this up and I might actually sign off on your internship."
+  _outOfOrderCaptureLines:
+  - "That is completely out of order! Did you leave your memory back on Earth?!"
+  - "{captured} right now?! That is NOT the sequence I gave you!"
+  - "Wrong order, rookie! Were you even paying attention during the briefing?!"
+  - "Sequence broken! You had ONE job: remember the exact order!"
+  - "That was NOT the next target! Your memory is worse than a goldfish!"
+  _notInListCaptureLines:
+  - "{captured}?! THAT WAS NOT ON THE LIST! Are you trying to get fired?!"
+  - "Why is there a {captured} on board?! I expressly forbade that specimen!"
+  - "Diplomatic disaster! Drop that {captured} before the Galactic Federation finds out!"
+  - "I did not authorize abducting a {captured}! That is a Class-B intergalactic offense!"
+  _correctCageLines:
+  - "Right cage. One less problem in the sorting bay."
+  - "Specimen secured successfully. The smell in the cargo hold is finally subsiding."
+  - "Perfect! Correct sorting without violating intergalactic safety codes."
+  _wrongCageLines:
+  - "You put {captured} in the wrong cage! The creature was almost eaten alive!"
+  - "Wrong cage! One more blunder like that and repairs come out of your paycheck!"
+  - "That is not a habitat, that is a biological disaster! Wrong cage!"
+  _correctDiscardLines:
+  - "Correct discard. Space scrap recycled according to Cosmic ISO regulations."
+  - "Successfully shredded. Less dead weight on the ship."
+  _wrongDiscardLines:
+  - "You threw {captured} into the shredder?! THAT WAS A MISSION TARGET, MORON!"
+  - "Unauthorized discard! Stop dumping company quota into the incinerator!"
+  - "You just disintegrated valuable research! My blood pressure is reaching orbit!"
+  _victoryLines:
+  - "Mission accomplished! Time to punch the clock and pretend we worked hard."
+  - "Quota met! You escaped a formal write-up for today."
+  - "Excellent work. The quarterly report will look great for the High Council."
+  _defeatLines:
+  - "Unacceptable failure ({reason})! Your performance review is going straight into the incinerator!"
+  - "End of the line! The intern managed to fail the simplest operation in the universe."
+  - "Mission failed: {reason}. I will pretend I never met you at the Star Tribunal."

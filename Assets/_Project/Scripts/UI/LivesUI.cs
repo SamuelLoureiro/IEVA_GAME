@@ -16,6 +16,17 @@ namespace VARG.UI
         [SerializeField] private Color _activeLifeColor = new Color(0.2f, 1f, 0.5f);
         [SerializeField] private Color _lostLifeColor = new Color(0.3f, 0.3f, 0.3f, 0.35f);
 
+        private void Awake()
+        {
+            if (_livesText == null) _livesText = GetComponentInChildren<TextMeshProUGUI>();
+        }
+
+        public void Configure(TextMeshProUGUI livesText)
+        {
+            _livesText = livesText;
+            RefreshLivesDisplay();
+        }
+
         private void OnEnable()
         {
             if (LivesManager.HasInstance) LivesManager.Instance.OnLivesChanged += HandleLivesChanged;
@@ -38,7 +49,11 @@ namespace VARG.UI
         {
             var currentLives = LivesManager.HasInstance ? LivesManager.Instance.Lives : LivesManager.DefaultStartingLives;
 
-            if (_livesText != null) _livesText.text = $"Lives: {currentLives}";
+            if (_livesText != null)
+            {
+                _livesText.text = $"LIVES: {currentLives}";
+                _livesText.color = currentLives <= 1 ? new Color(1f, 0.25f, 0.25f) : (currentLives <= 2 ? new Color(1f, 0.85f, 0.2f) : _activeLifeColor);
+            }
 
             if (_lifeIcons != null)
             {

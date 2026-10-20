@@ -24,6 +24,30 @@ namespace VARG.Sorting
         public event Action<int, int> OnItemCountsChanged;
         protected override bool IsPersistent => false;
 
+        protected override void Awake()
+        {
+            base.Awake();
+            EnsureCaptureBoxSpawner();
+        }
+
+        private void EnsureCaptureBoxSpawner()
+        {
+            var spawner = FindFirstObjectByType<CaptureBoxSpawner>();
+            if (spawner == null)
+            {
+                var anchor = GameObject.Find("SpawnAnchor");
+                if (anchor == null)
+                {
+                    anchor = new GameObject("SpawnAnchor");
+                    anchor.transform.position = new Vector3(0f, 0.35f, 1.2f);
+                }
+
+                spawner = anchor.GetComponent<CaptureBoxSpawner>() ?? anchor.AddComponent<CaptureBoxSpawner>();
+            }
+
+            spawner.SpawnExistingItems();
+        }
+
         private void Start()
         {
             _grabController = FindFirstObjectByType<GrabController>();
