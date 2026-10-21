@@ -8,7 +8,7 @@ namespace VARG.Player
     {
         [SerializeField] private Camera _playerCamera;
         [SerializeField] private float _range = 15f;
-        [SerializeField] private LayerMask _interactableLayer = ~0;
+        [SerializeField] private LayerMask _blockingLayers = ~0;
 
         private IPlayerInput _playerInput;
         private IInteractable _currentTarget;
@@ -32,12 +32,6 @@ namespace VARG.Player
             }
 
             _playerInput = InputManager.HasInstance ? InputManager.Instance.Player : new KeyboardMouseInput();
-
-            var interactableLayerIndex = LayerMask.NameToLayer("Interactable");
-            if (interactableLayerIndex != -1)
-            {
-                _interactableLayer = 1 << interactableLayerIndex;
-            }
         }
 
         private void Update()
@@ -53,7 +47,7 @@ namespace VARG.Player
             var ray = new Ray(_playerCamera.transform.position, _playerCamera.transform.forward);
             IInteractable detectedInteractable = null;
 
-            if (Physics.Raycast(ray, out _lastHit, _range, _interactableLayer))
+            if (Physics.Raycast(ray, out _lastHit, _range, _blockingLayers, QueryTriggerInteraction.Ignore))
             {
                 detectedInteractable = _lastHit.collider.GetComponentInParent<IInteractable>();
                 if (detectedInteractable != null && !detectedInteractable.CanInteract)
