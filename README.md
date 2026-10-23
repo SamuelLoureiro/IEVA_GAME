@@ -198,6 +198,7 @@ Le fichier est situé à la racine du projet. S'il est absent, le jeu génère a
 **Prérequis :**
 * Le smartphone (Android ou iOS) et le PC doivent être **sur le même réseau Wi-Fi**.
 * Une application d'envoi de capteurs via OSC/UDP, telle que **MultiSense OSC** (recommandée) ou *ZIG SIM*.
+  * **Téléchargement Android (APK) :** [Télécharger l'APK MultiSense OSC](https://apkpure.com/multisense-osc/edu.polytechnique.multisense.release/download)
 
 **Connexion :**
 1. **Trouver l'adresse IP locale du PC :** `ipconfig` sous Windows (adresse IPv4, ex. `192.168.1.45`), `ip a` ou `ifconfig` sous Linux / macOS.
