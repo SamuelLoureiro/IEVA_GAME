@@ -32,7 +32,7 @@ Il existe 4 types d'animaux/cibles :
 Chaque niveau se compose de 5 étapes séquentielles :
 
 #### Étape 1 : Le Briefing du Patron (`01_BossBriefing`)
-* Le patron affiche sur un écran de style "tableur Excel" la liste ordonnée des cibles à capturer (ex. : *Vache → Poule → Vache → Cochon*).
+* Le patron transmet ses ordres par dialogue et présente une vitrine visuelle 3D temporaire (*TargetShowcaseUI*) affichant la séquence ordonnée des spécimens à capturer (ex. : *Vache → Poule → Vache → Cochon*).
 * **Une espèce est systématiquement interdite** lors de chaque niveau (elle n'apparaît pas dans la commande). Le joueur doit mémoriser la liste et déduire l'intrus.
 * La liste disparaît une fois le temps de consultation écoulé : le joueur doit **tout mémoriser**.
 * *Fonctionnalité avancée :* Il est également possible de charger des niveaux personnalisés directement depuis un fichier tableur CSV (`CustomLevel.csv`).
@@ -56,7 +56,7 @@ Chaque niveau se compose de 5 étapes séquentielles :
   * **4 Cages dédiées :** Chacune n'accepte qu'un quota précis correspondant strictement à la commande de la mission. Déposer le bon animal valide la cage.
   * **Broyeur de Rebuts (*Discard Bin*) :** Destiné aux animaux interdits et aux surplus capturés par erreur.
   * **Erreurs de tri :** Déposer un animal dans la mauvaise cage ou dépasser le quota le fait recracher avec une pénalité de temps (**−5 secondes**).
-  * **Erreur critique :** Jeter un animal requis dans le broyeur de rebuts le fait paniquer, sauter hors de la poubelle pour s'échapper au sol, et coûte **−1 vie** et **−5 secondes**.
+  * **Erreur critique :** Jeter un animal requis dans le broyeur de rebuts déclenche une alarme, le téléporte immédiatement au centre de la soute pour pouvoir être récupéré, et coûte **−1 vie** et **−5 secondes**.
 
 #### Étape 5 : Résultats & Évaluation (`05_Results`)
 * Affichage des résultats sous forme de rapport d'évaluation bureaucratique (graphique à barres type tableur).
@@ -148,9 +148,9 @@ Lucas a conçu l'épine dorsale architecturale du projet, la persistance des don
   * Scène intérieure du vaisseau avec générateur physique des miniatures d'animaux dans le bac central.
   * Système complet de saisie physique (*Grabbing*) en vue FPS : préhension d'objets sans traverser les murs, réglage de la distance à la molette, lancer dosé et surbrillance au survol.
   * Cages interactives avec vérification des quotas au relâchement, éjection comique des intrus (*spit*), et détection d'erreurs dans l'incinérateur.
-* **Scène de Briefing & Humour Bureaucratique (`01_BossBriefing`, `BossDialogueManager`, `BossLineSet`, `BossPopupUI`, `AlienVoice`) :**
-  * Interface de présentation de mission avec effet d'écriture à la machine à écrire (*TypewriterText*) et prévisualisation temporaire des cibles.
-  * Système de répliques comiques générées aléatoirement via *shuffle bags*, avec insertion dynamique de variables contextuelles, montée en énervement du chef selon les vies perdues, et synthèse d'onomatopées extraterrestres procédurales (`AlienVoice`).
+* **Scène de Briefing & Humour Bureaucratique (`01_BossBriefing`, `BossDialogueManager`, `BossLineSet`, `BossPopupUI`, `DialogueBox`) :**
+  * Interface de présentation de mission avec boîte de dialogue narrative (`DialogueBox`), avatar du patron et vitrine visuelle 3D temporaire des cibles (`TargetShowcaseUI`).
+  * Système de répliques comiques générées aléatoirement via *shuffle bags*, avec insertion dynamique de variables contextuelles, réprimandes réactives aux erreurs de capture et pertes de vies, et retours sonores extraterrestres intégrés (`BossDialogueManager.PlayVoice`).
 
 ---
 
@@ -171,7 +171,7 @@ Le tableau ci-dessous atteste de la réalisation de l'ensemble des 13 étapes de
 | **9** | **Trigger box & Colliders pour tester l'objet** | `Cage`, `DiscardBin`, `SortingManager`, validation des quotas | **Lucas** |
 | **10** | **Timer pour gagner ou perdre du temps** | `TimerManager`, `TimerUI` *(Choix de design : perte de temps et système de dette)* | **Lucas & Samuel** |
 | **11** | **Scène/Menu avec animaux à chercher et mémoriser** | `01_BossBriefing`, `BriefingController`, `TargetShowcaseUI` | **Lucas** |
-| **12** | **Scripts d'humour** | `BossDialogueManager`, `BossLineSet`, `BossPopupUI`, `AlienVoice` | **Lucas** |
+| **12** | **Scripts d'humour** | `BossDialogueManager`, `BossLineSet`, `BossPopupUI`, `DialogueBox` | **Lucas** |
 | **13** | **Contrôles avec téléphone** | `MobileShipInput` (gyroscope, calibration, lissage) & `ShakeDetector` | **Samuel** |
 
 ---
