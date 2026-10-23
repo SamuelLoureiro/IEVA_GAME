@@ -59,6 +59,7 @@ namespace VARG.UI
 
             var isVictory = GameManager.HasInstance ? GameManager.Instance.IsVictory : CurrentResult.RemainingLives > 0;
             var level = GameManager.HasInstance ? GameManager.Instance.CurrentLevel : 1;
+            var isCustom = GameManager.HasInstance && GameManager.Instance.IsCustomSpreadsheetLevel;
 
             if (_titleText != null)
             {
@@ -68,9 +69,18 @@ namespace VARG.UI
 
             if (_subtitleText != null)
             {
-                _subtitleText.text = isVictory
-                    ? (level >= GameManager.MaxLevel ? "Campaign Complete! You are the Master of Abduction!" : $"Level {level} Performance Summary")
-                    : $"Level {level} - Mission Failed";
+                if (isCustom)
+                {
+                    _subtitleText.text = isVictory
+                        ? "Custom Spreadsheet Mission Complete! Quota Achieved!"
+                        : "Custom Spreadsheet Mission - Failed";
+                }
+                else
+                {
+                    _subtitleText.text = isVictory
+                        ? (level >= GameManager.MaxLevel ? "Campaign Complete! You are the Master of Abduction!" : $"Level {level} Performance Summary")
+                        : $"Level {level} - Mission Failed";
+                }
             }
 
             if (_captureTimeText != null) _captureTimeText.text = FormatTime(CurrentResult.RemainingCaptureTime);
@@ -84,21 +94,22 @@ namespace VARG.UI
             if (_livesBar != null) _livesBar.fillAmount = Mathf.Clamp01(CurrentResult.RemainingLives / 5f);
             if (_accuracyBar != null) _accuracyBar.fillAmount = Mathf.Max(0f, 1f - (CurrentResult.ErrorsCount * 0.25f));
 
-            if (_nextLevelButton != null) _nextLevelButton.gameObject.SetActive(isVictory);
+            var showNextLevel = isVictory && !isCustom;
+            if (_nextLevelButton != null) _nextLevelButton.gameObject.SetActive(showNextLevel);
             if (_retryButton != null) _retryButton.gameObject.SetActive(true);
             if (_mainMenuButton != null) _mainMenuButton.gameObject.SetActive(true);
 
-            UpdateButtonPositions(isVictory);
+            UpdateButtonPositions(showNextLevel);
         }
 
-        private void UpdateButtonPositions(bool isVictory)
+        private void UpdateButtonPositions(bool showNextLevel)
         {
             if (_mainMenuButton == null || _retryButton == null) return;
 
             var menuRect = _mainMenuButton.GetComponent<RectTransform>();
             var retryRect = _retryButton.GetComponent<RectTransform>();
 
-            if (isVictory && _nextLevelButton != null)
+            if (showNextLevel && _nextLevelButton != null)
             {
                 var nextRect = _nextLevelButton.GetComponent<RectTransform>();
                 if (menuRect != null) menuRect.anchoredPosition = new Vector2(-235f, 0f);

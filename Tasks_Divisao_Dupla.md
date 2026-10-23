@@ -164,7 +164,7 @@ Cada tarefa tem: **Arquivos** · **Depende de** · **Pronto quando** (critério 
   - Pronto quando: Briefing → voo → pousar com E → Caça.
 - [x] **X2 [A]** Teste rápido de viabilidade (*spike*) da ponte celular ↔ jogo (pode ser antecipado para quando o professor responder).
 - [x] **X3 [A]** `MobileShipInput` (giroscópio com calibração, deadzone, suavização) + `ShakeDetector` (descer).
-- [ ] **X4 [B]** `GyroCalibrationUI` + visual dos controles no tema planilha.
+- [x] **X4 [B]** `GyroCalibrationUI` + visual dos controles no tema planilha.
 - [ ] **X5 [A+B]** Teste no aparelho e checagem de tamanho final.
 
 ---

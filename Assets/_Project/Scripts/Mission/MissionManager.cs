@@ -79,6 +79,8 @@ namespace VARG.Mission
             }
         }
 
+        public void ResetProgress() => CurrentIndex = 0;
+
         public TargetData GetTargetDataForType(TargetType type)
         {
             if (_availableTargets == null) return null;

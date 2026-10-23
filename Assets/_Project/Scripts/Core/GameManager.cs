@@ -58,9 +58,16 @@ namespace VARG.Core
             LivesManager.Instance?.ResetLives(_penaltyConfig != null ? _penaltyConfig.StartingLives : 5);
             TimerManager.Instance?.ResetTimers();
 
-            if (MissionManager.Instance != null && config != null && !IsCustomSpreadsheetLevel)
+            if (MissionManager.Instance != null)
             {
-                MissionManager.Instance.GenerateMission(config);
+                if (!IsCustomSpreadsheetLevel && config != null)
+                {
+                    MissionManager.Instance.GenerateMission(config);
+                }
+                else if (IsCustomSpreadsheetLevel)
+                {
+                    MissionManager.Instance.ResetProgress();
+                }
             }
 
             if (SceneLoader.Instance != null) SceneLoader.Instance.Load(BriefingSceneName);
@@ -129,6 +136,7 @@ namespace VARG.Core
         public void GoToMainMenu()
         {
             ClearCustomSpreadsheetLevel();
+            CurrentLevel = 1;
             TimerManager.Instance?.StopAllTimers();
             if (SceneLoader.Instance != null) SceneLoader.Instance.Load(BootSceneName);
             else UnityEngine.SceneManagement.SceneManager.LoadScene(BootSceneName);

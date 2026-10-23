@@ -91,8 +91,14 @@ namespace VARG.UI
         public void PlayCampaign()
         {
             SetStatus("Starting Campaign...", new Color(0.35f, 0.90f, 0.55f));
-            GameManager.Instance?.ClearCustomSpreadsheetLevel();
-            StartBriefing();
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.RestartCampaign();
+            }
+            else
+            {
+                StartBriefing();
+            }
         }
 
         public void PlayCustomSpreadsheet()

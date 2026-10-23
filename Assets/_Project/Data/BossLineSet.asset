@@ -13,41 +13,80 @@ MonoBehaviour:
   m_Name: BossLineSet
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Humor.BossLineSet
   _correctCaptureLines:
-  - "Excellent. One more for the quota and one less headache on my report."
-  - "Logged into inventory! Who knew you actually knew how to read the briefing?!"
-  - "Correct! Research and Development appreciates this specimen's cooperation."
-  - "Not bad, rookie. Keep this up and I might actually sign off on your internship."
+  - Target logged. Look at that, the intern can actually read. Wonders never cease.
+  - Specimen bagged. One cell closer to filling my monthly spreadsheet quota.
+  - Acceptable. Keep this up and I might consider unlocking the break room vending
+    machine.
+  - Miraculously correct. Research & Development won't have an excuse to file an
+    HR complaint today.
+  - "Logged into cargo. Don't get cocky, rookie\u2014you're still getting the minimum
+    credit stipend."
   _outOfOrderCaptureLines:
-  - "That is completely out of order! Did you leave your memory back on Earth?!"
-  - "{captured} right now?! That is NOT the sequence I gave you!"
-  - "Wrong order, rookie! Were you even paying attention during the briefing?!"
-  - "Sequence broken! You had ONE job: remember the exact order!"
-  - "That was NOT the next target! Your memory is worse than a goldfish!"
+  - '{captured}?! Did I ask you to abduct your mother?! Stick to the spreadsheet
+    sequence, rookie!'
+  - A {captured} right now?! You just corrupted column B! The unpaid intern before
+    you at least knew how to count to three!
+  - Out of order! I explicitly highlighted cell C4 in yellow! Do Earthlings have
+    color blindness or just general incompetence?!
+  - Sequence broken! That {captured} goes into the next batch! My blood pressure
+    just broke orbital velocity!
+  - Wrong order! You're making me manually sort this data table in Excel, and I don't
+    get paid overtime for that!
   _notInListCaptureLines:
-  - "{captured}?! THAT WAS NOT ON THE LIST! Are you trying to get fired?!"
-  - "Why is there a {captured} on board?! I expressly forbade that specimen!"
-  - "Diplomatic disaster! Drop that {captured} before the Galactic Federation finds out!"
-  - "I did not authorize abducting a {captured}! That is a Class-B intergalactic offense!"
+  - '{captured}?! That species is strictly FORBIDDEN! Are you trying to get our division
+    audited by the Galactic Union?!'
+  - Why is there a {captured} in my cargo hold?! If intergalactic labor inspectors
+    see this, my quarterly bonus is incinerated!
+  - A forbidden {captured}?! Drop that biohazard right now before I bill your family
+    for the hazardous disposal fee!
+  - I expressly banned {captured}! One more illegal specimen and I'm charging you
+    for the ship's oxygen subscription!
+  - Diplomatic catastrophe! You just abducted an unsanctioned {captured}! Quick,
+    throw it out before HR drafts a write-up!
   _correctCageLines:
-  - "Right cage. One less problem in the sorting bay."
-  - "Specimen secured successfully. The smell in the cargo hold is finally subsiding."
-  - "Perfect! Correct sorting without violating intergalactic safety codes."
+  - Right habitat. The smell in cargo is finally dropping to acceptable legal thresholds.
+  - Specimen secured according to Galactic ISO-9001 regulations. How painfully bureaucratic.
+  - In the cage. Congratulations on doing the bare minimum requirement of your job
+    description.
+  - Target locked in. One less lawsuit waiting to happen during transit.
   _wrongCageLines:
-  - "You put {captured} in the wrong cage! The creature was almost eaten alive!"
-  - "Wrong cage! One more blunder like that and repairs come out of your paycheck!"
-  - "That is not a habitat, that is a biological disaster! Wrong cage!"
+  - You shoved a {captured} into the wrong cage! If they cross-breed, I'll have to
+    fill out 40 pages of genetic incident reports!
+  - Wrong cage! That creature was about to turn your quota into its lunch! Repairs
+    are coming out of your paycheck!
+  - Wrong habitat, idiot! Stop mixing species before the Galactic Health Administration
+    shuts down our wing!
+  - Are you blind?! Put the {captured} in its assigned pen before I reassign you
+    to toxic waste filtration!
   _correctDiscardLines:
-  - "Correct discard. Space scrap recycled according to Cosmic ISO regulations."
-  - "Successfully shredded. Less dead weight on the ship."
+  - Recycled. Unsanctioned biomass shredded without leaving a paper trail. Clean
+    work.
+  - Straight to the incinerator. If anyone asks, that specimen never legally existed.
+  - Shredded. Dead weight removed, ship fuel efficiency restored by 0.002%.
   _wrongDiscardLines:
-  - "You threw {captured} into the shredder?! THAT WAS A MISSION TARGET, MORON!"
-  - "Unauthorized discard! Stop dumping company quota into the incinerator!"
-  - "You just disintegrated valuable research! My blood pressure is reaching orbit!"
+  - You just threw our mission target into the incinerator?! YOU DISINTEGRATED COMPANY
+    QUOTA, MORON!
+  - Stop dumping our profit margins into the shredder! I will literally deduct that
+    {captured} from your soul!
+  - You incinerated a verified quota specimen! My career just flashed before my ocular
+    sensory organs!
+  - That was an approved abduction, not garbage! I'm canceling your weekend and debiting
+    your life insurance!
   _victoryLines:
-  - "Mission accomplished! Time to punch the clock and pretend we worked hard."
-  - "Quota met! You escaped a formal write-up for today."
-  - "Excellent work. The quarterly report will look great for the High Council."
+  - Quota achieved! I'm putting my name on the header of this report and telling
+    Central Command I did it all myself.
+  - Mission complete. Punch your time card and get out of my sight before I find
+    another assignment for you.
+  - All targets sorted. The High Council will be thrilled with MY leadership. You
+    may have one complementary hydration cube.
+  - We met the deadline! Go clean the engine vents while I attend the executive victory
+    banquet.
   _defeatLines:
-  - "Unacceptable failure ({reason})! Your performance review is going straight into the incinerator!"
-  - "End of the line! The intern managed to fail the simplest operation in the universe."
-  - "Mission failed: {reason}. I will pretend I never met you at the Star Tribunal."
+  - Critical failure ({reason})! Your internship has been terminated and your resume
+    has been launched into the nearest star!
+  - "End of the line ({reason})! I'm expensing your rescue pod from your final paycheck\u2014which
+    is zero!"
+  - 'Mission failed: {reason}. If the Federation asks, I have never seen you, spoken
+    to you, or signed your work visa.'
+  - Total operational collapse ({reason})! I am recommending to the Board that you
+    be permanently replaced by a spreadsheet macro!

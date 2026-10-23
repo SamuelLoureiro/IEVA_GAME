@@ -998,7 +998,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.9, y: 2, z: 0.9}
+  m_Size: {x: 1.1, y: 2, z: 1.1}
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &1351162171820301766
 GameObject:
@@ -7358,6 +7358,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6077119827642655334, guid: ed550bb285f2d793ab326ed7de18d402, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8628089376795829992, guid: ed550bb285f2d793ab326ed7de18d402, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294950745
+      objectReference: {fileID: 0}
+    - target: {fileID: 8628089376795829992, guid: ed550bb285f2d793ab326ed7de18d402, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7376,6 +7388,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7285103955453859834}
     m_Modifications:
+    - target: {fileID: 2828618291842278901, guid: f072f84d2941ce1379126ad1c62ea806, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294950745
+      objectReference: {fileID: 0}
+    - target: {fileID: 2828618291842278901, guid: f072f84d2941ce1379126ad1c62ea806, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 5155436279412310197, guid: f072f84d2941ce1379126ad1c62ea806, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 7513889679013837727, guid: f072f84d2941ce1379126ad1c62ea806, type: 3}
       propertyPath: m_Name
       value: Cage_Cow
@@ -7500,6 +7524,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7285103955453859834}
     m_Modifications:
+    - target: {fileID: 2391703589996985001, guid: 843a705717bc932b996ecd1570ee60b3, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 3951510104581320007, guid: 843a705717bc932b996ecd1570ee60b3, type: 3}
       propertyPath: m_Name
       value: Cage_Chicken
@@ -7543,6 +7571,14 @@ PrefabInstance:
     - target: {fileID: 4327943882215142661, guid: 843a705717bc932b996ecd1570ee60b3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7270516378037538152, guid: 843a705717bc932b996ecd1570ee60b3, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294950745
+      objectReference: {fileID: 0}
+    - target: {fileID: 7270516378037538152, guid: 843a705717bc932b996ecd1570ee60b3, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7606,6 +7642,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cage_Pig
       objectReference: {fileID: 0}
+    - target: {fileID: 6354635839936855165, guid: 76a0012f84e7f79949eff20222bb803a, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294950745
+      objectReference: {fileID: 0}
+    - target: {fileID: 6354635839936855165, guid: 76a0012f84e7f79949eff20222bb803a, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 8531264959520791751, guid: 76a0012f84e7f79949eff20222bb803a, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7664,9 +7712,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2113369624159957221, guid: 6092c33b70d3ea98bade86bd7196435d, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294950745
+      objectReference: {fileID: 0}
+    - target: {fileID: 2113369624159957221, guid: 6092c33b70d3ea98bade86bd7196435d, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 5548189024309284974, guid: 6092c33b70d3ea98bade86bd7196435d, type: 3}
       propertyPath: m_Name
       value: Cage_Human
+      objectReference: {fileID: 0}
+    - target: {fileID: 7207372686490256738, guid: 6092c33b70d3ea98bade86bd7196435d, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
