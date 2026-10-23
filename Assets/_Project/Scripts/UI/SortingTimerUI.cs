@@ -75,12 +75,6 @@ namespace VARG.UI
             livesUI.Configure(tmp);
         }
 
-        public void Configure(TextMeshProUGUI timeText, TextMeshProUGUI itemsCountText)
-        {
-            _timeText = timeText;
-            _itemsCountText = itemsCountText;
-        }
-
         private void Update()
         {
             if (_timeText != null && TimerManager.Instance != null)

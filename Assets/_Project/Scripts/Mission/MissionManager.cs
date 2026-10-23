@@ -25,11 +25,6 @@ namespace VARG.Mission
         protected override void Awake()
         {
             base.Awake();
-            LoadDependenciesIfMissing();
-        }
-
-        private void LoadDependenciesIfMissing()
-        {
             if (_penaltyConfig == null)
             {
                 _penaltyConfig = Resources.Load<PenaltyConfig>("Data/PenaltyConfig");
@@ -38,7 +33,6 @@ namespace VARG.Mission
 
         public void GenerateMission(LevelConfig level)
         {
-            LoadDependenciesIfMissing();
             _requiredOrder.Clear();
             CurrentIndex = 0;
 
@@ -74,7 +68,6 @@ namespace VARG.Mission
 
         public void LoadCustomMission(IReadOnlyList<TargetType> targetSequence, TargetType forbiddenType)
         {
-            LoadDependenciesIfMissing();
             _requiredOrder.Clear();
             CurrentIndex = 0;
             ForbiddenType = forbiddenType;
@@ -140,14 +133,6 @@ namespace VARG.Mission
             LivesManager.Instance?.LoseLife();
             GameEvents.TriggerOutOfOrderCapture(captured, expected);
             return CaptureResult.OutOfOrder;
-        }
-
-        public void SetMissionDebug(List<TargetData> order, TargetType forbidden)
-        {
-            _requiredOrder.Clear();
-            _requiredOrder.AddRange(order);
-            ForbiddenType = forbidden;
-            CurrentIndex = 0;
         }
     }
 }

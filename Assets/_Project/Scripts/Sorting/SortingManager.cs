@@ -32,19 +32,7 @@ namespace VARG.Sorting
 
         private void EnsureCaptureBoxSpawner()
         {
-            var spawner = FindFirstObjectByType<CaptureBoxSpawner>();
-            if (spawner == null)
-            {
-                var anchor = GameObject.Find("SpawnAnchor");
-                if (anchor == null)
-                {
-                    anchor = new GameObject("SpawnAnchor");
-                    anchor.transform.position = new Vector3(0f, 0.35f, 1.2f);
-                }
-
-                spawner = anchor.GetComponent<CaptureBoxSpawner>() ?? anchor.AddComponent<CaptureBoxSpawner>();
-            }
-
+            var spawner = FindFirstObjectByType<CaptureBoxSpawner>() ?? gameObject.AddComponent<CaptureBoxSpawner>();
             spawner.SpawnExistingItems();
         }
 

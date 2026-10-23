@@ -21,18 +21,6 @@ namespace VARG.Sorting
             _lineRenderer.enabled = false;
         }
 
-        public void Configure(LineRenderer lineRenderer, Transform muzzlePoint)
-        {
-            _lineRenderer = lineRenderer;
-            _muzzlePoint = muzzlePoint;
-
-            if (_lineRenderer != null)
-            {
-                _lineRenderer.positionCount = 2;
-                _lineRenderer.enabled = false;
-            }
-        }
-
         public void UpdateBeam(Vector3 currentItemPos)
         {
             if (_lineRenderer == null) return;

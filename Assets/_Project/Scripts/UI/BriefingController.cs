@@ -32,22 +32,6 @@ namespace VARG.UI
             InitializeBriefing();
         }
 
-        public void Configure(
-            DialogueBox dialogueBox,
-            TargetShowcaseUI showcaseUI,
-            TextMeshProUGUI levelTitleText,
-            GameObject bossAvatar = null,
-            Button spreadsheetButton = null,
-            TextMeshProUGUI spreadsheetButtonText = null)
-        {
-            _dialogueBox = dialogueBox;
-            _showcaseUI = showcaseUI;
-            _levelTitleText = levelTitleText;
-            _bossAvatar = bossAvatar;
-            _spreadsheetButton = spreadsheetButton;
-            _spreadsheetButtonText = spreadsheetButtonText;
-        }
-
         private void InitializeBriefing()
         {
             var currentLevel = GameManager.Instance != null ? GameManager.Instance.CurrentLevel : 1;
@@ -67,7 +51,7 @@ namespace VARG.UI
 
             if (_spreadsheetButtonText != null && GameManager.Instance != null && GameManager.Instance.IsCustomSpreadsheetLevel)
             {
-                _spreadsheetButtonText.text = "<b>✔ SPREADSHEET ACTIVE</b>";
+                _spreadsheetButtonText.text = "<b>[SPREADSHEET ACTIVE]</b>";
             }
 
             if (_showcaseUI != null)
@@ -165,7 +149,7 @@ namespace VARG.UI
             textRect.sizeDelta = Vector2.zero;
 
             _spreadsheetButtonText = textObj.GetComponent<TextMeshProUGUI>();
-            _spreadsheetButtonText.text = "<b>📄 SPREADSHEET LEVEL</b>";
+            _spreadsheetButtonText.text = "<b>[SPREADSHEET LEVEL]</b>";
             _spreadsheetButtonText.fontSize = 15;
             _spreadsheetButtonText.alignment = TextAlignmentOptions.Center;
             _spreadsheetButtonText.color = new Color(0.40f, 0.88f, 0.95f, 1f);
@@ -177,8 +161,7 @@ namespace VARG.UI
         {
             if (!SpreadsheetLevelLoader.TryLoadCustomLevel(out var levelData, out var statusMessage))
             {
-                _dialogueBox?.Say(_bossSpeakerName, $"Erro na planilha da matriz: {statusMessage}", null);
-                Debug.LogWarning($"[BriefingController] {statusMessage}");
+                _dialogueBox?.Say(_bossSpeakerName, $"Spreadsheet error: {statusMessage}", null);
                 return;
             }
 
@@ -196,7 +179,7 @@ namespace VARG.UI
             MissionManager.Instance?.LoadCustomMission(levelData.TargetSequence, levelData.ForbiddenTarget);
 
             if (_levelTitleText != null) _levelTitleText.text = "CAPTURE MISSION  |  CUSTOM SPREADSHEET LEVEL";
-            if (_spreadsheetButtonText != null) _spreadsheetButtonText.text = "<b>✔ SPREADSHEET LOADED</b>";
+            if (_spreadsheetButtonText != null) _spreadsheetButtonText.text = "<b>[SPREADSHEET LOADED]</b>";
 
             if (!_isBossInCorner)
             {
@@ -217,8 +200,6 @@ namespace VARG.UI
 
                 _dialogueBox?.Say(_bossSpeakerName, $"Spreadsheet approved! Memorize the {levelData.TargetSequence.Count} targets! {levelData.ForbiddenTarget.ToString().ToUpper()} remains FORBIDDEN!", null);
             }
-
-            Debug.Log($"[BriefingController] {statusMessage}");
         }
 
         private void OnStage2Finished()

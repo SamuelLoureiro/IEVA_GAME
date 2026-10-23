@@ -53,10 +53,6 @@ namespace VARG.Targets
             {
                 MissionManager.Instance.ValidateCapture(_data);
             }
-            else
-            {
-                Debug.Log($"[Target] Captured without MissionManager: {_data?.DisplayName ?? name}");
-            }
         }
     }
 }

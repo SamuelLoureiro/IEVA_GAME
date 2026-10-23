@@ -61,9 +61,5 @@ namespace VARG.Sorting
             _rb.linearVelocity = delta * followForce;
             _rb.angularVelocity = Vector3.Lerp(_rb.angularVelocity, Vector3.zero, Time.fixedDeltaTime * 10f);
         }
-
-        public void SetHighlight(bool enable)
-        {
-        }
     }
 }

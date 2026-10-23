@@ -45,15 +45,6 @@ namespace VARG.Sorting
             _fallbackInput = new KeyboardMouseInput();
         }
 
-        public void Configure(Camera playerCamera, TractorBeamVisual beamVisual = null)
-        {
-            _playerCamera = playerCamera;
-            if (beamVisual != null)
-            {
-                _beamVisual = beamVisual;
-            }
-        }
-
         private void Update()
         {
             if (_playerCamera == null) return;

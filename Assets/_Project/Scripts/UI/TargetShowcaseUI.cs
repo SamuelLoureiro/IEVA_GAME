@@ -47,26 +47,6 @@ namespace VARG.UI
             }
         }
 
-        public void Configure(GameObject timerPanel, TextMeshProUGUI countdownText, Image fillBar, Button confirmButton, Transform showcaseAnchor = null)
-        {
-            _timerPanel = timerPanel;
-            _timerCountdownText = countdownText;
-            _timerFillBar = fillBar;
-            _confirmButton = confirmButton;
-            _showcaseAnchor = showcaseAnchor;
-
-            if (_timerPanel != null)
-            {
-                _timerPanel.SetActive(false);
-            }
-
-            if (_confirmButton != null)
-            {
-                _confirmButton.onClick.RemoveListener(ConfirmAndProceed);
-                _confirmButton.onClick.AddListener(ConfirmAndProceed);
-            }
-        }
-
         private void Update()
         {
             if (!gameObject.activeInHierarchy || _isCompleted || _countdownCoroutine == null) return;
@@ -153,7 +133,7 @@ namespace VARG.UI
             var count = order.Count;
             if (count == 0) return;
 
-            var (spacing, scale) = CalculateLayout(count);
+            var spacing = count <= 1 ? 0f : Mathf.Clamp(7.0f / (count - 1), 1.6f, _modelSpacing);
             var startX = -(count - 1) * 0.5f * spacing;
             var anchor = _showcaseAnchor != null ? _showcaseAnchor.position : _defaultAnchorPosition;
 
@@ -164,53 +144,30 @@ namespace VARG.UI
 
                 var pos = anchor + new Vector3(startX + i * spacing, 0f, 0f);
                 var prefab = target.MiniPrefab != null ? target.MiniPrefab : target.Prefab;
+                if (prefab == null) continue;
 
-                if (prefab != null)
+                var instance = Instantiate(prefab, pos, Quaternion.Euler(0f, 180f, 0f));
+                instance.name = $"Showcase_{i + 1}_{target.name}";
+                instance.transform.SetParent(transform, true);
+                instance.transform.localScale = Vector3.one * _modelScale;
+
+                if (instance.TryGetComponent<Rigidbody>(out var rb))
                 {
-                    var rot = Quaternion.Euler(0f, 180f, 0f);
-                    if (Camera.main != null)
-                    {
-                        var dirToCam = Camera.main.transform.position - pos;
-                        dirToCam.y = 0f;
-                        if (dirToCam.sqrMagnitude > 0.001f)
-                        {
-                            rot = Quaternion.LookRotation(dirToCam);
-                        }
-                    }
-
-                    var instance = Instantiate(prefab, pos, rot);
-                    instance.name = $"Showcase_{i + 1}_{target.name}";
-                    instance.transform.SetParent(transform, true);
-                    instance.transform.localScale = Vector3.one * scale;
-
-                    var rb = instance.GetComponent<Rigidbody>();
-                    if (rb != null)
-                    {
-                        rb.isKinematic = true;
-                        rb.useGravity = false;
-                    }
-
-                    var colliders = instance.GetComponentsInChildren<Collider>();
-                    foreach (var col in colliders)
-                    {
-                        col.enabled = false;
-                    }
-
-                    var sortable = instance.GetComponent<Sorting.SortableItem>();
-                    if (sortable != null) Destroy(sortable);
-
-                    var grabbable = instance.GetComponent<Sorting.Grabbable>();
-                    if (grabbable != null) Destroy(grabbable);
-
-                    _spawnedShowcaseObjects.Add(instance);
+                    rb.isKinematic = true;
+                    rb.useGravity = false;
                 }
-            }
-        }
 
-        private (float spacing, float scale) CalculateLayout(int count)
-        {
-            var spacing = count <= 1 ? 0f : Mathf.Clamp(7.0f / (count - 1), 1.6f, _modelSpacing);
-            return (spacing, _modelScale);
+                var colliders = instance.GetComponentsInChildren<Collider>();
+                for (var c = 0; c < colliders.Length; c++)
+                {
+                    colliders[c].enabled = false;
+                }
+
+                if (instance.TryGetComponent<Sorting.SortableItem>(out var sortable)) Destroy(sortable);
+                if (instance.TryGetComponent<Sorting.Grabbable>(out var grabbable)) Destroy(grabbable);
+
+                _spawnedShowcaseObjects.Add(instance);
+            }
         }
 
         private IEnumerator MemoryCountdownRoutine(float duration)

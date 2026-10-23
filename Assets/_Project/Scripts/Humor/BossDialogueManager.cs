@@ -15,16 +15,10 @@ namespace VARG.Humor
         [SerializeField] private AudioSource _audioSource;
         [SerializeField] private AudioClip _bossVoiceClip;
 
-        public static event Action<string> OnBossSpokeStatic;
-        public event Action<string> OnBossSpoke;
-
         public BossLineSet Lines => _lines;
         public string LastSpokenLine { get; private set; }
 
         private float _nextAllowedSpeechTime;
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStaticEvents() => OnBossSpokeStatic = null;
 
         protected override void Awake()
         {
@@ -89,9 +83,6 @@ namespace VARG.Humor
             _nextAllowedSpeechTime = Time.time + _minCooldown;
 
             PlayVoice();
-
-            OnBossSpoke?.Invoke(text);
-            OnBossSpokeStatic?.Invoke(text);
             BossPopupUI.Show(text);
         }
 

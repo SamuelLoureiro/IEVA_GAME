@@ -14,11 +14,6 @@ namespace VARG.Sorting
             }
         }
 
-        public void Configure(Cage cage)
-        {
-            _cage = cage;
-        }
-
         private void OnTriggerStay(Collider other)
         {
             if (_cage != null)

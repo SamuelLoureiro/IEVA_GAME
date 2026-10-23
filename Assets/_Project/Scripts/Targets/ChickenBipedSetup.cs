@@ -53,7 +53,6 @@ namespace VARG.Targets
         {
             HideTransforms();
 
-            // Center the two remaining legs to make a balanced biped stride
             if (_legR != null)
             {
                 var pos = _legR.localPosition;

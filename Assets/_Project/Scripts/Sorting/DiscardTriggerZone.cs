@@ -14,11 +14,6 @@ namespace VARG.Sorting
             }
         }
 
-        public void Configure(DiscardBin bin)
-        {
-            _bin = bin;
-        }
-
         private void OnTriggerStay(Collider other)
         {
             if (_bin != null)

@@ -15,14 +15,7 @@ namespace VARG.Sorting
 
         public IReadOnlyList<GameObject> SpawnedObjects => _spawnedObjects;
 
-        private void Awake()
-        {
-            if (_spawnAnchor == null)
-            {
-                var found = transform.Find("SpawnAnchor");
-                _spawnAnchor = found != null ? found : transform;
-            }
-        }
+        private static readonly Vector3 DefaultSpawnCenter = new(0f, 0.35f, 1.2f);
 
         private void Start()
         {
@@ -80,7 +73,7 @@ namespace VARG.Sorting
         {
             if (item.Data == null || item.Data.MiniPrefab == null) return null;
 
-            var anchor = _spawnAnchor != null ? _spawnAnchor.position : transform.position;
+            var anchor = _spawnAnchor != null ? _spawnAnchor.position : DefaultSpawnCenter;
             var randomPos = new Vector3(
                 anchor.x + Random.Range(-_spawnAreaSize.x * 0.5f, _spawnAreaSize.x * 0.5f),
                 Mathf.Max(anchor.y, 0.35f),

@@ -52,7 +52,7 @@ namespace VARG.Mission
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"[SpreadsheetLevelLoader] Failed to create template file: {ex.Message}");
+                Debug.LogWarning($"Failed to create CSV template: {ex.Message}");
                 return false;
             }
         }
@@ -85,47 +85,40 @@ namespace VARG.Mission
                     if (parts.Count < 2) continue;
 
                     var key = NormalizeKey(parts[0]);
-                    if (key == "parameter" || key == "parametro" || key == "key") continue;
+                    if (key == "parameter" || key == "key") continue;
 
                     var value = parts[1].Trim().Trim('"');
 
                     switch (key)
                     {
                         case "targetsequence":
-                        case "sequenciaalvos":
                             ParseTargetSequence(value, data.TargetSequence);
                             foundSequence = data.TargetSequence.Count > 0;
                             break;
 
                         case "forbiddentarget":
-                        case "alvoproibido":
                             if (TryParseTargetType(value, out var forbidden)) data.ForbiddenTarget = forbidden;
                             break;
 
                         case "capturetime":
-                        case "tempocaca":
                             if (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var cTime))
                                 data.CaptureTime = Mathf.Max(10f, cTime);
                             break;
 
                         case "sortingtime":
-                        case "tempotriagem":
                             if (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var sTime))
                                 data.SortingTime = Mathf.Max(10f, sTime);
                             break;
 
                         case "extraspawns":
-                        case "alvosextras":
                             if (int.TryParse(value, out var extras)) data.ExtraSpawns = Mathf.Max(0, extras);
                             break;
 
                         case "forbiddenspawns":
-                        case "alvosproibidos":
                             if (int.TryParse(value, out var fSpawns)) data.ForbiddenSpawns = Mathf.Max(0, fSpawns);
                             break;
 
                         case "fleespeedmultiplier":
-                        case "velocidadefuga":
                             if (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var fSpeed))
                                 data.FleeSpeedMultiplier = Mathf.Clamp(fSpeed, 0.2f, 3.0f);
                             break;
@@ -196,10 +189,10 @@ namespace VARG.Mission
             var cleaned = name.Trim().ToLowerInvariant();
             switch (cleaned)
             {
-                case "cow": case "vaca": type = TargetType.Cow; return true;
-                case "pig": case "porco": type = TargetType.Pig; return true;
-                case "chicken": case "galinha": type = TargetType.Chicken; return true;
-                case "human": case "humano": type = TargetType.Human; return true;
+                case "cow": case "vache": type = TargetType.Cow; return true;
+                case "pig": case "cochon": type = TargetType.Pig; return true;
+                case "chicken": case "poule": type = TargetType.Chicken; return true;
+                case "human": case "humain": type = TargetType.Human; return true;
                 default: return Enum.TryParse(name.Trim(), true, out type);
             }
         }

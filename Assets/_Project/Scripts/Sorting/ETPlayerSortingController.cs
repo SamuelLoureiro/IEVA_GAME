@@ -46,12 +46,6 @@ namespace VARG.Sorting
             HandleCursorToggle();
         }
 
-        public void Configure(Transform cameraTransform, float moveSpeed = 3.5f)
-        {
-            _cameraTransform = cameraTransform;
-            _moveSpeed = moveSpeed;
-        }
-
         private void HandleLook()
         {
             if (_cameraTransform == null || Cursor.lockState != CursorLockMode.Locked)
@@ -59,7 +53,7 @@ namespace VARG.Sorting
                 return;
             }
 
-            var lookDelta = ReadLookInput();
+            var lookDelta = GetInput().Look;
             var yaw = lookDelta.x * _mouseSensitivity * 0.1f;
             var pitch = lookDelta.y * _mouseSensitivity * 0.1f;
 
@@ -72,7 +66,7 @@ namespace VARG.Sorting
 
         private void HandleMovement()
         {
-            var moveInput = ReadMoveInput();
+            var moveInput = GetInput().Move;
 
             var moveDirection = (transform.forward * moveInput.y + transform.right * moveInput.x).normalized;
             var motion = moveDirection * _moveSpeed;
@@ -97,16 +91,6 @@ namespace VARG.Sorting
                 var isLocked = Cursor.lockState == CursorLockMode.Locked;
                 LockCursor(!isLocked);
             }
-        }
-
-        private Vector2 ReadMoveInput()
-        {
-            return GetInput().Move;
-        }
-
-        private Vector2 ReadLookInput()
-        {
-            return GetInput().Look;
         }
 
         private IPlayerInput GetInput()

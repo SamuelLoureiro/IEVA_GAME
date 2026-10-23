@@ -55,13 +55,13 @@ Chaque niveau se compose de 5 étapes séquentielles :
 * Le joueur utilise un système de saisie physique (*Grabbing*) pour porter, approcher/éloigner ou lancer les créatures :
   * **4 Cages dédiées :** Chacune n'accepte qu'un quota précis correspondant strictement à la commande de la mission. Déposer le bon animal valide la cage.
   * **Broyeur de Rebuts (*Discard Bin*) :** Destiné aux animaux interdits et aux surplus capturés par erreur.
-  * **Erreurs de tri :** Déposer un animal dans la mauvaise cage ou dépasser le quota le fait recracher avec une pénalité de temps (**−5 secondes**).
+  * **Erreurs de tri :** Déposer un animal dans la mauvaise cage ou dépasser le quota le renvoie au centre de la soute avec une pénalité de temps (**−5 secondes**).
   * **Erreur critique :** Jeter un animal requis dans le broyeur de rebuts déclenche une alarme, le téléporte immédiatement au centre de la soute pour pouvoir être récupéré, et coûte **−1 vie** et **−5 secondes**.
 
 #### Étape 5 : Résultats & Évaluation (`05_Results`)
 * Affichage des résultats sous forme de rapport d'évaluation bureaucratique (graphique à barres type tableur).
 * Calcul du score en fonction du temps restant sur les deux chronomètres et des vies conservées.
-* Dialogue comique de conclusion du patron alien (félicitations condescendantes ou réprimande), puis passage au niveau suivant ou réessai.
+* Dialogue comique de conclusion du patron alien (félicitations condescendantes ou réprimande), puis passage au niveau suivant, réessai ou retour au menu principal.
 
 ---
 
@@ -146,11 +146,11 @@ Lucas a conçu l'épine dorsale architecturale du projet, la persistance des don
   * Parseur permettant de concevoir et modifier des niveaux complets directement dans un tableur (Excel, LibreOffice Calc) via fichier CSV.
 * **Tri Physique dans la Soute (`GrabController`, `Grabbable`, `CaptureBoxSpawner`, `Cage`, `DiscardBin`, `SortingManager`) :**
   * Scène intérieure du vaisseau avec générateur physique des miniatures d'animaux dans le bac central.
-  * Système complet de saisie physique (*Grabbing*) en vue FPS : préhension d'objets sans traverser les murs, réglage de la distance à la molette, lancer dosé et surbrillance au survol.
-  * Cages interactives avec vérification des quotas au relâchement, éjection comique des intrus (*spit*), et détection d'erreurs dans l'incinérateur.
+  * Système complet de saisie physique (*Grabbing*) en vue FPS : préhension d'objets sans traverser les murs, réglage de la distance à la molette, lancer dosé et faisceau tracteur visuel (`TractorBeamVisual`).
+  * Cages interactives avec vérification des quotas au relâchement, renvoi automatique des intrus au centre de la soute (`ReturnToCenter`), et détection d'erreurs dans l'incinérateur.
 * **Scène de Briefing & Humour Bureaucratique (`01_BossBriefing`, `BossDialogueManager`, `BossLineSet`, `BossPopupUI`, `DialogueBox`) :**
   * Interface de présentation de mission avec boîte de dialogue narrative (`DialogueBox`), avatar du patron et vitrine visuelle 3D temporaire des cibles (`TargetShowcaseUI`).
-  * Système de répliques comiques générées aléatoirement via *shuffle bags*, avec insertion dynamique de variables contextuelles, réprimandes réactives aux erreurs de capture et pertes de vies, et retours sonores extraterrestres intégrés (`BossDialogueManager.PlayVoice`).
+  * Système de répliques comiques choisies aléatoirement avec délai anti-spam (*cooldown*), insertion dynamique du nom de la cible capturée (`{captured}`), réprimandes réactives aux erreurs de capture et de tri, et retours sonores extraterrestres intégrés (`BossDialogueManager.PlayVoice`).
 
 ---
 
@@ -199,9 +199,8 @@ Le tableau ci-dessous atteste de la réalisation de l'ensemble des 13 étapes de
    * `Clic Gauche` : Tirer au pistolet réducteur (en ville) / Saisir et lâcher un objet (dans la soute).
    * `Clic Droit` : Lancer l'objet tenu (dans la soute).
    * `Molette Souris` : Rapprocher ou éloigner l'objet tenu.
-   * `E` : Interagir / Atterrir en ville lors de la phase de vol.
+   * `E` / `Espace` : Interagir / Avancer le Briefing / Atterrir en ville lors de la phase de vol.
    * `C` : Recalibrer la position neutre du gyroscope (phase de vol).
-   * `P` : Charger le niveau personnalisé `CustomLevel.csv` lors du Briefing.
 
 ---
 
@@ -256,15 +255,15 @@ Le fichier s'articule autour de 4 colonnes (`Parameter,Value,DefaultValue,Descri
 
 Il existe deux manières directes de charger et tester un niveau personnalisé :
 
-#### Méthode 1 : Depuis le Menu Principal
-1. Cliquer sur le bouton **`OPEN SPREADSHEET`** : le jeu ouvre directement le fichier `CustomLevel.csv` dans le tableur par défaut du système d'exploitation.
+#### Méthode 1 : Depuis le Menu Principal (`00_Boot`)
+1. Cliquer sur le bouton **`OPEN SPREADSHEET (EXCEL)`** : le jeu ouvre directement le fichier `CustomLevel.csv` dans le tableur par défaut du système d'exploitation.
 2. Éditer les paramètres souhaités (séquence d'animaux, espèce interdite, temps limites, vitesse) et enregistrer le fichier (`Ctrl + S`).
-3. Revenir sur le jeu et cliquer sur **`PLAY CUSTOM`** : le jeu analyse le fichier, configure le niveau personnalisé et démarre automatiquement la partie.
+3. Revenir sur le jeu et cliquer sur **`PLAY CUSTOM (SPREADSHEET)`** : le jeu analyse le fichier, configure le niveau personnalisé et démarre automatiquement la partie.
 
 #### Méthode 2 : Depuis la Scène de Briefing (`01_BossBriefing`)
-1. Lors de la phase de Briefing avec le patron extraterrestre, cliquer sur le bouton **`📄 SPREADSHEET LEVEL`** situé dans le coin supérieur droit de l'écran (ou appuyer sur la touche **`P`**).
+1. Lors de la phase de Briefing avec le patron extraterrestre, cliquer sur le bouton **`[SPREADSHEET LEVEL]`** situé dans le coin supérieur droit de l'écran.
 2. Le `SpreadsheetLevelLoader` injecte immédiatement la configuration dans le `GameManager` et le `MissionManager`.
-3. Le titre de la mission passe à `CAPTURE MISSION | CUSTOM SPREADSHEET LEVEL`, le bouton se valide (`✔ SPREADSHEET LOADED`), et le patron réagit en direct pour valider la commande envoyée par le quartier général.
+3. Le titre de la mission passe à `CAPTURE MISSION | CUSTOM SPREADSHEET LEVEL`, le bouton se valide (`[SPREADSHEET LOADED]`), et le patron réagit en direct pour valider la commande envoyée par le quartier général.
 
 ### Sécurité et Validation des Données
 Le chargeur (`SpreadsheetLevelLoader`) intègre un mécanisme de validation robuste :

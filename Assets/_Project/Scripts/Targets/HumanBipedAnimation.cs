@@ -113,7 +113,6 @@ namespace VARG.Targets
             var sin = Mathf.Sin(_cycle);
             var cos = Mathf.Cos(_cycle);
 
-            // Legs swing opposite to each other with energetic stride
             var legMultiplier = isFleeing ? 1.25f : 1.0f;
             var legAngleL = sin * (_maxLegAngle * legMultiplier);
             var legAngleR = -sin * (_maxLegAngle * legMultiplier);
@@ -127,7 +126,6 @@ namespace VARG.Targets
                 _legPivotR.localRotation = _initialLegRotR * Quaternion.Euler(legAngleR, 0f, 0f);
             }
 
-            // Arms: Natural cartoon running pump! Arms swing forward and back opposing legs, biased forward (-20 deg)
             var armSwing = isFleeing ? (_maxArmAngle * 1.6f) : _maxArmAngle;
             var armForwardBias = isFleeing ? -22f : -10f;
             var armAngleL = -sin * armSwing + armForwardBias;
@@ -142,7 +140,6 @@ namespace VARG.Targets
                 _armPivotR.localRotation = _initialArmRotR * Quaternion.Euler(armAngleR, 0f, -5f);
             }
 
-            // Torso: Footstep bounce + forward sprint lean when running
             if (_torso != null)
             {
                 var bob = Mathf.Abs(cos) * (isFleeing ? _bobHeight * 1.3f : _bobHeight);
@@ -153,7 +150,6 @@ namespace VARG.Targets
                 _torso.localRotation = Quaternion.Euler(leanX, swayY, 0f);
             }
 
-            // Head subtle sway and looking forward
             if (_headPivot != null)
             {
                 var headTilt = -sin * (isFleeing ? 4f : 2f);
@@ -163,7 +159,6 @@ namespace VARG.Targets
 
         private void AnimateIdle()
         {
-            // Smoothly return limbs and torso to rest
             if (_legPivotL != null)
             {
                 _legPivotL.localRotation = Quaternion.Slerp(_legPivotL.localRotation, _initialLegRotL, Time.deltaTime * 6f);
@@ -181,7 +176,6 @@ namespace VARG.Targets
                 _armPivotR.localRotation = Quaternion.Slerp(_armPivotR.localRotation, _initialArmRotR, Time.deltaTime * 6f);
             }
 
-            // Subtle breathing bob
             if (_torso != null)
             {
                 var breath = Mathf.Sin(_cycle) * (_bobHeight * 0.25f);

@@ -13,8 +13,8 @@ namespace VARG.Ship
 
         [SerializeField] private float _maxLandingSpeed = 3.5f;
         [SerializeField] private TextMeshProUGUI _promptText;
-        [SerializeField] private string _readyPromptMessage = "Pressione E / Chacoalhe o celular para descer";
-        [SerializeField] private string _slowDownPromptMessage = "Reduza a velocidade sobre a cidade...";
+        [SerializeField] private string _readyPromptMessage = "Press E / Shake phone to descend";
+        [SerializeField] private string _slowDownPromptMessage = "Slow down over the city...";
         [SerializeField] private Light _zoneLight;
         [SerializeField] private Color _idleColor = new Color(0.2f, 0.7f, 1f);
         [SerializeField] private Color _readyColor = new Color(0.2f, 1f, 0.4f);

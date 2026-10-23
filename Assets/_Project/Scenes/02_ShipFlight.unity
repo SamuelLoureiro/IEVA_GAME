@@ -422,8 +422,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VARG.Ship.LandingZone
   _maxLandingSpeed: 3.5
   _promptText: {fileID: 1742407366}
-  _readyPromptMessage: Pressione E / Chacoalhe o celular para descer
-  _slowDownPromptMessage: Reduza a velocidade sobre a cidade...
+  _readyPromptMessage: Press E / Shake phone to descend
+  _slowDownPromptMessage: Slow down over the city...
   _zoneLight: {fileID: 107748719}
   _idleColor: {r: 0.2, g: 0.7, b: 1, a: 1}
   _readyColor: {r: 0.2, g: 1, b: 0.4, a: 1}
@@ -826,7 +826,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Pressione E / Chacoalhe o celular para descer
+  m_text: Press E / Shake phone to descend
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

@@ -148,7 +148,6 @@ GameObject:
   - component: {fileID: 7525984419623893482}
   - component: {fileID: 1892079308211794159}
   - component: {fileID: 5266847112433870954}
-  - component: {fileID: 4359783990536408263}
   m_Layer: 0
   m_Name: DialogueText
   m_TagString: Untagged
@@ -275,20 +274,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &4359783990536408263
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4767770622637723563}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c578ce2ebc6f74b05894bc604321a62b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VARG.UI.TypewriterText
-  _textComponent: {fileID: 0}
-  _charactersPerSecond: 35
 --- !u!1 &5815972073480646235
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,6 +503,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VARG.UI.DialogueBox
   _speakerNameText: {fileID: 8910923965182455189}
-  _typewriter: {fileID: 4359783990536408263}
+  _dialogueText: {fileID: 5266847112433870954}
   _continueIndicator: {fileID: 4680788291558361770}
   _advanceButton: {fileID: 0}

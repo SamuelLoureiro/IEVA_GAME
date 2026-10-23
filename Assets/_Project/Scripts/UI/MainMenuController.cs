@@ -23,14 +23,22 @@ namespace VARG.UI
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void EnsureMainMenuInBootScene()
         {
-            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            if (activeScene.name == "00_Boot")
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+            SpawnIfBootScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+        }
+
+        private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+        {
+            SpawnIfBootScene(scene);
+        }
+
+        private static void SpawnIfBootScene(UnityEngine.SceneManagement.Scene scene)
+        {
+            if (scene.name == "00_Boot" && FindFirstObjectByType<MainMenuController>() == null)
             {
-                if (FindFirstObjectByType<MainMenuController>() == null)
-                {
-                    var go = new GameObject("MainMenuController");
-                    go.AddComponent<MainMenuController>();
-                }
+                var go = new GameObject("MainMenuController");
+                go.AddComponent<MainMenuController>();
             }
         }
 
@@ -51,24 +59,6 @@ namespace VARG.UI
             if (_playCustomButton != null) _playCustomButton.onClick.RemoveListener(PlayCustomSpreadsheet);
             if (_openSpreadsheetButton != null) _openSpreadsheetButton.onClick.RemoveListener(OpenSpreadsheetFile);
             if (_quitButton != null) _quitButton.onClick.RemoveListener(QuitGame);
-        }
-
-        public void Configure(
-            Button playCampaignButton,
-            Button playCustomButton,
-            Button openSpreadsheetButton,
-            Button quitButton,
-            TextMeshProUGUI statusText,
-            TextMeshProUGUI titleText = null,
-            TextMeshProUGUI subtitleText = null)
-        {
-            _playCampaignButton = playCampaignButton;
-            _playCustomButton = playCustomButton;
-            _openSpreadsheetButton = openSpreadsheetButton;
-            _quitButton = quitButton;
-            _statusText = statusText;
-            _titleText = titleText;
-            _subtitleText = subtitleText;
         }
 
         private void SetupListeners()
@@ -128,7 +118,6 @@ namespace VARG.UI
             else
             {
                 SetStatus(statusMessage, new Color(1f, 0.45f, 0.45f));
-                Debug.LogWarning($"[MainMenuController] {statusMessage}");
             }
         }
 
@@ -211,9 +200,9 @@ namespace VARG.UI
             layout.childControlWidth = true;
             layout.childControlHeight = false;
 
-            _playCampaignButton = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>▶ PLAY CAMPAIGN</b>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
-            _playCustomButton = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>📄 PLAY CUSTOM (SPREADSHEET)</b>", new Color(0.15f, 0.45f, 0.85f), new Color(0.25f, 0.65f, 1f));
-            _openSpreadsheetButton = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>📁 OPEN SPREADSHEET (EXCEL)</b>", new Color(0.18f, 0.28f, 0.38f), new Color(0.28f, 0.42f, 0.58f));
+            _playCampaignButton = CreateMenuButton("PlayCampaignBtn", btnContainer.transform, "<b>PLAY CAMPAIGN</b>", new Color(0.10f, 0.75f, 0.45f), new Color(0.18f, 0.92f, 0.58f));
+            _playCustomButton = CreateMenuButton("PlayCustomBtn", btnContainer.transform, "<b>PLAY CUSTOM (SPREADSHEET)</b>", new Color(0.15f, 0.45f, 0.85f), new Color(0.25f, 0.65f, 1f));
+            _openSpreadsheetButton = CreateMenuButton("OpenCsvBtn", btnContainer.transform, "<b>OPEN SPREADSHEET (EXCEL)</b>", new Color(0.18f, 0.28f, 0.38f), new Color(0.28f, 0.42f, 0.58f));
             _quitButton = CreateMenuButton("QuitBtn", btnContainer.transform, "<b>QUIT</b>", new Color(0.45f, 0.15f, 0.18f), new Color(0.65f, 0.22f, 0.25f));
 
             _statusText = CreateText("StatusText", bgObj.transform, "Select a game mode to begin.", 18, TextAlignmentOptions.Center, FontStyles.Italic, new Color(0.70f, 0.80f, 0.90f));

@@ -224,7 +224,6 @@ GameObject:
   - component: {fileID: 5360108149486803806}
   - component: {fileID: 7180169983607311868}
   - component: {fileID: 1010573428275011864}
-  - component: {fileID: 620809042361043850}
   m_Layer: 0
   m_Name: BossPopupUI
   m_TagString: Untagged
@@ -281,31 +280,8 @@ MonoBehaviour:
   _canvasGroup: {fileID: 7180169983607311868}
   _speakerNameText: {fileID: 3338522681341414215}
   _dialogueText: {fileID: 4669975196337128307}
-  _avatarImage: {fileID: 8814604814819161838}
-  _alienVoice: {fileID: 620809042361043850}
-  _neutralSprite: {fileID: 0}
-  _annoyedSprite: {fileID: 0}
-  _angrySprite: {fileID: 0}
-  _furiousSprite: {fileID: 0}
-  _smugSprite: {fileID: 0}
-  _charactersPerSecond: 32
   _displayDuration: 3.5
   _fadeDuration: 0.2
---- !u!114 &620809042361043850
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2650110028138497234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36354e2a093e1efb290fe8f3b8940b16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VARG.Humor.AlienVoice
-  _audioSource: {fileID: 0}
-  _voiceClip: {fileID: 0}
-  _minInterval: 0.05
 --- !u!1 &3512589772617179106
 GameObject:
   m_ObjectHideFlags: 0

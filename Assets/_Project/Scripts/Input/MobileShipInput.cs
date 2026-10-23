@@ -64,7 +64,7 @@ namespace VARG.Input
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"[MobileShipInput] Could not bind UDP port {udpPort}: {ex.Message}");
+                Debug.LogWarning($"Could not bind UDP port {udpPort}: {ex.Message}");
             }
         }
 

@@ -28,6 +28,7 @@ namespace VARG.UI
         [Header("Buttons")]
         [SerializeField] private Button _nextLevelButton;
         [SerializeField] private Button _retryButton;
+        [SerializeField] private Button _mainMenuButton;
 
         public LevelResult CurrentResult { get; private set; }
 
@@ -36,8 +37,17 @@ namespace VARG.UI
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
+            if (_mainMenuButton == null && _retryButton != null)
+            {
+                _mainMenuButton = Instantiate(_retryButton, _retryButton.transform.parent);
+                _mainMenuButton.name = "Button_MainMenu";
+                var label = _mainMenuButton.GetComponentInChildren<TextMeshProUGUI>();
+                if (label != null) label.text = "MAIN MENU";
+            }
+
             if (_nextLevelButton != null) _nextLevelButton.onClick.AddListener(() => GameManager.Instance?.NextLevel());
             if (_retryButton != null) _retryButton.onClick.AddListener(() => GameManager.Instance?.RetryLevel());
+            if (_mainMenuButton != null) _mainMenuButton.onClick.AddListener(() => GameManager.Instance?.GoToMainMenu());
 
             DisplayResults();
         }
@@ -59,7 +69,7 @@ namespace VARG.UI
             if (_subtitleText != null)
             {
                 _subtitleText.text = isVictory
-                    ? (level >= GameManager.MaxLevel ? "Campanha Concluída! Você é o Mestre da Abdução!" : $"Level {level} Performance Summary")
+                    ? (level >= GameManager.MaxLevel ? "Campaign Complete! You are the Master of Abduction!" : $"Level {level} Performance Summary")
                     : $"Level {level} - Mission Failed";
             }
 
@@ -76,6 +86,30 @@ namespace VARG.UI
 
             if (_nextLevelButton != null) _nextLevelButton.gameObject.SetActive(isVictory);
             if (_retryButton != null) _retryButton.gameObject.SetActive(true);
+            if (_mainMenuButton != null) _mainMenuButton.gameObject.SetActive(true);
+
+            UpdateButtonPositions(isVictory);
+        }
+
+        private void UpdateButtonPositions(bool isVictory)
+        {
+            if (_mainMenuButton == null || _retryButton == null) return;
+
+            var menuRect = _mainMenuButton.GetComponent<RectTransform>();
+            var retryRect = _retryButton.GetComponent<RectTransform>();
+
+            if (isVictory && _nextLevelButton != null)
+            {
+                var nextRect = _nextLevelButton.GetComponent<RectTransform>();
+                if (menuRect != null) menuRect.anchoredPosition = new Vector2(-235f, 0f);
+                if (retryRect != null) retryRect.anchoredPosition = new Vector2(0f, 0f);
+                if (nextRect != null) nextRect.anchoredPosition = new Vector2(235f, 0f);
+            }
+            else
+            {
+                if (menuRect != null) menuRect.anchoredPosition = new Vector2(-120f, 0f);
+                if (retryRect != null) retryRect.anchoredPosition = new Vector2(120f, 0f);
+            }
         }
 
         private static string FormatTime(float sec)
